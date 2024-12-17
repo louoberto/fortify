@@ -3,6 +3,14 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+*.o
+*.swp
+*.mod
+*.out
+*.exe
+.DS_Store
+repo
+
 # C extensions
 *.so
 
