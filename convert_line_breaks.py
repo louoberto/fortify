@@ -1,25 +1,25 @@
-from donotformat import doNotFormatCheck
-
-# ==========================================================
-def convert_line_breaks(lynes, f90):
+# ========================================================================
+# Function: convert_line_breaks
+# ========================================================================
+# Purpose:
+# If a fixed format file is given, this will force the line continuation
+# character to be an ampersand. It is most common and in free form
+# it must be an ampersand.
+# ========================================================================
+comments = ['*', 'c', 'C', '!']
+def convert_line_breaks(self):
     """
-    If we have line breaks, make sure we are using & as the character
+    If we have line breaks, force using & as the character
     """
-    new_lynes = []
-    weopen = False
-    for lyne in lynes:
-        comment_found = False
-        if lyne.strip():  # Is there anything in this line to worry about?
-            if not f90:
-                if lyne[0].strip():  # Is there anything in the first column?
-                    if not lyne[0].strip().isdigit():
-                        comment_found = (
-                            True  # First column != a number, so it's a comment
-                        )
-
-                    # If we have a symbol in the 6th column and it isn't a line comment, make sure its a &
-                    if len(lyne) >= 6 and not comment_found:
-                        if lyne[5].strip():
-                            lyne = lyne[:5] + "&" + lyne[6:]
-        new_lynes.append(lyne)
-    return new_lynes
+    new_file_lines = []
+    if not self.free_form:  # Make sure we are fixed form
+        for line in self.file_lines:
+            if line.strip():  # Make sure the line has something
+                # Make sure the first column is not a comment character, 
+                # thus the entire line is not a comment and check to 
+                # make sure the line is longer than 6 characters for good measure
+                if line.strip()[0] not in comments and len(line) >= 6 and line[5] != ' ':
+                    line = line[:5] + "&" + line[6:] 
+        new_file_lines.append(line)
+    self.file_lines = new_file_lines
+    return self
