@@ -1,4 +1,12 @@
+# ========================================================================
+# Function: read_file
+# ========================================================================
+# Purpose:
+# Open a file, read and store the lines in an array. Also determine if
+# we are fixed or free form.
+# ========================================================================
 import sys
+
 
 def read_file(self, filename):
     """
@@ -11,7 +19,7 @@ def read_file(self, filename):
             if ".f" == filename[-2:] or ".F" == filename[-2:]:
                 free_form = False
             self.free_form = free_form
-            return self
+            return
     except:
         print("Could not open/read: ", filename)
         print("Quitting")

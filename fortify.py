@@ -1,6 +1,8 @@
 from read_file import read_file
 from convert_line_breaks import convert_line_breaks
-from processcommentsandcasing import processCommentsAndCasing
+from lowercasing import lowercasing
+from convert_comment_char import convert_comment_char
+from tab_to_spaces import tab_to_spaces
 # from sort_vars import sortaVars
 # from processparens import processParens
 # from processnesting import processNesting
@@ -18,7 +20,6 @@ from processcommentsandcasing import processCommentsAndCasing
 # from format_params_saves import format_params_saves
 # from param_save_comma import param_save_comma
 # from print_file import print_file
-# from tabsToSpaces import tabsToSpaces
 # from processHangingEnds import processHangingEnds
 # from processColumns import processColumns
 # from processIncludes import processIncludes
@@ -27,13 +28,21 @@ from processcommentsandcasing import processCommentsAndCasing
 
 class fortify:
     # Constructor to initialize object attributes
-    def __init__(self):
+    def __init__(self, continuation_char, spacing, tab, spaceamp, lastcol, data_types, comments, functions):
+        self.continuation_char = continuation_char
+        self.spacing = spacing
+        self.tab = tab
+        self.spaceamp = spaceamp
+        self.lastcol = lastcol
+        self.data_types = data_types
+        self.comments = comments
+        self.functions = functions
         self.read_file = read_file
-        self.convert_line_breaks = convert_line_breaks
-        self.processCommentsAndCasing = processCommentsAndCasing
+        self.convert_line_breaks = convert_line_breaks # convert continuation to & for fixed format/.f files
+        self.lowercasing = lowercasing
+        self.convert_comment_char = convert_comment_char
+        self.tab_to_spaces = tab_to_spaces
 
-        #     lynes, noSortName = processCommentsAndCasing(lynes, noSortName, True, f90)
-#     lynes = tabsToSpaces(lynes)
 #     lynes = processDatatypes(lynes, f90)
 #     lynes = processIfStatements(lynes)
 #     lynes = processParens(lynes)
