@@ -29,7 +29,6 @@ if __name__ == "__main__":
         myfile.read_file(myfile, fortran_file)
         myfile.convert_comment_char(myfile)
         myfile.remove_extra_whitespace(myfile) # Need to worry about F77 cols
-        myfile.if_logicals_spacing(myfile)
         myfile.common_format_template(myfile)
         # myfile.paren_spacing(myfile)
         # myfile.relational_op_spacing(myfile)
