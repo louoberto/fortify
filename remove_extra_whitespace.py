@@ -1,14 +1,14 @@
 # ========================================================================
-# Function: lowercasing
+# Function: remove_extra_whitespace
 # ========================================================================
 # Purpose:
-# Lowercase all code in the file, except for comments and strings
-# Fortran compilers are case insensitive, and modern languages are
-# typically lowercased. So, the code looks modern in this way
+# Removes all blank extra white space, only allowing one space max between
+# code, with the exception of the first 6 columns in F77 as well as strings
 # ========================================================================
 from no_format import no_format
 
-def lowercasing(self):
+
+def remove_extra_whitespace(self):
     new_file_lines = []
     for line in self.file_lines:
         # Skip blank lines
@@ -41,17 +41,20 @@ def lowercasing(self):
         temp = ""
         single_quote_skip = False # Skip strings
         double_quote_skip = False # Skip strings
-        for char in code_line:
+        for j, char in enumerate(code_line):
             # String check
             if char == "'":
                 single_quote_skip = not single_quote_skip
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
-                temp += char.lower()
+                if char == " " and code_line[j - 1] == " ":
+                    continue
+                else:
+                    temp += char
             else:
                 temp += char
 
-        new_file_lines.append(ff_line + temp + cmnt_line)
+        new_file_lines.append(ff_line + temp.lstrip() + cmnt_line)
     self.file_lines = new_file_lines
     return

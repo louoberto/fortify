@@ -12,7 +12,6 @@ spaceamp = 5
 tab = 3
 lastcol = 131  # Last usable column in Fortran
 continuation_char = '&'
-data_types = ["integer", "real", "complex", "character", "logical"] # Variable declartion types, referenced in multiple functions
 comments = ['*', 'c', 'C', '!']
 functions = ["subroutine", "function","program" ]  # Types of Fortran code blocks, used to identify the start and ending of function sections
 
@@ -28,11 +27,30 @@ if __name__ == "__main__":
     argz = parser.parse_args()
     fortran_files = argz.filename # Set of args supplied to us.
 
+    # File editing order
+    #   1. Read file, store lines
+    #   2. Start by removing any unnecessary whitespace
+    #   3. Convert the comment character from F77 *,C,c to !
+    #   4. Convert line break characters to be &
+    #   5. Lowercase all normal code, except strings
     for fortran_file in fortran_files:
-        myfile = fortify(continuation_char, spacing, tab, spaceamp, lastcol, data_types, comments, functions)
+        myfile = fortify()
         myfile.read_file(myfile, fortran_file)
-        myfile.convert_line_breaks(myfile)
-        myfile.lowercasing(myfile)
+        myfile.remove_extra_whitespace(myfile) # Need to worry about F77 cols
         myfile.convert_comment_char(myfile)
-        myfile.tab_to_spaces(myfile)
+        myfile.convert_line_breaks(myfile) # Need to worry about F77 cols
+        myfile.lowercasing(myfile)
+        myfile.tab_to_spaces(myfile) # Need to worry about F77 cols
+        myfile.if_logicals_spacing(myfile)
+        myfile.paren_spacing(myfile)
+        myfile.relational_op_spacing(myfile)
+        myfile.star_spacing(myfile)
+        myfile.plus_spacing(myfile)
+        myfile.minus_spacing(myfile)
+        myfile.structured_indent(myfile)
+        myfile.line_carry_over(myfile)
+        myfile.lineup_f90_line_continuations(myfile)
+
+
+        myfile.print_file(myfile, fortran_file)
 

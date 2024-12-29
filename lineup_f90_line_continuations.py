@@ -1,18 +1,25 @@
-from donotformat import doNotFormatCheck
+# ========================================================================
+# Function: structured_indent
+# ========================================================================
+# Purpose:
+# Will format  I believe this handles = - 0.213 to = -0.213 for example
+# ========================================================================
+from no_format import no_format
 
-def lineup_f90_line_continuations(lynes, f90):
-    new_lynes = []
+
+def lineup_f90_line_continuations(self):
+    new_file_lines = []
     weopen = False
-    for lyne in lynes:
-        if f90 and lyne.strip():
-            if "&" == lyne[-2] and "!" != lyne.strip()[0]:
-                if lyne.count("(") > lyne.count(")"):
-                    starting_col = lyne.find("(") + 2
+    for line in self.file_lines:
+        if self.free_form and line.strip():
+            if "&" == line[-2] and "!" != line.strip()[0]:
+                if line.count("(") > line.count(")"):
+                    starting_col = line.find("(") + 2
                     weopen = True
-                elif weopen and lyne.count("(") <= lyne.count(")"):
-                    lyne = " " * starting_col + lyne.lstrip()
-            elif weopen and lyne.count("(") <= lyne.count(")"):
-                lyne = " " * starting_col + lyne.lstrip()
+                elif weopen and line.count("(") <= line.count(")"):
+                    line = " " * starting_col + line.lstrip()
+            elif weopen and line.count("(") <= line.count(")"):
+                line = " " * starting_col + line.lstrip()
                 weopen = False
-        new_lynes.append(lyne)
-    return new_lynes
+        new_file_lines.append(line)
+    return

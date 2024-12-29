@@ -1,8 +1,5 @@
 # ===========================================================
 def repeaters(lynes):
-    """
-    Removes repeated lynes
-    """
     new_lynes = []
     format_open = False
     lparen = 0

@@ -44,82 +44,82 @@
 !  The old (R 1.1.1) version of the code is available via `#define D_non_pois'
 
 
-FUNCTION dgam (x, shape, scale, give_log) RESULT(fn_val) !ThIsIsAtEsT
+function dgam (x, shape, scale, give_log) result(fn_val) !ThIsIsAtEsT
 
-  IMPLICIT NONE
+   implicit none
 
-  DOUBLE PRECISION, INTENT(IN) :: x, shape, scale
+   double precision, intent(in) :: x, shape, scale
 
-  LOGICAL, INTENT(IN) :: give_log
+   logical, intent(in) :: give_log
 
-  DOUBLE PRECISION, PARAMETER :: POS_INF = 1.0e99
-  DOUBLE PRECISION, PARAMETER :: NEG_INF = -1.0e99
-  DOUBLE PRECISION, PARAMETER :: NaN = 9999.0
+   double precision, parameter :: pos_inf = 1.0e99
+   double precision, parameter :: neg_inf = -1.0e99
+   double precision, parameter :: nan = 9999.0
 
-  DOUBLE PRECISION :: pr, dpois_raw, fn_val
+   double precision :: pr, dpois_raw, fn_val
 
-  IF (shape .lt. 0.0 .or. scale .le. 0.0) THEN
-     PRINT *, ' Invalid shape or scale parameter in "dgamma", NaN returned!'  !ThIsIsAtEsT
-     fn_val = NaN
-  END IF
+   if (shape .lt. 0.0 .or. scale .le. 0.0) then
+      print *, ' Invalid shape or scale parameter in "dgamma", NaN returned!'  !ThIsIsAtEsT
+      fn_val = nan
+   end if
 
-  IF (x .lt. 0.0) THEN
-     IF (give_log) THEN
-        fn_val = NEG_INF
-     ELSE
-        fn_val = 0.0
-     END IF
-     RETURN
-  END IF
+   if (x .lt. 0.0) then
+      if (give_log) then
+         fn_val = neg_inf
+      else
+         fn_val = 0.0
+      end if
+      return
+   end if
 
-  IF (shape .eq. 0.0) THEN ! point mass at 0
-     IF (x .eq. 0.0) THEN
-        fn_val = POS_INF
-     ELSE
-        IF (give_log) THEN
-           fn_val = NEG_INF
-        ELSE
-           fn_val = 0.0
-        END IF
-     END IF
-     RETURN
-  END IF
+   if (shape .eq. 0.0) then ! point mass at 0
+      if (x .eq. 0.0) then
+         fn_val = pos_inf
+      else
+         if (give_log) then
+            fn_val = neg_inf
+         else
+            fn_val = 0.0
+         end if
+      end if
+      return
+   end if
 
-  IF (x .eq. 0.0) THEN
-     IF (shape .lt. 1.0) THEN
-        fn_val = POS_INF
-     ELSE IF (shape .gt. 1.0) THEN
-        IF (give_log) THEN
-           fn_val = NEG_INF
-        ELSE
-           fn_val = 0.0
-        END IF
-     ELSE
-        IF (give_log) THEN
-           fn_val = -log(scale)
-        ELSE
-           fn_val = 1.0 / scale
-        END IF
-     END IF
-     RETURN
-  END IF
+   if (x .eq. 0.0) then
+      if (shape .lt. 1.0) then
+         fn_val = pos_inf
+      else if (shape .gt. 1.0) then
+         if (give_log) then
+            fn_val = neg_inf
+         else
+            fn_val = 0.0
+         end if
+      else
+         if (give_log) then
+            fn_val = -log(scale)
+         else
+            fn_val = 1.0 / scale
+         end if
+      end if
+      return
+   end if
 
-  IF (shape .lt. 1.0) THEN
-     pr = dpois_raw (shape, x/scale, give_log)
-     IF (give_log) THEN
-        fn_val = pr + log(shape/x)
-     ELSE
-        fn_val = pr*shape/x
-     END IF
-  ELSE  ! shape >= 1
-     pr = dpois_raw(shape-1.0, x/scale, give_log)
-     IF (give_log) THEN
-        fn_val = pr - log(scale)
-     ELSE
-        fn_val =  pr/scale
-     END IF
-  END IF
+   if (shape .lt. 1.0) then
+      pr = dpois_raw (shape, x / scale, give_log)
+      if (give_log) then
+         fn_val = pr + log(shape / x)
+      else
+         fn_val = pr * shape / x
+      end if
+   else ! shape >= 1
+      pr = dpois_raw(shape - 1.0, x / scale, give_log)
+      if (give_log) then
+         fn_val = pr - log(scale)
+      else
+         fn_val = pr / scale
+      end if
+   end if
 
-  RETURN
+   return
 
-END FUNCTION dgam
+end function dgam

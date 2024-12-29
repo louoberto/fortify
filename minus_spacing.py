@@ -1,14 +1,13 @@
 # ========================================================================
-# Function: lowercasing
+# Function: miuns_spacing
 # ========================================================================
 # Purpose:
-# Lowercase all code in the file, except for comments and strings
-# Fortran compilers are case insensitive, and modern languages are
-# typically lowercased. So, the code looks modern in this way
+# Will format  I believe this handles = - 0.213 to = -0.213 for example
 # ========================================================================
 from no_format import no_format
 
-def lowercasing(self):
+
+def minus_spacing(self):
     new_file_lines = []
     for line in self.file_lines:
         # Skip blank lines
@@ -41,14 +40,17 @@ def lowercasing(self):
         temp = ""
         single_quote_skip = False # Skip strings
         double_quote_skip = False # Skip strings
-        for char in code_line:
+        for j, char in enumerate(code_line):
             # String check
             if char == "'":
                 single_quote_skip = not single_quote_skip
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
-                temp += char.lower()
+                if (not self.free_form and ff_line[-1] == '&' and j == 0) or (code_line[j - 3] in ['=','-','+','/','*'] and code_line[j - 2] == " " and code_line[j - 1] in ["+", "-"]):
+                    pass
+                else:
+                    temp += char
             else:
                 temp += char
 

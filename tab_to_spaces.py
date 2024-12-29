@@ -2,7 +2,7 @@
 # Function: tab_to_spaces
 # ========================================================================
 # Purpose:
-# Convert tab characters to spaces
+# Convert tab characters (/t) to spaces
 # ========================================================================
 def tab_to_spaces(self):
     new_file_lines = []

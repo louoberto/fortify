@@ -1,6 +1,14 @@
 from donotformat import doNotFormatCheck
 
-#This 
+# I believe this is taking variable declaration blocks and separating them
+# to each be on it's own line as well as alphabetizing them
+# E.g.
+# real :: var1, var2, var3 
+# =>
+# real :: var1
+# real :: var2
+# real :: var3
+# Maybe add this later, shelving for now - LJO 12/24/24
 
 #----------------------------------------------
 # Define global variables used across multiple functions

@@ -1,14 +1,13 @@
 # ========================================================================
-# Function: lowercasing
+# Function: plus_spacing
 # ========================================================================
 # Purpose:
-# Lowercase all code in the file, except for comments and strings
-# Fortran compilers are case insensitive, and modern languages are
-# typically lowercased. So, the code looks modern in this way
+# Will format 
 # ========================================================================
 from no_format import no_format
 
-def lowercasing(self):
+
+def plus_spacing(self):
     new_file_lines = []
     for line in self.file_lines:
         # Skip blank lines
@@ -41,17 +40,36 @@ def lowercasing(self):
         temp = ""
         single_quote_skip = False # Skip strings
         double_quote_skip = False # Skip strings
-        for char in code_line:
+        for j, char in enumerate(code_line):
             # String check
             if char == "'":
                 single_quote_skip = not single_quote_skip
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
-                temp += char.lower()
+                if char in ["+", "-"]:
+                    if code_line[j + 1] != " " and code_line[j - 1] != " ": #?+?
+                        if code_line[j - 1] == "e" or code_line[j - 1] == "d": #d+?
+                            if code_line[j - 2].isnumeric() and code_line[j + 1].isnumeric(): #5d+5
+                                temp += char
+                            else: #?d+?
+                                temp += " " + char + " "
+                        else: #?+?
+                            if code_line[j - 2] == "=": #=+?
+                                temp += " " + char
+                            else:  #?+?
+                                temp += " " + char + " "
+                    elif code_line[j - 1] == " " and code_line[j + 1] != " ": #? +?
+                        temp += char + " "
+                    elif code_line[j - 1] != " " and code_line[j + 1] == " ": #?+ ?
+                        temp += " " + char
+                    else: #? + ?
+                        temp += char
+                else:
+                    temp += char
             else:
                 temp += char
-
+                
         new_file_lines.append(ff_line + temp + cmnt_line)
     self.file_lines = new_file_lines
     return

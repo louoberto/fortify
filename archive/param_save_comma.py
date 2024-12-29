@@ -9,7 +9,7 @@ data_types = ["integer", "real", "complex", "character", "logical"]
 def param_save_comma(lynes):
     """
     If we declare a variable as a 'parameter' or 'save' variable, ensure
-    there == a comma between modifiers
+    there is a comma between modifiers
     """
     new_lynes = []
     # Loop through all lines, clean up variable declarations
