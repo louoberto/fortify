@@ -3,24 +3,11 @@
 # ========================================================================
 # Purpose:
 # Adds spaces between logical expressions: x.gt.y => x .gt. y
-# This promotes code readability and is common place in other language
-# formatters (clang, black, etc).
-#
-# TODO: Probably need to update for a line carrying over
 # ========================================================================
 def if_logicals_spacing(self):
     # This puts a space between keywords statements.
     new_file_lines = []
-    iftypes = [".and.", ".not."]  # These are 3 letter
-    iftypes2 = [  # These are 2 letter
-        ".eq.",
-        ".ge.",
-        ".gt.",
-        ".le.",
-        ".lt.",
-        ".ne.",
-        ".or.",
-    ]
+    
     # ===========================================================
     # Process each line of the file one at a time. If raw == given, store those lines.
     for line in self.file_lines:
@@ -34,7 +21,7 @@ def if_logicals_spacing(self):
                 if skip:
                     temp += char
                 else:
-                    if char == "." and any(line[j : j + 5] in x for x in iftypes):
+                    if char == "." and any(line[j : j + 5] in x for x in self.iftypes):
                         try:
                             if line[j + 5]:
                                 if line[j - 1] != " " and line[j + 5] != " ":
@@ -53,14 +40,10 @@ def if_logicals_spacing(self):
                                 temp += line[j:]
                             skip_pass = 4
                             skip = True
-                    elif char == "." and any(line[j : j + 4] in x for x in iftypes2):
+                    elif char == "." and any(line[j : j + 4] in x for x in self.iftypes2):
                         try:
                             if line[j + 4]:
-                                if (
-                                    line[j - 1] != " "
-                                    and line[j + 4] != " "
-                                    and line[j + 4] != "."
-                                ):
+                                if line[j - 1] != " " and line[j + 4] != " " and line[j + 4] != ".":
                                     temp += " " + line[j : j + 4] + " "
                                 elif line[j - 1] != " " and line[j + 4] == " ":
                                     temp += " " + line[j : j + 4]
@@ -80,6 +63,7 @@ def if_logicals_spacing(self):
             else:
                 skip_pass = skip_pass - 1
         line = temp
-        new_file_lines.append(line)
+
+        new_file_lines.append(ff_line + temp + cmnt_line)
     self.file_lines = new_file_lines
     return

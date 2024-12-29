@@ -3,7 +3,7 @@
 # ========================================================================
 # Purpose:
 # If a fixed format file is given, this will force the line continuation
-# character to be the continuation_char.
+# character to be the continuation_char (default is &).
 # ========================================================================
 def convert_line_breaks(self):
     new_file_lines = []

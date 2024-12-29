@@ -1,19 +1,10 @@
 #!/usr/bin/env python3
 # ==============================================================================
 # Purpose:
-# Format Fortran code to a standard, while allowing user input for a variety
-# of styles
+# Format Fortran code to a standard
 # ==============================================================================
 import argparse
 from fortify import fortify
-
-spacing = 6  # First 6 cols go unused in most cases
-spaceamp = 5
-tab = 3
-lastcol = 131  # Last usable column in Fortran
-continuation_char = '&'
-comments = ['*', 'c', 'C', '!']
-functions = ["subroutine", "function","program" ]  # Types of Fortran code blocks, used to identify the start and ending of function sections
 
 if __name__ == "__main__":
     # Arg parsing command line

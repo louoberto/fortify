@@ -14,6 +14,7 @@
 # ========================================================================
 from no_format import no_format
 
+
 def relational_op_spacing(self):
     new_file_lines = []
     for line in self.file_lines:
@@ -55,17 +56,17 @@ def relational_op_spacing(self):
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip and char in ["<", ">", "/", "="]:
                 if code_line[j + 1] == "=":
-                    if code_line[j - 1] != " ":
-                        temp += " " + char
+                    if code_line[j - 1] != self.space:
+                        temp += self.space + char
                     else:
                         temp += char
-                elif code_line[j + 1] != " ":
+                elif code_line[j + 1] != self.space:
                     if code_line[j - 1] != "=":
-                        temp += " " + char + " "
+                        temp += self.space + char + self.space
                     else:
-                        temp += char + " "
-                elif code_line[j - 1] != " ":
-                    temp += " " + char
+                        temp += char + self.space
+                elif code_line[j - 1] != self.space:
+                    temp += self.space + char
                 else:
                     temp += char
             else:

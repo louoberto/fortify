@@ -1,13 +1,13 @@
 # ========================================================================
-# Function: plus_spacing
+# Function: comma_colon_spacing
 # ========================================================================
 # Purpose:
-# Will format
+# Will format 
 # ========================================================================
 from no_format import no_format
 
 
-def plus_spacing(self):
+def common_format_template(self):
     new_file_lines = []
     for line in self.file_lines:
         # Skip blank lines
@@ -47,29 +47,3 @@ def plus_spacing(self):
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
-                if char in ["+", "-"]:
-                    if code_line[j + 1] != self.space and code_line[j - 1] != self.space:  # ?+?
-                        if code_line[j - 1] == "e" or code_line[j - 1] == "d":  # d+?
-                            if code_line[j - 2].isnumeric() and code_line[j + 1].isnumeric():  # 5d+5
-                                temp += char
-                            else:  # ?d+?
-                                temp += self.space + char + self.space
-                        else:  # ?+?
-                            if code_line[j - 2] == "=":  # =+?
-                                temp += self.space + char
-                            else:  # ?+?
-                                temp += self.space + char + self.space
-                    elif code_line[j - 1] == self.space and code_line[j + 1] != self.space:  # ? +?
-                        temp += char + self.space
-                    elif code_line[j - 1] != self.space and code_line[j + 1] == self.space:  # ?+ ?
-                        temp += self.space + char
-                    else:  # ? + ?
-                        temp += char
-                else:
-                    temp += char
-            else:
-                temp += char
-
-        new_file_lines.append(ff_line + temp + cmnt_line)
-    self.file_lines = new_file_lines
-    return

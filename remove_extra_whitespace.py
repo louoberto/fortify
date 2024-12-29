@@ -48,7 +48,7 @@ def remove_extra_whitespace(self):
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
-                if char == " " and code_line[j - 1] == " ":
+                if char == self.space and code_line[j - 1] == self.space:
                     continue
                 else:
                     temp += char

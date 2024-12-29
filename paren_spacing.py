@@ -44,14 +44,14 @@ def paren_spacing(self):
             if char == '"' or char == "'":
                 quote_skip = not quote_skip
 
-            if not quote_skip and char in [")", " "]:
-                if char == " ":
+            if not quote_skip and char in [")", self.space]:
+                if char == self.space:
                     if code_line[j - 1] == "(" or j + 1 < len(code_line) and code_line[j + 1] == ")":
                         continue # skip this because we want parens to line up with args
                     else:
                         temp += char
-                elif char == ")" and j + 1 < len(code_line) and code_line[j + 1] and code_line[j + 1] not in ("\n", " ", "%"):
-                    temp += char + " "
+                elif char == ")" and j + 1 < len(code_line) and code_line[j + 1] and code_line[j + 1] not in ("\n", self.space, "%"):
+                    temp += char + self.space
                 else:
                     temp += char
             else:

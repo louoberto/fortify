@@ -47,7 +47,7 @@ def minus_spacing(self):
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
-                if (not self.free_form and ff_line[-1] == '&' and j == 0) or (code_line[j - 3] in ['=','-','+','/','*'] and code_line[j - 2] == " " and code_line[j - 1] in ["+", "-"]):
+                if (not self.free_form and ff_line[-1] == '&' and j == 0) or (code_line[j - 3] in ['=','-','+','/','*'] and code_line[j - 2] == self.space and code_line[j - 1] in ["+", "-"]):
                     pass
                 else:
                     temp += char

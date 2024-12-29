@@ -31,34 +31,43 @@ def comma_colon_spacing(self):
             code_line = line
             cmnt_line = ""
 
+        if not self.free_form:
+            ff_line = code_line[: self.ff_column_len]
+            code_line = code_line[self.ff_column_len :]
+        else:
+            ff_line = ""
+
         temp = ""
-        quote_skip = False # Skip strings
+        single_quote_skip = False  # Skip strings
+        double_quote_skip = False  # Skip strings
         for j, char in enumerate(code_line):
             # String check
-            if char == '"' or char == "'":
-                quote_skip = not quote_skip
-            if not quote_skip:
-                if char == "," and code_line[j + 1] != " ": # Comma case 1
-                    temp += temp + char + " "
-                elif char == "," and code_line[j - 1] == " ": # Comma case 2
+            if char == "'":
+                single_quote_skip = not single_quote_skip
+            if char == '"':
+                double_quote_skip = not double_quote_skip
+            if not single_quote_skip and not double_quote_skip:
+                if char == "," and code_line[j + 1] != self.space: # Comma case 1
+                    temp += temp + char + self.space
+                elif char == "," and code_line[j - 1] == self.space: # Comma case 2
                     temp = temp[:-1] + char
                 elif char == ":" and code_line[j + 1] != ":" and code_line[j - 1] != ":": # Colon case 1
-                    if code_line[j + 1] != " " and code_line[j - 1] != " ":  # a=b
-                        temp += " " + char + " "
-                    elif code_line[j + 1] != " " and code_line[j - 1] == " ":  # maybe a =b
-                        temp += char + " "
-                    elif code_line[j + 1] == " " and code_line[j - 1] != " ":  # could be a= b
-                        temp += " " + char
+                    if code_line[j + 1] != self.space and code_line[j - 1] != self.space:  # a=b
+                        temp += self.space + char + self.space
+                    elif code_line[j + 1] != self.space and code_line[j - 1] == self.space:  # maybe a =b
+                        temp += char + self.space
+                    elif code_line[j + 1] == self.space and code_line[j - 1] != self.space:  # could be a= b
+                        temp += self.space + char
                     else:  # could be a = b
                         temp += char
                 elif char == ":" and code_line[j + 1] == ":" and code_line[j - 1] != ":": # Colon case 2
-                    if code_line[j - 1] != " ":  # a=b
-                        temp += " " + char
+                    if code_line[j - 1] != self.space:  # a=b
+                        temp += self.space + char
                     else:  # could be a = b
                         temp += char
                 elif char == ":" and code_line[j + 1] != ":" and code_line[j - 1] == ":": # Colon case 3
-                    if code_line[j + 1] != " ":  # a=b
-                        temp += char + " "
+                    if code_line[j + 1] != self.space:  # a=b
+                        temp += char + self.space
                     else:  # could be a = b
                         temp += char
                 else:
@@ -66,6 +75,6 @@ def comma_colon_spacing(self):
             else:
                 temp += char
 
-        new_file_lines.append(temp + cmnt_line[:-1])
+        new_file_lines.append(ff_line + temp + cmnt_line)
     self.file_lines = new_file_lines
     return

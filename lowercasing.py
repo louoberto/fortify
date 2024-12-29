@@ -33,15 +33,15 @@ def lowercasing(self):
             cmnt_line = ""
 
         if not self.free_form:
-            ff_line = code_line[:self.ff_column_len]
-            code_line = code_line[self.ff_column_len:]
+            ff_line = code_line[: self.ff_column_len]
+            code_line = code_line[self.ff_column_len :]
         else:
             ff_line = ""
 
         temp = ""
-        single_quote_skip = False # Skip strings
-        double_quote_skip = False # Skip strings
-        for char in code_line:
+        single_quote_skip = False  # Skip strings
+        double_quote_skip = False  # Skip strings
+        for j, char in enumerate(code_line):
             # String check
             if char == "'":
                 single_quote_skip = not single_quote_skip
