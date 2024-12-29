@@ -47,3 +47,14 @@ def common_format_template(self):
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
+                char = char.lower()
+                # temp = self.comma_colon_spacing(self, j, char, code_line, temp)
+                char = self.minus_spacing(j, char, ff_line, code_line, temp)
+                print(self.minus_spacing(j, char, ff_line, code_line, temp))
+                if char:
+                    temp += char
+            else:
+                temp += char
+        new_file_lines.append(ff_line + temp + cmnt_line)
+    self.file_lines = new_file_lines
+    return

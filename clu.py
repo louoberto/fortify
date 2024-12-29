@@ -27,20 +27,20 @@ if __name__ == "__main__":
     for fortran_file in fortran_files:
         myfile = fortify()
         myfile.read_file(myfile, fortran_file)
-        myfile.remove_extra_whitespace(myfile) # Need to worry about F77 cols
         myfile.convert_comment_char(myfile)
-        myfile.convert_line_breaks(myfile) # Need to worry about F77 cols
-        myfile.lowercasing(myfile)
-        myfile.tab_to_spaces(myfile) # Need to worry about F77 cols
+        myfile.remove_extra_whitespace(myfile) # Need to worry about F77 cols
+        
+        
         myfile.if_logicals_spacing(myfile)
-        myfile.paren_spacing(myfile)
-        myfile.relational_op_spacing(myfile)
-        myfile.star_spacing(myfile)
-        myfile.plus_spacing(myfile)
-        myfile.minus_spacing(myfile)
-        myfile.structured_indent(myfile)
-        myfile.line_carry_over(myfile)
-        myfile.lineup_f90_line_continuations(myfile)
+        # myfile.paren_spacing(myfile)
+        # myfile.relational_op_spacing(myfile)
+        # myfile.star_spacing(myfile)
+        # myfile.plus_spacing(myfile)
+        # myfile.minus_spacing(myfile)
+        # myfile.common_format_template(myfile)
+        # myfile.structured_indent(myfile)
+        # myfile.line_carry_over(myfile)
+        # myfile.lineup_f90_line_continuations(myfile)
 
 
         myfile.print_file(myfile, fortran_file)

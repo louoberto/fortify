@@ -48,23 +48,23 @@ def star_spacing(self):
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
                 if char == "*" and code_line[j - 1] != "*" and code_line[j + 1] != "*" and not any(code_line[j - 4 : j] in x for x in self.data_types):
-                    if code_line[j - 1] != " " and code_line[j + 1] != " ": #?*?
+                    if code_line[j - 1] != self.space and code_line[j + 1] != self.space: #?*?
                         if (code_line[j - 1].isnumeric() or code_line[j - 1].isalpha()) and (code_line[j + 1].isnumeric() or code_line[j + 1].isalpha()): #5*5
-                            temp += " " + char + " "
+                            temp += self.space + char + self.space
                         elif (code_line[j - 1].isnumeric() or code_line[j - 1].isalpha()) and not (code_line[j + 1].isnumeric() or code_line[j + 1].isalpha()): #5*?
-                            temp += " " + char
+                            temp += self.space + char
                         elif not (code_line[j - 1].isnumeric() or code_line[j - 1].isalpha()) and (code_line[j + 1].isnumeric() or code_line[j + 1].isalpha()): #?*5
-                            temp += char + " "
+                            temp += char + self.space
                         else: #?*?
                             temp += char
-                    elif code_line[j - 1] == " " and code_line[j + 1] != " ": # ? *?
+                    elif code_line[j - 1] == self.space and code_line[j + 1] != self.space: # ? *?
                         if code_line[j + 1].isnumeric() or code_line[j + 1].isalpha(): #? *5
-                            temp += char + " "
+                            temp += char + self.space
                         else: #? *?
                             temp += char
-                    elif code_line[j - 1] != " " and code_line[j + 1] == " ": #?* ?
+                    elif code_line[j - 1] != self.space and code_line[j + 1] == self.space: #?* ?
                         if code_line[j - 1].isnumeric() or code_line[j - 1].isalpha(): #5* ?
-                            temp += " " + char
+                            temp += self.space + char
                         else: #?* ?
                             temp += char
                     else: # ? * ?

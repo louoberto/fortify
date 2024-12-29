@@ -1,5 +1,5 @@
 from read_file import read_file
-from convert_line_breaks import convert_line_breaks
+# from convert_line_breaks import convert_line_breaks
 from lowercasing import lowercasing
 from convert_comment_char import convert_comment_char
 from tab_to_spaces import tab_to_spaces
@@ -15,6 +15,7 @@ from minus_spacing import minus_spacing
 from structured_indent import structured_indent
 from line_carry_over import line_carry_over
 from lineup_f90_line_continuations import lineup_f90_line_continuations
+from common_format_template import common_format_template
 
 
 class fortify:
@@ -52,9 +53,9 @@ class fortify:
         else:
             self.last_col = 77  # Last usable column in Fortran
         # These should have toggles below
-        self.convert_line_breaks = (
-            convert_line_breaks  # convert continuation to & for fixed format (.f) files
-        )
+        # self.convert_line_breaks = (
+        #     convert_line_breaks  # convert continuation to & for fixed format (.f) files
+        # )
         self.convert_comment_char = convert_comment_char  # Converts the comment character from C, c, and * to ! for fixed format (.f) files
         self.lowercasing = lowercasing  # Converts code to lowercase
         self.tab_to_spaces = tab_to_spaces
@@ -70,6 +71,7 @@ class fortify:
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
         self.lineup_f90_line_continuations = lineup_f90_line_continuations
+        self.common_format_template = common_format_template
 
     keywords_increase = [
         "contains",

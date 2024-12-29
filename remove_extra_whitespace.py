@@ -51,7 +51,7 @@ def remove_extra_whitespace(self):
                 if char == self.space and code_line[j - 1] == self.space:
                     continue
                 else:
-                    temp += char
+                    temp += char.lower()
             else:
                 temp += char
 
