@@ -12,16 +12,16 @@ def lineup_f90_line_continuations(self):
     new_file_lines = []
     open_paren = False
     for line in self.file_lines:
-        if not no_format(line):
-            if self.free_form and line.strip():
-                if self.continuation_char == line[-2] and self.comment_char != line.strip()[0]:
-                    if line.count("(") > line.count(")"):
-                        starting_col = line.find("(") + 2
-                        open_paren = True
-                    elif open_paren and line.count("(") <= line.count(")"):
-                        line = self.space * starting_col + line.lstrip()
+        if line and not no_format(line) and self.free_form:
+            if len(line)>2 and self.continuation_char == line[-2] and self.comment_char != line.strip()[0]:
+                if line.count("(") > line.count(")"):
+                    starting_col = line.find("(") + 2
+                    open_paren = True
                 elif open_paren and line.count("(") <= line.count(")"):
                     line = self.space * starting_col + line.lstrip()
-                    open_paren = False
-            new_file_lines.append(line)
+            elif open_paren and line.count("(") <= line.count(")"):
+                line = self.space * starting_col + line.lstrip()
+                open_paren = False
+        new_file_lines.append(line)
+    # self.file_lines = new_file_lines
     return

@@ -11,40 +11,40 @@ from comma_colon_spacing import comma_colon_spacing
 # from remove_extra_whitespace import remove_extra_whitespace
 from star_spacing import star_spacing
 from plus_spacing import plus_spacing
-from minus_spacing import minus_spacing
+#from minus_spacing import minus_spacing
 from structured_indent import structured_indent
 from line_carry_over import line_carry_over
-from lineup_f90_line_continuations import lineup_f90_line_continuations
+#from lineup_f90_line_continuations import lineup_f90_line_continuations
 from common_format_template import common_format_template
 
 
 class fortify:
     # Constructor to initialize object attributes
-    def __init__(self, continuation_char="&", ff_column_len=6, tab_len=3):
+    def __init__(self, continuation_char='&', ff_column_len=6, tab_len=3):
         # These are variables
         self.continuation_char = continuation_char  # Can make this user defined I suppose, but only for ff
         self.ff_column_len = ff_column_len  # Reserved space for fixed format
         self.tab_len = tab_len  # Make default tab space 3
         self.free_form = False
-        self.space = " "
-        self.comment_char = "!"
+        self.space = ' '
+        self.comment_char = '!'
         self.data_types = [
-            "integer",
-            "real",
-            "complex",
-            "character",
-            "logical",
-            "double precision",
+            'integer',
+            'real',
+            'complex',
+            'character',
+            'logical',
+            'double precision',
         ]  # Variable declartion types, referenced in multiple functions
-        self.iftypes = [".and.", ".not."]  # These are 3 letter
+        self.iftypes = ['.and.', '.not.']  # These are 3 letter
         self.iftypes2 = [  # These are 2 letter
-            ".eq.",
-            ".ge.",
-            ".gt.",
-            ".le.",
-            ".lt.",
-            ".ne.",
-            ".or.",
+            '.eq.',
+            '.ge.',
+            '.gt.',
+            '.le.',
+            '.lt.',
+            '.ne.',
+            '.or.',
         ]
         # These are functions
         self.read_file = read_file  # Read and stoe the file_lines of the file to format
@@ -66,56 +66,58 @@ class fortify:
         self.comma_colon_spacing = comma_colon_spacing
         self.star_spacing = star_spacing
         self.plus_spacing = plus_spacing
-        self.minus_spacing = minus_spacing
+        #self.minus_spacing = minus_spacing
         self.print_file = print_file
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
-        self.lineup_f90_line_continuations = lineup_f90_line_continuations
+        #self.lineup_f90_line_continuations = lineup_f90_line_continuations
         self.common_format_template = common_format_template
 
     keywords_increase = [
-        "contains",
-        "do",
-        "function",
-        "if",
-        "interface",
-        "module",
-        "program",
-        "recursive function",
-        "select",
-        "structure",
-        "subroutine",
-        "type",
-        "type,",
-        "where",
+        'contains',
+        'do',
+        ': do',
+        'function',
+        'if',
+        'interface',
+        'module',
+        'program',
+        'recursive function',
+        'select',
+        'structure',
+        'subroutine',
+        'type',
+        'type,',
+        'where',
     ]
     keywords_decrease = [
-        "enddo",
-        "end do",
-        "endfunction",
-        "end function",
-        "endif",
-        "end if",
-        "endinterface",
-        "end interface",
-        "endmodule",
-        "end module",
-        "endprogram",
-        "end program",
-        "endselect",
-        "end select",
-        "endstructure",
-        "end structure",
-        "endsubroutine",
-        "end subroutine",
-        "endtype",
-        "end type",
-        "endwhere",
-        "end where",
+        'enddo',
+        'end do',
+        'endfunction',
+        'end function',
+        'endif',
+        'end if',
+        'endinterface',
+        'end interface',
+        'endmodule',
+        'end module',
+        'endprogram',
+        'end program',
+        'endselect',
+        'end select',
+        'endstructure',
+        'end structure',
+        'endsubroutine',
+        'end subroutine',
+        'endtype',
+        'end type',
+        'endwhere',
+        'end where',
+        'end'
     ]
 
 
 #     if f90:
-#         if lynes[-1][-1] != "\n":
-#             lynes[-1] = lynes[-1] + "\n"
-#             print("Added newline at end of file")
+#         if lynes[-1][-1] != '\n':
+#             lynes[-1] = lynes[-1] + '\n'
+#             print('Added newline at end of file')

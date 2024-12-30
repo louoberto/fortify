@@ -18,10 +18,10 @@ def line_carry_over(self):
         # Skip formatting if any of the following conditions are met
         #   1. If there is a comment in the first column
         #   2. FORMAT statement is in the line.
-        #   3. There is a "do not fortify" in the line.
+        #   3. There is a 'do not fortify' in the line.
         #   4. Preprocessor directive
-        cmt_index = line.find("!")
-        if cmt_index == 0 or "format" in line[:cmt_index] or no_format(line) or "#" in line.strip()[0]:
+        cmt_index = line.find('!')
+        if cmt_index == 0 or 'format' in line[:cmt_index] or no_format(line) or '#' in line.strip()[0]:
             new_file_lines.append(line)
             continue
         elif cmt_index > 0:
@@ -29,13 +29,13 @@ def line_carry_over(self):
             cmnt_line = line[cmt_index:]
         else:
             code_line = line
-            cmnt_line = ""
+            cmnt_line = ''
 
         if not self.free_form:
             ff_line = code_line[:self.ff_column_len]
             code_line = code_line[self.ff_column_len:]
         else:
-            ff_line = ""
+            ff_line = ''
 
         quote_skip = False # Skip strings
         lineCont = False
@@ -43,7 +43,7 @@ def line_carry_over(self):
         # The whole point of this is to look for a string
         for j, char in enumerate(code_line):
             # String check
-            if char == "'" or char == '"':
+            if char == ''' or char == ''':
                 quote_skip = not quote_skip
                 comloc = j
             if j > (self.last_col-len(ff_line)):
@@ -57,28 +57,28 @@ def line_carry_over(self):
                 j = self.last_col
                 if self.free_form:
                     j -= 1
-            if code_line[j] == " " or quote_skip:
+            if code_line[j] == self.space or quote_skip:
                 if self.free_form:
-                    line1 = ff_line + code_line[:j] + "& " + cmnt_line
+                    line1 = ff_line + code_line[:j] + self.continuation_char + self.space + cmnt_line
                     line2 = code_line[j:]
                 else:
                     line1 = ff_line + code_line[:j] + cmnt_line
-                    line2 = ff_line[-1] + "&" + code_line[j:]
+                    line2 = ff_line[-1] + self.continuation_char + code_line[j:]
             else:
-                while code_line[j] != " ":
+                while code_line[j] != self.space:
                     j = j - 1
                 if self.free_form:
                     if not cmnt_line:
-                        line1 = ff_line + code_line[:j] + "&\n"
+                        line1 = ff_line + code_line[:j] + self.continuation_char + '\n'
                     else:
-                        line1 = ff_line + code_line[:j] + "& " + cmnt_line
+                        line1 = ff_line + code_line[:j] + self.continuation_char + self.space + cmnt_line
                     line2 = code_line[j:]
                 else:
                     if not cmnt_line:
-                        line1 = ff_line + code_line[:j] + "\n"
+                        line1 = ff_line + code_line[:j] + '\n'
                     else:
                         line1 = ff_line + code_line[:j] + cmnt_line
-                    line2 = ff_line[-1] + "&" + code_line[j:]
+                    line2 = ff_line[-1] + self.continuation_char + code_line[j:]
             new_file_lines.append(line1)
             new_file_lines.append(line2)
         else:

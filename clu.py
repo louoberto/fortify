@@ -30,9 +30,7 @@ if __name__ == "__main__":
         myfile.read_file(myfile, fortran_file)
         myfile.convert_comment_char(myfile)
         myfile.common_format_template(myfile)
-        myfile.structured_indent(myfile)
-        # myfile.line_carry_over(myfile)
-        # myfile.lineup_f90_line_continuations(myfile)
+        myfile.line_carry_over(myfile)
 
 
         myfile.print_file(myfile, fortran_file)

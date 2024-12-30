@@ -5,9 +5,12 @@
 # Will format 
 # ========================================================================
 from no_format import no_format
-
+import sys
 
 def common_format_template(self):
+    indenter = 0
+    skip = False
+    first_case = False
     new_file_lines = []
     for line in self.file_lines:
         # Skip blank lines
@@ -27,17 +30,29 @@ def common_format_template(self):
             new_file_lines.append(line)
             continue
         elif cmt_index > 0:
-            code_line = line[:cmt_index].lstrip()
+            if not self.free_form:
+                code_line = line[self.ff_column_len:cmt_index].lstrip()
+            else:
+                code_line = line[:cmt_index].lstrip()
             cmnt_line = line[cmt_index:]
         else:
-            code_line = line.lstrip()
+            if not self.free_form:
+                code_line = line[self.ff_column_len:].lstrip()
+            else:
+                code_line = line.lstrip()
             cmnt_line = ""
 
+
         if not self.free_form:
-            ff_line = code_line[: self.ff_column_len]
-            code_line = code_line[self.ff_column_len :]
+            ff_line = line[: self.ff_column_len]
         else:
             ff_line = ""
+
+        if code_line:
+            code_line = code_line.replace(self.space*2, '')
+        else:
+            new_file_lines.append(ff_line + code_line + cmnt_line)
+            continue
 
         temp = ""
         single_quote_skip = False  # Skip strings
@@ -49,11 +64,7 @@ def common_format_template(self):
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
-                if char == self.space and code_line[j - 1] == self.space: # Remove double spaces
-                    continue
-                else:
-                    char = char.lower() # Lowercase all working code; no global CAPS at this time
-
+                char = char.lower() # Lowercase all working code; no global CAPS at this time
                 if char == ".":
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
                 elif char in [")", self.space]:
@@ -64,7 +75,6 @@ def common_format_template(self):
                     temp = self.star_spacing(self, j, char, code_line, temp)
                 elif char in ["+", "-"]:
                     temp = self.plus_spacing(self, j, char, code_line, temp)
-                    temp = self.minus_spacing(self, j, char, code_line, temp)
                 elif char in [",", ":"]:
                     temp = self.comma_colon_spacing(self, j, char, code_line, temp)
                 else:
@@ -76,6 +86,8 @@ def common_format_template(self):
             temp = temp.replace("/ /", "//") # Taking this into account
         if "= =" in temp:
             temp = temp.replace("= =", "==") # Taking this into account
+        
+        temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case)
         new_file_lines.append(ff_line + temp + cmnt_line)
     self.file_lines = new_file_lines
     return
