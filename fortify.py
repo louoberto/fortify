@@ -1,14 +1,14 @@
 from read_file import read_file
 # from convert_line_breaks import convert_line_breaks
-from lowercasing import lowercasing
+#from lowercasing import lowercasing
 from convert_comment_char import convert_comment_char
-from tab_to_spaces import tab_to_spaces
+# from tab_to_spaces import tab_to_spaces
 from print_file import print_file
 from if_logicals_spacing import if_logicals_spacing
 from paren_spacing import paren_spacing
 from relational_op_spacing import relational_op_spacing
 from comma_colon_spacing import comma_colon_spacing
-from remove_extra_whitespace import remove_extra_whitespace
+# from remove_extra_whitespace import remove_extra_whitespace
 from star_spacing import star_spacing
 from plus_spacing import plus_spacing
 from minus_spacing import minus_spacing
@@ -57,9 +57,9 @@ class fortify:
         #     convert_line_breaks  # convert continuation to & for fixed format (.f) files
         # )
         self.convert_comment_char = convert_comment_char  # Converts the comment character from C, c, and * to ! for fixed format (.f) files
-        self.lowercasing = lowercasing  # Converts code to lowercase
-        self.tab_to_spaces = tab_to_spaces
-        self.remove_extra_whitespace = remove_extra_whitespace
+        #self.lowercasing = lowercasing  # Converts code to lowercase
+        # self.tab_to_spaces = tab_to_spaces
+        # self.remove_extra_whitespace = remove_extra_whitespace
         self.if_logicals_spacing = if_logicals_spacing
         self.paren_spacing = paren_spacing
         self.relational_op_spacing = relational_op_spacing

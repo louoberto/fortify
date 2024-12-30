@@ -14,7 +14,6 @@ def structured_indent(self):
     callerIndent = 0
     first_case = False
     endsub = False
-    space = ' '
     new_file_lines = []
     for line in self.file_lines:
         # Skip blank lines
@@ -55,20 +54,20 @@ def structured_indent(self):
                 stop = True
 
         temp = ''
-        weird_indent = False        
-        if code_line.replace(' ', '')[0].isnumeric() and ('if (' in code_line[btr:btr+4] or 'do ' in code_line[btr:btr+3]):
+        weird_indent = False
+        if code_line.replace(self.space, '') and code_line.replace(self.space, '')[0].isnumeric() and ('if (' in code_line[btr:btr+4] or 'do ' in code_line[btr:btr+3]):
             temp = code_line[:btr].strip()
             code_line = code_line[btr:].lstrip()
             indenter += 1
             skip = True
-        elif code_line.replace(' ', '')[0].isnumeric() and 'enddo' in code_line[btr:btr+5]:
+        elif code_line.replace(self.space, '') and code_line.replace(self.space, '')[0].isnumeric() and 'enddo' in code_line[btr:btr+5]:
             temp = code_line[:btr].strip()
             code_line = code_line[btr:].lstrip()
             indenter -= 1
         elif code_line.strip().startswith('if (') and 'else' not in code_line.strip()[0:4]:
             indenter += 1
             skip = True
-        elif (any(code_line.strip().startswith(keyword + space) for keyword in self.keywords_increase) or 
+        elif (any(code_line.strip().startswith(keyword + self.space) for keyword in self.keywords_increase) or 
               any(code_line.strip().startswith(item + ' function ') for item in self.data_types)):
             indenter += 1
             skip = True
@@ -123,17 +122,18 @@ def structured_indent(self):
         code_line = code_line.lstrip() #Remove that whitespace and start over
         if code_line:
             if code_line[0] == '!': #Get comments out of the way first
-                if self.free_form:
-                    code_line = space*self.tab_len*indenter+code_line
-                else:
-                    code_line = space*self.ff_column_len + space*self.tab_len*indenter+code_line
+                # if self.free_form:
+                code_line = self.space*self.tab_len*indenter+code_line
+                # else:
+                #     print(code_line)
+                #     code_line = self.space*self.ff_column_len + self.space*self.tab_len*indenter+code_line
             elif code_line[0] == '&':
                 if skip:
                     if weird_indent:
-                        code_line=space*(self.ff_column_len-1) + code_line[0] + space*self.tab_len *(indenter-2)+code_line[1:].lstrip()
+                        code_line=self.space*(self.ff_column_len-1) + code_line[0] + self.space*self.tab_len *(indenter-2)+code_line[1:].lstrip()
                         weird_indent = False
                     else:
-                        code_line=space*(self.ff_column_len-1)+code_line[0] + space*self.tab_len*(indenter-1)+code_line[1:].lstrip()
+                        code_line=self.space*(self.ff_column_len-1)+code_line[0] + self.space*self.tab_len*(indenter-1)+code_line[1:].lstrip()
                     skip=False
                 else:
                     checkindent=0
@@ -145,7 +145,7 @@ def structured_indent(self):
                             callerIndent=1
                     if caller and code_line[1:].lstrip()[0]==')':
                         caller=False
-                    code_line = space *(self.ff_column_len-1) + code_line[0] + space*self.tab_len*indenter + space*self.tab_len*checkindent + space*self.tab_len*callerIndent + code_line[1:].lstrip()
+                    code_line = self.space *(self.ff_column_len-1) + code_line[0] + self.space*self.tab_len*indenter + self.space*self.tab_len*checkindent + self.space*self.tab_len*callerIndent + code_line[1:].lstrip()
                     if not caller:
                         callerIndent=0
             elif code_line[0].isnumeric():
@@ -158,22 +158,25 @@ def structured_indent(self):
                         else:
                             flag = False
                             ktr = jtr
-                if self.free_form:
-                    code_line=space*self.tab_len*indenter + code_line.lstrip()
-                else:
-                    code_line=code_line[:ktr] + space *(6-ktr)+ space*self.tab_len*indenter + code_line[ktr:].lstrip()
+                # if self.free_form:
+                code_line=self.space*self.tab_len*indenter + code_line.lstrip()
+                # else:
+                #     print(code_line)
+                #     code_line=code_line[:ktr] + self.space *(6-ktr)+ self.space*self.tab_len*indenter + code_line[ktr:].lstrip()
             else:
                 if skip:
-                    if self.free_form:
-                        code_line=space*self.tab_len*(indenter-1) + code_line
-                    else:
-                        code_line=space*(self.ff_column_len-1) + space+ space*self.tab_len*(indenter-1) + code_line
+                    # if self.free_form:
+                    code_line=self.space*self.tab_len*(indenter-1) + code_line
+                    # else:
+                    #     print(code_line)
+                    #     code_line=self.space*(self.ff_column_len-1) + self.space+ self.space*self.tab_len*(indenter-1) + code_line
                     skip = False
                 else:
-                    if self.free_form:
-                        code_line = space*self.tab_len *indenter +code_line
-                    else:
-                        code_line = space*self.ff_column_len + space*self.tab_len *indenter +code_line
+                    # if self.free_form:
+                    code_line = self.space*self.tab_len *indenter +code_line
+                    # else:
+                    #     print(code_line)
+                    #     code_line = self.space*self.ff_column_len + self.space*self.tab_len *indenter +code_line
         else:
             code_line='\n'
         if temp != '':

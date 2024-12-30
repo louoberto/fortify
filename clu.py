@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # ==============================================================================
+# Function: driver
 # Purpose:
 # Format Fortran code to a standard
 # ==============================================================================
@@ -28,15 +29,8 @@ if __name__ == "__main__":
         myfile = fortify()
         myfile.read_file(myfile, fortran_file)
         myfile.convert_comment_char(myfile)
-        myfile.remove_extra_whitespace(myfile) # Need to worry about F77 cols
         myfile.common_format_template(myfile)
-        # myfile.paren_spacing(myfile)
-        # myfile.relational_op_spacing(myfile)
-        # myfile.star_spacing(myfile)
-        # myfile.plus_spacing(myfile)
-        # myfile.minus_spacing(myfile)
-        # 
-        # myfile.structured_indent(myfile)
+        myfile.structured_indent(myfile)
         # myfile.line_carry_over(myfile)
         # myfile.lineup_f90_line_continuations(myfile)
 

@@ -48,10 +48,10 @@ def remove_extra_whitespace(self):
             if char == '"':
                 double_quote_skip = not double_quote_skip
             if not single_quote_skip and not double_quote_skip:
-                if char == self.space and code_line[j - 1] == self.space:
+                if char == self.space and code_line[j - 1] == self.space: # Remove double spaces
                     continue
                 else:
-                    temp += char.lower()
+                    temp += char.lower() # Lowercase all working code; no global CAPS at this time
             else:
                 temp += char
 
