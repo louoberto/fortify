@@ -2,36 +2,26 @@
 # ==============================================================================
 # Function: driver
 # Purpose:
-# Format Fortran code to a standard
+# This is the entry point from the command line. It creates the object and calls
+# all the class object functions.
 # ==============================================================================
 import argparse
 from fortify import fortify
 
+
 if __name__ == "__main__":
     # Arg parsing command line
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument(
-        "filename", action="store", nargs="+", help="Path(s) to input file(s)"
-    )
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("filename", action="store", nargs="+", help="Path(s) to input file(s)")
 
     argz = parser.parse_args()
     fortran_files = argz.filename # Set of args supplied to us.
-
-    # File editing order
-    #   1. Read file, store lines
-    #   2. Start by removing any unnecessary whitespace
-    #   3. Convert the comment character from F77 *,C,c to !
-    #   4. Convert line break characters to be &
-    #   5. Lowercase all normal code, except strings
     for fortran_file in fortran_files:
         myfile = fortify()
         myfile.read_file(myfile, fortran_file)
-        myfile.convert_comment_char(myfile)
-        myfile.common_format_template(myfile)
-        myfile.line_carry_over(myfile)
-
-
+        if myfile.free_form:
+            myfile.last_col = 131  # Last usable column in Fortran
+        else:
+            myfile.last_col = 77  # Last usable column in Fortran
+        myfile.format(myfile)
         myfile.print_file(myfile, fortran_file)
-

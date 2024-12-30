@@ -2,7 +2,7 @@
 # Function: plus_spacing
 # ========================================================================
 # Purpose:
-# Will format
+# Handles formatting for + and -
 # ========================================================================
 def plus_spacing(self, j, char, code_line, temp_line):
     if code_line[j + 1] != self.space and code_line[j - 1] != self.space:  # ?+?

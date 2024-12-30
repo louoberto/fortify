@@ -1,5 +1,5 @@
 # ========================================================================
-# Function: cvt_cmt_tab_ctn
+# Function: convert_comment_char
 # ========================================================================
 # Purpose:
 # Convert comment character from *, C, c to !
@@ -17,8 +17,6 @@ def convert_comment_char(self):
         if line and not no_format(line): # Skip line if we are not to format it
             if line[0] in ['*','C','c']:
                 line = "!" + line[1:]
-            if "\t" in line:
-                line = line.replace("\t", self.space * self.tab)
 
             if not self.free_form:
                 if len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):

@@ -1,40 +1,46 @@
 # ========================================================================
-# Function: comma_colon_spacing
+# Function: format
 # ========================================================================
 # Purpose:
-# Will format 
+# The main formatting function. It runs all of the main formatting
+# functions and stores them to be printed back in the driver.
 # ========================================================================
 from no_format import no_format
-import sys
 
-def common_format_template(self):
+def format(self):
     indenter = 0
     skip = False
     first_case = False
     new_file_lines = []
     for line in self.file_lines:
-        # Skip blank lines
-        if not line.strip():
-            new_file_lines.append(line)
-            continue
-        elif "\t" in line:
-            line = line.replace("\t", self.space * self.tab)
-
         # Skip formatting if any of the following conditions are met
-        #   1. If there is a comment in the first column
-        #   2. FORMAT statement is in the line.
-        #   3. There is a "do not fortify" in the line.
-        #   4. Preprocessor directive
-        cmt_index = line.find("!")
-        if cmt_index == 0 or "format" in line[:cmt_index] or no_format(line) or "#" in line.strip()[0]:
+        if not line.strip(): # If blank line
             new_file_lines.append(line)
             continue
+        elif no_format(line): # Do no format in the line
+            new_file_lines.append(line)
+            continue
+        elif line.strip()[0] == '#': # Preprocesser directive, leave line be
+            new_file_lines.append(line)
+            continue
+        elif line[0] in ['*','C','c']: # Convert old-style comment chars to !
+            line = "!" + line[1:]
+            continue
+
+        cmt_index = line.find("!")
+        
+        if "\t" in line: # Convert tab characters to spaces
+            line = line.replace("\t", self.space * self.tab)
+        if not self.free_form: # Standardize the line continuation character to & for fixed format
+            if len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
+                line = line[:5] + self.continuation_char + line[6:]
         elif cmt_index > 0:
             if not self.free_form:
                 code_line = line[self.ff_column_len:cmt_index].lstrip()
             else:
                 code_line = line[:cmt_index].lstrip()
-            cmnt_line = line[cmt_index:]
+            add_space = len(code_line) - len(code_line.rstrip()) # Keep original spacing
+            cmnt_line = self.space * add_space + line[cmt_index:]
         else:
             if not self.free_form:
                 code_line = line[self.ff_column_len:].lstrip()
@@ -42,11 +48,9 @@ def common_format_template(self):
                 code_line = line.lstrip()
             cmnt_line = ""
 
-
+        ff_line = "" # Fixed format columns
         if not self.free_form:
-            ff_line = line[: self.ff_column_len]
-        else:
-            ff_line = ""
+            ff_line = line[:self.ff_column_len]
 
         if code_line:
             code_line = code_line.replace(self.space*2, '')
@@ -88,6 +92,8 @@ def common_format_template(self):
             temp = temp.replace("= =", "==") # Taking this into account
         
         temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case)
-        new_file_lines.append(ff_line + temp + cmnt_line)
+        temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
+        temp = temp1 + temp2
+        new_file_lines.append(temp)
     self.file_lines = new_file_lines
     return

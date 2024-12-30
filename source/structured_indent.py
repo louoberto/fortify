@@ -2,7 +2,8 @@
 # Function: structured_indent
 # ========================================================================
 # Purpose:
-# Will format  I believe this handles = - 0.213 to = -0.213 for example
+# This will properly nest and indent code largely based on the keyword
+# lists found in keywords_increase and keywords_decrease
 # ========================================================================
 def structured_indent(self, code_line, indenter, skip, first_case):
     if ": do" in code_line and not code_line[code_line.find(": do") - 1] == ":":
