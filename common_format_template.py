@@ -71,7 +71,7 @@ def common_format_template(self):
                     temp = self.paren_spacing(self, j, char, code_line, temp)
                 elif char in ["<", ">", "/", "="]:
                     temp = self.relational_op_spacing(self, j, char, code_line, temp)
-                elif char == "*" and code_line[j - 1] != "*" and code_line[j + 1] != "*" and not any(code_line[j - 4 : j] in x for x in self.data_types):
+                elif char == "*" and code_line[j - 1] != "*" and code_line[j + 1] != "*" and not code_line[j - 4 : j] in self.data_types:
                     temp = self.star_spacing(self, j, char, code_line, temp)
                 elif char in ["+", "-"]:
                     temp = self.plus_spacing(self, j, char, code_line, temp)
