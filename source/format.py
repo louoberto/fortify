@@ -7,6 +7,7 @@
 # ========================================================================
 from no_format import no_format
 
+
 def format(self):
     indenter = 0
     skip = False
@@ -25,16 +26,19 @@ def format(self):
             continue
         elif line[0] in ['*','C','c']: # Convert old-style comment chars to !
             line = "!" + line[1:]
+            new_file_lines.append(line)
             continue
 
         cmt_index = line.find("!")
-        
+        if cmt_index == 0:
+            new_file_lines.append(line)
+            continue
         if "\t" in line: # Convert tab characters to spaces
             line = line.replace("\t", self.space * self.tab)
         if not self.free_form: # Standardize the line continuation character to & for fixed format
             if len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
                 line = line[:5] + self.continuation_char + line[6:]
-        elif cmt_index > 0:
+        if cmt_index > 0:
             if not self.free_form:
                 code_line = line[self.ff_column_len:cmt_index].lstrip()
             else:
@@ -51,7 +55,6 @@ def format(self):
         ff_line = "" # Fixed format columns
         if not self.free_form:
             ff_line = line[:self.ff_column_len]
-
         if code_line:
             code_line = code_line.replace(self.space*2, '')
         else:
