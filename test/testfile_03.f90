@@ -1,125 +1,138 @@
-!-----------------------------------------------------------------------------
-!
-! Evaluation of the PDF of a gamma distribution
-!
-! This Fortran code is translated from the C code in /src/nmath of that comes
-! with version 3.1 of the statistical programming language 'R':
-!
-!-----------------------------------------------------------------------------
-!
-!  AUTHOR
-!    Catherine Loader, catherine@research.bell-labs.com.
-!    October 23, 2000.
-!
-!  Merge in to R:
-!  Copyright (C) 2000 The R Core Team
-!  Copyright (C) 2004 The R Foundation
-!
-!  This program is free software; you can redistribute it and/or modify
-!  it under the terms of the GNU General Public License as published by
-!  the Free Software Foundation; either version 2 of the License, or
-!  (at your option) any later version.
-!
-!  This program is distributed in the hope that it will be useful,
-!  but WITHOUT ANY WARRANTY; without even the implied warranty of
-!  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!  GNU General Public License for more details.
-!
-!  You should have received a copy of the GNU General Public License
-!  along with this program; if not, a copy is available at
-!  http://www.r-project.org/Licenses/
-!
-!
-! DESCRIPTION
-!
-!   Computes the density of the gamma distribution,
-!
-!                   1/s (x/s)^{a-1} exp(-x/s)
-!        p(x;a,s) = -----------------------
-!                            (a-1)!
-!
-!   where `s' is the scale (= 1/lambda in other parametrizations)
-!     and `a' is the shape parameter ( = alpha in other contexts).
-!
-!  The old (R 1.1.1) version of the code is available via `#define D_non_pois'
+subroutine border_smooth(nx,ny,validmask,fcst)
 
+implicit none
 
-FUNCTION dgam (x, shape, scale, give_log) RESULT(fn_val) !ThIsIsAtEsT
+! ---------------------------------------------------------------------------------------- 
+! Input/Output Variables
+! ---------------------------------------------------------------------------------------- 
+integer, intent(in) :: nx
+integer, intent(in) :: ny
+integer(kind=2), intent(in), dimension(nx,ny) :: validmask
+real, intent(inout), dimension(nx,ny) :: fcst
 
-  IMPLICIT NONE
+! ---------------------------------------------------------------------------------------- 
+! Local Variables
+! ---------------------------------------------------------------------------------------- 
+integer :: i,j,n,ii,jj
+integer :: imin,imax,jmin,jmax,stencil_radius
+integer :: ktr0,ktr1
+real :: sum0,sum1,weight
 
-  DOUBLE PRECISION, INTENT(IN) :: x, shape, scale
+integer, dimension(5) :: stencil_sizes
 
-  LOGICAL, INTENT(IN) :: give_log
+real, allocatable, dimension(:,:) :: work
+real, allocatable, dimension(:,:) :: work2
 
-  DOUBLE PRECISION, PARAMETER :: POS_INF = 1.0e99
-  DOUBLE PRECISION, PARAMETER :: NEG_INF = -1.0e99
-  DOUBLE PRECISION, PARAMETER :: NaN = 9999.0
+! ---------------------------------------------------------------------------------------- 
+! Initialize
+! ---------------------------------------------------------------------------------------- 
+sum0=0.0
+sum1=0.0
+weight=0.0
+stencil_sizes=(/301,151,75,51,5/)
 
-  DOUBLE PRECISION :: pr, dpois_raw, fn_val
+! ---------------------------------------------------------------------------------------- 
+! Allocate work array
+! ---------------------------------------------------------------------------------------- 
+if(allocated(work))deallocate(work)
+allocate(work(nx,ny))
 
-  IF (shape .lt. 0.0 .or. scale .le. 0.0) THEN
-     PRINT *, ' Invalid shape or scale parameter in "dgamma", NaN returned!'  !ThIsIsAtEsT
-     fn_val = NaN
-  END IF
+! ---------------------------------------------------------------------------------------- 
+! Put input fcst array into work array.
+! ---------------------------------------------------------------------------------------- 
+work(:,:)=fcst(:,:)
 
-  IF (x .lt. 0.0) THEN
-     IF (give_log) THEN
-        fn_val = NEG_INF
-     ELSE
-        fn_val = 0.0
-     END IF
-     RETURN
-  END IF
+! ---------------------------------------------------------------------------------------- 
+! Perform multiple passes over the grid, performing the border smooth with successively
+! smaller stencils (i.e. subgrids) as given by array stencil_sizes.
+! ---------------------------------------------------------------------------------------- 
+write(6,fmt='(/A,I0.1,A)')" PERFORMING BORDER SMOOTHING WITH ",size(stencil_sizes)," PASSES"
+do n=1,size(stencil_sizes)
+   stencil_radius=(stencil_sizes(n)-1)/2
+   write(6,fmt='(/5X,2(A,I0.1))')" PASS ",n,": STENCIL SIZE = ",stencil_sizes(n)
 
-  IF (shape .eq. 0.0) THEN ! point mass at 0
-     IF (x .eq. 0.0) THEN
-        fn_val = POS_INF
-     ELSE
-        IF (give_log) THEN
-           fn_val = NEG_INF
-        ELSE
-           fn_val = 0.0
-        END IF
-     END IF
-     RETURN
-  END IF
+!!!!$OMP PARALLEL DO DEFAULT(SHARED) PRIVATE(J,I,IMIN,IMAX,JMIN,JMAX,KTR0,KTR1,SUM0,SUM1,WEIGHT,JJ,II) COLLAPSE(2)
+   do j=1,ny
+      do i=1,nx
+         ! Grid point is inside the validmask. Iterate.
+         if(validmask(i,j).eq.1)cycle
 
-  IF (x .eq. 0.0) THEN
-     IF (shape .lt. 1.0) THEN
-        fn_val = POS_INF
-     ELSE IF (shape .gt. 1.0) THEN
-        IF (give_log) THEN
-           fn_val = NEG_INF
-        ELSE
-           fn_val = 0.0
-        END IF
-     ELSE
-        IF (give_log) THEN
-           fn_val = -log(scale)
-        ELSE
-           fn_val = 1.0 / scale
-        END IF
-     END IF
-     RETURN
-  END IF
+         ! Set stencil bounds per dimension. The following insures that we do not
+         ! go beyond the bounds of the array (1:nx,1:ny).
+         imin=max(1,i-stencil_radius)
+         imax=min(nx,i+stencil_radius)
+         jmin=max(1,j-stencil_radius)
+         jmax=min(ny,j+stencil_radius)
 
-  IF (shape .lt. 1.0) THEN
-     pr = dpois_raw (shape, x/scale, give_log)
-     IF (give_log) THEN
-        fn_val = pr + log(shape/x)
-     ELSE
-        fn_val = pr*shape/x
-     END IF
-  ELSE  ! shape >= 1
-     pr = dpois_raw(shape-1.0, x/scale, give_log)
-     IF (give_log) THEN
-        fn_val = pr - log(scale)
-     ELSE
-        fn_val =  pr/scale
-     END IF
-  END IF
+         ! Per-iteration initialization
+         ktr0=0
+         ktr1=0
+         sum0=0.0
+         sum1=0.0
+         weight=0.0
 
-  RETURN
+         ! Iterate over subgrid. Count and sum number of points inside and outside
+          do jj=jmin,jmax
+             do ii=imin,imax
+               if(validmask(ii,jj).eq.0)then
+                  ktr0=ktr0+1
+                  sum0=sum0+fcst(ii,jj)
+               elseif(validmask(ii,jj).eq.1)then
+                  ktr1=ktr1+1
+                  sum1=sum1+fcst(ii,jj)
+               endif
+            end do
+         end do
 
-END FUNCTION dgam
+         ! Check the count of validmask points
+         if(ktr1.eq.0)then
+            ! Subgrid is entirely outside the validmask. Use original value.
+            work(i,j)=fcst(i,j)
+         else
+            ! Subgrid contains at least 1 validmask point, perform weighted average.
+            sum0=sum0/real(ktr0)
+            sum1=sum1/real(ktr1)
+            weight=real(ktr1)/real(ktr0+ktr1)
+            !print *,"I,J = ",i,j
+            !print *,"   KTR0,KTR1,SUM = ",ktr0,ktr1,(ktr0+ktr1)
+            !print *,"   WEIGHT = ",weight
+            !print *,"   SUM0,SUM1 = ",sum0,sum1
+            !print *,"   ORIG,NEW = ",work(i,j),((weight*sum1)+((1.0-weight)*sum0))
+            work(i,j)=(weight*sum1)+((1.0-weight)*sum0)
+         endif
+      end do ! i=1,nx
+   end do ! j=1,ny
+!!!!$OMP END PARALLEL DO
+
+end do ! n=1,size(stencil_sizes)
+
+! ---------------------------------------------------------------------------------------- 
+! Perfor 25-point smooth to the work array. work2 is the smoothed array.
+! ---------------------------------------------------------------------------------------- 
+if(allocated(work2))deallocate(work2)
+allocate(work2(nx,ny))
+call smth25(6,work,work2,nx,ny)
+
+! ---------------------------------------------------------------------------------------- 
+! Put the 25-point smoothed work array back into fcst, outside of validmask. So now,
+! where validmask = 1, have quantile-mapped, SG-smoothed values and where validmask = 0,
+! we have raw model, border-smoothed, 25-point smooth values.
+! ---------------------------------------------------------------------------------------- 
+do j=1,ny
+   do i=1,nx
+      if(validmask(i,j).eq.0)then
+         fcst(i,j)=work2(i,j)
+      elseif(validmask(i,j).eq.1)then
+         fcst(i,j)=fcst(i,j)
+      endif
+   end do
+end do
+
+! ---------------------------------------------------------------------------------------- 
+! Clean up.
+! ---------------------------------------------------------------------------------------- 
+if(allocated(work))deallocate(work)
+if(allocated(work2))deallocate(work2)
+
+return
+end subroutine border_smooth

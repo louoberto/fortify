@@ -74,8 +74,8 @@ def format(self):
                 char = char.lower() # Lowercase all working code; no global CAPS at this time
                 if char == ".":
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
-                elif char in [")", self.space]:
-                    temp = self.paren_spacing(self, j, char, code_line, temp)
+                # elif char in [")", self.space]:
+                #     temp = self.paren_spacing(self, j, char, code_line, temp)
                 elif char in ["<", ">", "/", "="]:
                     temp = self.relational_op_spacing(self, j, char, code_line, temp)
                 elif char == "*" and code_line[j - 1] != "*" and code_line[j + 1] != "*" and not code_line[j - 4 : j] in self.data_types:

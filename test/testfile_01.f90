@@ -1,104 +1,95 @@
-function gam1 ( a )
-
-!*****************************************************************************80
+subroutine barnes_like(nx,ny,ideterm,validmask,precip_in,precip_out)
+! ---------------------------------------------------------------------------------------- 
 !
-!! GAM1 computes 1 / GAMMA(A+1) - 1 for -0.5 <= A <= 1.5
-!
-!  Author:
-!
-!    Armido DiDinato, Alfred Morris
-!
-!  Reference:
-!
-!    Armido DiDinato, Alfred Morris,
-!    Algorithm 708:
-!    Significant Digit Computation of the Incomplete Beta Function Ratios,
-!    ACM Transactions on Mathematical Software,
-!    Volume 18, 1993, pages 360-373.
-!
-!  Parameters:
-!
-!    Input, real ( kind = 8 ) A, forms the argument of the Gamma function.
-!
-!    Output, real ( kind = 8 ) GAM1, the value of 1 / GAMMA ( A + 1 ) - 1.
-!
-  implicit none
+! ---------------------------------------------------------------------------------------- 
+implicit none
 
-  real ( kind = 8 ) a
-  real ( kind = 8 ) bot
-  real ( kind = 8 ) d
-  real ( kind = 8 ) gam1
-  real ( kind = 8 ), parameter, dimension ( 7 ) :: p = (/ &
-     0.577215664901533D+00, -0.409078193005776D+00, &
-    -0.230975380857675D+00,  0.597275330452234D-01, &
-     0.766968181649490D-02, -0.514889771323592D-02, &
-     0.589597428611429D-03 /)
-  real ( kind = 8 ), dimension ( 5 ) :: q = (/ &
-    0.100000000000000D+01, 0.427569613095214D+00, &
-    0.158451672430138D+00, 0.261132021441447D-01, &
-    0.423244297896961D-02 /)
-  real ( kind = 8 ), dimension ( 9 ) :: r = (/ &
-    -0.422784335098468D+00, -0.771330383816272D+00, &
-    -0.244757765222226D+00,  0.118378989872749D+00, &
-     0.930357293360349D-03, -0.118290993445146D-01, &
-     0.223047661158249D-02,  0.266505979058923D-03, &
-    -0.132674909766242D-03 /)
-  real ( kind = 8 ), parameter :: s1 = 0.273076135303957D+00
-  real ( kind = 8 ), parameter :: s2 = 0.559398236957378D-01
-  real ( kind = 8 ) t
-  real ( kind = 8 ) top
-  real ( kind = 8 ) w
+! ---------------------------------------------------------------------------------------- 
+! Input/Output Variables
+! ---------------------------------------------------------------------------------------- 
+integer, intent(in) :: nx
+integer, intent(in) :: ny
+integer, intent(in) :: ideterm
+integer(kind=2), intent(in), dimension(nx,ny) :: validmask
+real, intent(inout), dimension(nx,ny) :: precip_in
+real, intent(out), dimension(nx,ny) :: precip_out
 
-  d = a - 0.5D+00
+! ---------------------------------------------------------------------------------------- 
+! Local Variables
+! ---------------------------------------------------------------------------------------- 
+integer :: i,j,k,ii,jj
+integer :: imin,imax,jmin,jmax
+integer :: icut
+real :: dist,pavg,rlenscale,rlenscale2
+real(kind=8) :: weight
 
-  if ( 0.0D+00 < d ) then
-    t = d - 0.5D+00
-  else
-    t = a
-  end if
+integer, dimension(3) :: cutradius
+real(kind=8), dimension(nx,ny) :: denom
+real(kind=8), dimension(nx,ny) :: numer
+real(kind=8), dimension(nx,ny) :: work
 
-  if ( t == 0.0D+00 ) then
+! ---------------------------------------------------------------------------------------- 
+! Initialize
+! ---------------------------------------------------------------------------------------- 
+dist=0.0
+pavg=0.0
+weight=0.0
+denom(:,:)=0.0
+numer(:,:)=0.0
 
-    gam1 = 0.0D+00
+! ---------------------------------------------------------------------------------------- 
+! Compute the averge of the input precipitation grid (inside validmask).
+! ---------------------------------------------------------------------------------------- 
+pavg=sum(precip_in*real(validmask))/sum(real(validmask))
 
-  else if ( 0.0D+00 < t ) then
+! ---------------------------------------------------------------------------------------- 
+! Perform something akin to a Barnes filtering, weighting the data by
+! exp(-dist**2/lengthscale**2) this loop tallies up the numerator and denominator needed
+! for weighted sum calculation.
+! ---------------------------------------------------------------------------------------- 
+icut=10
+rlenscale=3.
+rlenscale2=rlenscale**2
+do j=1,ny
+   jmin=max(1,j-icut)
+   jmax=min(ny,j+icut)
+   do i=1,nx
+      imin=max(1,i-icut)
+      imax=min(nx,i+icut)
+      if(validmask(i,j).eq.0)then
+         do jj=jmin,jmax
+            do ii=imin,imax
+               dist=sqrt(real((i-ii)**2+(j-jj)**2))
+               weight=exp(-dist**2/rlenscale2)
+               if(dist.le.icut.and.validmask(ii,jj).eq.1.and.precip_in(ii,jj).ge.0.0)then
+                  numer(i,j)=numer(i,j)+weight*precip_in(ii,jj)
+                  denom(i,j)=denom(i,j)+weight
+               endif
+            end do ! ii=imin,imax
+         end do ! jj=jmin,jmax
+      endif
+   end do ! i=1,nx
+end do ! j=1,ny
 
-    top = ((((( p(7)* t + p(6) )* t + p(5) )* t + p(4) ) * t + p(3) ) * t + p(2) ) * t + p(1)
+! ---------------------------------------------------------------------------------------- 
+! Set the output over water to the weighted sum. Over land use original values. If at a 
+! point that is too far from land to have any points counted in weight, just set the 
+! value to the domain-averaged land probability.
+! ---------------------------------------------------------------------------------------- 
+do j=1,ny
+   do i=1,nx
+      if(denom(i,j).gt.0.0)then 
+         precip_out(i,j)=numer(i,j)/denom(i,j) 
+      else
+         precip_out(i,j)=precip_in(i,j)
+      endif
+      if(ideterm.eq.0)then !probabilistic data, 0 to 1
+         if(precip_out(i,j).lt.0.0.or.precip_out(i,j).gt.1.0)precip_out(i,j)=pavg
+      else ! deterministic data >=0
+         if(precip_out(i,j).lt.0.0)precip_out(i,j)=pavg
+      endif
+   end do
+end do
 
-    bot = ((( q(5) * t + q(4) ) * t + q(3) ) * t + q(2) ) * t + 1.0D+00
-
-    w = top / bot
-
-    if ( d <= 0.0D+00 ) then
-      gam1 = a * w
-    else
-      gam1 = ( t / a ) * ( ( w - 0.5D+00 ) &
-        - 0.5D+00 )
-    end if
-
-  else if ( t < 0.0D+00 ) then
-
-    top = (((((((  &
-            r(9)   &
-      * t + r(8) ) &
-      * t + r(7) ) &
-      * t + r(6) ) &
-      * t + r(5) ) &
-      * t + r(4) ) &
-      * t + r(3) ) &
-      * t + r(2) ) &
-      * t + r(1)
-
-    bot = ( s2 * t + s1 ) * t + 1.0D+00
-    w = top / bot
-
-    if ( d <= 0.0D+00 ) then
-      gam1 = a * ( ( w + 0.5D+00 ) + 0.5D+00 )
-    else
-      gam1 = t * w / a
-    end if
-
-  end if
-
-  return
-end
+return
+end subroutine barnes_like
