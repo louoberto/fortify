@@ -7,7 +7,7 @@
 def if_logicals_spacing(self, j, char, code_line, temp_line):
     if code_line[j - 4 : j + 1].lower() in self.iftypes:
         if code_line[j - 5] != self.space and code_line[j + 1] != self.space:
-            if temp_line[-4] != self.space:
+            if temp_line[-5] != self.space:
                 temp = temp_line[:-4] + self.space + temp_line[-4:] + char + self.space
             else:
                 temp = temp_line[:-4] + temp_line[-4:] + char + self.space
