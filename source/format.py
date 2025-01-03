@@ -24,7 +24,7 @@ def format(self):
         elif line.strip()[0] == '#': # Preprocesser directive, leave line be
             new_file_lines.append(line)
             continue
-        elif line[0] in ['*','C','c']: # Convert old-style comment chars to !
+        elif line[0] in ['*','C','c'] and not self.free_form: # Convert old-style comment chars to !
             line = "!" + line[1:]
             new_file_lines.append(line)
             continue
@@ -45,13 +45,16 @@ def format(self):
                 code_line = line[:cmt_index].lstrip()
             add_space = len(code_line) - len(code_line.rstrip()) # Keep original spacing
             cmnt_line = self.space * add_space + line[cmt_index:]
+            code_line = code_line.rstrip()
         else:
             if not self.free_form:
                 code_line = line[self.ff_column_len:].lstrip()
             else:
                 code_line = line.lstrip()
             cmnt_line = ""
-
+        if len(code_line) > 0:
+            while(code_line[-2] == self.space):
+                code_line = code_line[:-2] + code_line[-1:]
         ff_line = "" # Fixed format columns
         if not self.free_form:
             ff_line = line[:self.ff_column_len]
@@ -74,16 +77,20 @@ def format(self):
                 char = char.lower() # Lowercase all working code; no global CAPS at this time
                 if char == ".":
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
-                # elif char in [")", self.space]:
-                #     temp = self.paren_spacing(self, j, char, code_line, temp)
+                elif char == ",":
+                    temp = self.comma_spacing(self, j, char, code_line, temp)
+                # elif char == ":":
+                #     temp = self.colon_spacing(self, j, char, code_line, temp)
+                elif char in ["(", ")"]:
+                    temp = self.paren_spacing(self, j, char, code_line, temp)
+                # elif char == self.space:
+                #     temp = self.space_spacing(self, j, char, code_line, temp)
                 elif char in ["<", ">", "/", "="]:
                     temp = self.relational_op_spacing(self, j, char, code_line, temp)
-                elif char == "*" and code_line[j - 1] != "*" and code_line[j + 1] != "*" and not code_line[j - 4 : j] in self.data_types:
+                elif char == "*" and "*" not in [code_line[j - 1], code_line[j + 1]] and code_line[j - 4 : j] not in self.data_types:
                     temp = self.star_spacing(self, j, char, code_line, temp)
                 elif char in ["+", "-"]:
                     temp = self.plus_spacing(self, j, char, code_line, temp)
-                elif char in [",", ":"]:
-                    temp = self.comma_colon_spacing(self, j, char, code_line, temp)
                 else:
                     temp += char
             else:

@@ -13,14 +13,22 @@
 #    add space to either side of the line.
 # ========================================================================
 def relational_op_spacing(self, j, char, code_line, temp_line):
-    if code_line[j + 1] == "=":
-        if code_line[j - 1] != self.space:
+    if code_line[j + 1] == "=": # ?==, ?+=, ?-=, ?/=
+        if code_line[j - 1] != self.space: # ?==, ?+=, ?-=, ?/=
             temp = temp_line + self.space + char
-        else:
+        else: # ? ==, ? +=, ? -=, ? /=
             temp = temp_line + char
-    elif code_line[j + 1] != self.space:
-        if code_line[j - 1] != '=' and code_line[j + 1] != ')':
-            temp = temp_line + self.space + char + self.space
+    elif code_line[j + 1] != self.space: # ?=?, ?+?, ?-?, ?/?
+        if code_line[j - 1] != '=' and ')' not in [code_line[j - 1], code_line[j + 1]]: # ?=?, ?+?, ?-?, ?/?
+            if char == '/':
+                if code_line[j + 1] == '/':
+                    temp = temp_line + self.space + char
+                elif code_line[j - 1] == '/':
+                    temp = temp_line + char + self.space
+                else:
+                    temp = temp_line + self.space + char + self.space
+            else:
+                temp = temp_line + self.space + char + self.space
         elif code_line[j + 1] == ')':
             temp = temp_line + char
         else:

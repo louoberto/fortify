@@ -10,11 +10,13 @@ from print_file import print_file
 from if_logicals_spacing import if_logicals_spacing
 from paren_spacing import paren_spacing
 from relational_op_spacing import relational_op_spacing
-from comma_colon_spacing import comma_colon_spacing
+from comma_spacing import comma_spacing
+from colon_spacing import colon_spacing
 from star_spacing import star_spacing
 from plus_spacing import plus_spacing
 from structured_indent import structured_indent
 from line_carry_over import line_carry_over
+from space_spacing import space_spacing
 from format import format
 
 
@@ -52,12 +54,14 @@ class fortify:
         self.if_logicals_spacing = if_logicals_spacing
         self.paren_spacing = paren_spacing
         self.relational_op_spacing = relational_op_spacing
-        self.comma_colon_spacing = comma_colon_spacing
         self.star_spacing = star_spacing
         self.plus_spacing = plus_spacing
         self.print_file = print_file
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
+        self.comma_spacing = comma_spacing
+        self.colon_spacing = colon_spacing
+        self.space_spacing = space_spacing
         self.format = format
 
         self.keywords_increase = [
@@ -73,7 +77,7 @@ class fortify:
             'select',
             'structure',
             'subroutine',
-            'type',
+            # 'type',
             'type,',
             'where',
         ]

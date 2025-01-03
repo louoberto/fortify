@@ -4,14 +4,16 @@
 # Purpose:
 # Handles formatting for objects around and inside parens ()
 # ========================================================================
+debug_me = True
+
 def paren_spacing(self, j, char, code_line, temp_line):
-    if char == self.space:
-        if code_line[j - 1] == "(" or (j + 1 < len(code_line) and code_line[j + 1] == ")"):
-            temp = temp_line # skip this because we want parens to line up with args
+    if char == "(" and code_line.startswith("if(") and j == 2:
+        temp = temp_line + self.space + char
+    elif char == ")" and (j + 1 < len(code_line) and code_line[j + 1] and code_line[j + 1] not in ['\n', self.space, '%' ,')',',']):
+        if (j + 2 < len(code_line) and code_line[j + 2] and code_line[j + 1:j + 3] not in ['**']):
+            temp = temp_line + char + self.space
         else:
             temp = temp_line + char
-    elif char == ")" and j + 1 < len(code_line) and code_line[j + 1] and code_line[j + 1] not in ['\n', self.space, '%' ,')',',']:
-        temp = temp_line + char + self.space
     else:
         temp = temp_line + char
     return temp
