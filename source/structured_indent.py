@@ -7,8 +7,6 @@
 # ========================================================================
 import sys
 def structured_indent(self, code_line, indenter, skip, first_case):
-    if "ctemp .eq. " in code_line.strip():
-        print(indenter)
     if ": do" in code_line and not code_line[code_line.find(": do") - 1] == ":":
         indenter += 1
         skip = True
@@ -16,9 +14,7 @@ def structured_indent(self, code_line, indenter, skip, first_case):
         if code_line.startswith('if'):
             if code_line[-5:].strip() == 'then':
                 indenter += 1
-                skip = True
-            if "ctemp .eq. " in code_line.strip():
-                print(code_line[-5:].strip())         
+                skip = True     
         else:
             indenter += 1
             skip = True
@@ -31,20 +27,13 @@ def structured_indent(self, code_line, indenter, skip, first_case):
         indenter -= 2
     elif any(code_line.startswith(keyword) for keyword in self.keywords_decrease):
         indenter -= 1
-        # if indenter == 0:
-        #     print(code_line, indenter, skip)
-    if "ctemp .eq. " in code_line.strip():
-        print(indenter)
-        #sys.exit(0)
     if ("else" in code_line[:4] or "elseif" in code_line[:6] or "elsewhere" in code_line[:6]):  # else statements go back one, but that's it
         skip = True
 
     if skip:
         code_line = self.space * self.tab_len * (indenter - 1) + code_line
         skip = False
-        # print(code_line, indenter, skip)
     else:
-        # print(code_line, indenter, skip)
         code_line = self.space * self.tab_len * indenter + code_line
 
     return code_line, indenter, skip, first_case
