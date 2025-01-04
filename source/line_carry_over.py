@@ -34,8 +34,11 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line, indenter, skip):
         if temp_line[j] == self.space: # or (not single_quote_skip and not double_quote_skip):
             if self.free_form:
                 if temp_line[j+1] == self.continuation_char:
-                    line1 = temp_line[:j+2].rstrip()
+                    line1 = temp_line[:j] + self.continuation_char + ''
+                    if cmnt_line:
+                        line1 += self.space + cmnt_line
                     line2 = ''
+                    print(line2)
                 else:
                     line1 = temp_line[:j] + self.continuation_char
                     if cmnt_line:
@@ -43,9 +46,9 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line, indenter, skip):
                     else:
                         line1 += "\n"
                     if skip:
-                        line2 = self.space * self.tab_len * (indenter - 1) + temp_line[j:].strip()
+                        line2 = self.space * self.tab_len * (indenter - 1) + temp_line[j:].strip() + "\n"
                     else:
-                        line2 = self.space * self.tab_len * indenter + temp_line[j:].strip()
+                        line2 = self.space * self.tab_len * indenter + temp_line[j:].strip() + "\n"
             else:
                 line1 = ff_line + temp_line[:j] + cmnt_line
                 line2 = ff_line[-1] + self.continuation_char + temp_line[j:]
@@ -68,9 +71,7 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line, indenter, skip):
                 else:
                     line1 = ff_line + temp_line[:j] + cmnt_line
                 line2 = ff_line[-1] + self.continuation_char + temp_line[j:]
-        # if line2[-2] == self.continuation_char:
-        #     print(line2[-2], line2)
-        #     line2 == ''
+
         return line1, line2
     else:
         line1 = ff_line + temp_line + cmnt_line
