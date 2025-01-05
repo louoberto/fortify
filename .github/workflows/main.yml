@@ -62,7 +62,7 @@ jobs:
           fi
         done
     - name: Show error log if differences found
-      if: failure()
+      # if: failure()
       run: cat reports/diff.log
     
     - name: Upload reports as artifacts
