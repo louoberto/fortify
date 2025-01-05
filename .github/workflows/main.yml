@@ -1,0 +1,22 @@
+name: Python tests
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: pip install -r fortran_formatter/requirements.txt
+    - name: Run tests
+      run: |
+        for file in fortran_formatter/test_files/testfile*.f*; do
+          python fortran_formatter/clu.py "$file"
+          keyfile=$(echo "$file" | sed 's/testfile/keyfile/')
+          diff "$file" "$keyfile"
+        done
