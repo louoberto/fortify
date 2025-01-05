@@ -23,16 +23,16 @@ jobs:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         path: test
 
-    - name: Install build dependencies
-      run: sudo apt-get update && sudo apt-get install -y python3-setuptools python3-dev
+    # - name: Install build dependencies
+    #   run: sudo apt-get update && sudo apt-get install -y python3-setuptools python3-dev
 
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
-    - name: Install distutils
-      run: sudo apt-get install -y python3-distutils
+    - name: Install setuptools
+      run: sudo python3 -m pip install setuptools
     
     - name: Install build-essential
       run: sudo apt-get install -y build-essential
