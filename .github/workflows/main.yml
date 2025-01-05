@@ -23,6 +23,9 @@ jobs:
         token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         path: test
 
+    - name: Install build dependencies
+      run: sudo apt-get install python3-distutils
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
