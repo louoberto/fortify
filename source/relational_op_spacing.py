@@ -30,6 +30,8 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
                     temp = temp_line + char + self.space
                 elif code_line[j - 1] == '(':
                     temp = temp_line + char
+                elif code_line[j - 1] == self.space:
+                    temp = temp_line + char + self.space
                 else:
                     temp = temp_line + self.space + char + self.space
             else:
@@ -42,7 +44,7 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
         else:
             temp = temp_line + char + self.space
     elif code_line[j - 1] != self.space:
-        if code_line[j - 1] in ['(',')']:
+        if code_line[j - 1] in ['(',')','<','>','/']:
             temp = temp_line + char
         else:
             temp = temp_line + self.space + char

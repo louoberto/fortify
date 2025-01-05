@@ -13,10 +13,12 @@ def format(self):
     skip = False
     first_case = False
     new_file_lines = []
-    for line in self.file_lines:
+    string_count = 0
+    for i, line in enumerate(self.file_lines):
         # Skip formatting if any of the following conditions are met
         if not line.strip(): # If blank line
-            new_file_lines.append(line)
+            if i != len(self.file_lines) - 1:
+                new_file_lines.append('\n')
             continue
         elif no_format(line): # Do no format in the line
             new_file_lines.append(line)
@@ -26,11 +28,15 @@ def format(self):
             continue
         elif line[0] in ['*','C','c'] and not self.free_form: # Convert old-style comment chars to !
             line = "!" + line[1:]
+            while(line[-2] == self.space):
+                line = line[:-2] + line[-1:]
             new_file_lines.append(line)
             continue
 
         cmt_index = line.find("!")
         if cmt_index == 0:
+            while(line[-2] == self.space):
+                line = line[:-2] + line[-1:]
             new_file_lines.append(line)
             continue
         if "\t" in line: # Convert tab characters to spaces
@@ -61,7 +67,10 @@ def format(self):
         if code_line:
             code_line = code_line.replace(self.space*2, '')
         else:
-            new_file_lines.append(ff_line + code_line + cmnt_line)
+            code_line = ff_line + code_line + cmnt_line
+            while(code_line[-2] == self.space):
+                code_line = code_line[:-2] + code_line[-1:]
+            new_file_lines.append(code_line)
             continue
 
         temp = ""
@@ -69,11 +78,13 @@ def format(self):
         double_quote_skip = False  # Skip strings
         for j, char in enumerate(code_line):
             # String check
-            if char == "'":
+            if char == "'" and not double_quote_skip:
                 single_quote_skip = not single_quote_skip
-            if char == '"':
+                string_count += 1
+            if char == '"' and not single_quote_skip:
                 double_quote_skip = not double_quote_skip
-            if not single_quote_skip and not double_quote_skip:
+                string_count += 1
+            if not single_quote_skip and not double_quote_skip and string_count%2 == 0:
                 char = char.lower() # Lowercase all working code; no global CAPS at this time
                 if char == ".":
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
@@ -101,7 +112,7 @@ def format(self):
         if "= =" in temp:
             temp = temp.replace("= =", "==") # Taking this into account
         
-        temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case)
+        temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i)
         temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line, indenter, skip)
         temp = temp1 + temp2
         new_file_lines.append(temp)
