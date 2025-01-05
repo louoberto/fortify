@@ -58,3 +58,9 @@ jobs:
     - name: Show error log if differences found
       if: failure()
       run: cat reports/errors.log
+    
+     - name: Upload reports as artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: reports/
