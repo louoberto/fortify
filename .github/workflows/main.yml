@@ -31,8 +31,8 @@ jobs:
       with:
         python-version: '3.x'
 
-    # - name: Install distutils
-    #   run: sudo apt-get install -y python3-distutils
+    - name: Install setuptools
+      run: sudo apt-get install -y setuptools
     
     - name: Install build-essential
       run: sudo apt-get install -y build-essential
