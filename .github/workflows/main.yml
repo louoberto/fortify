@@ -39,12 +39,6 @@ jobs:
 
     - name: Install dependencies
       run: pip install -r fortify/requirements.txt
-    
-    # - name: Upload reports as artifacts
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: test-reports
-    #     path: reports/
 
     - name: Run tests and compare results
       run: |
@@ -54,13 +48,26 @@ jobs:
           keyfile="test/keyfile_${base#testfile_}"
           if [[ -f "$keyfile" ]]; then
             echo "Running: python fortify/source/driver.py $file"
-            python fortify/source/driver.py "$file"
+            python3 fortify/source/driver.py "$file"
             echo "Comparing $file with $keyfile"
-            diff "$file" "$keyfile" > reports/diff_${base#testfile_}.log || echo "Diff found for $file" >> reports/errors.log
+            diff "$file" "$keyfile" > reports/diff_${base#testfile_}.log
+            if [[ $? -ne 0 ]]; then
+              echo "Diff found for $file" >> reports/diff.log
+              exit 1
+            else
+              echo "No errors reported for $file" >> reports/diff.log
+            fi
           else
-            echo "Keyfile $keyfile not found for $file" >> reports/errors.log
+            echo "Keyfile $keyfile not found for $file" >> reports/diff.log
+            exit 2
           fi
         done
     - name: Show error log if differences found
       if: failure()
-      run: cat reports/errors.log
+      run: cat reports/diff.log
+    
+    - name: Upload reports as artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-reports
+        path: reports/
