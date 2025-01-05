@@ -24,7 +24,8 @@ jobs:
         path: test
 
     - name: Install build dependencies
-      run: sudo apt-get install python3-distutils
+      run: sudo apt-get update && sudo apt-get install -y python3-setuptools python3-dev
+
 
     - name: Set up Python
       uses: actions/setup-python@v4
