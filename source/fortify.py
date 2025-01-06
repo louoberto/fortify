@@ -11,12 +11,10 @@ from if_logicals_spacing import if_logicals_spacing
 from paren_spacing import paren_spacing
 from relational_op_spacing import relational_op_spacing
 from comma_spacing import comma_spacing
-from colon_spacing import colon_spacing
 from star_spacing import star_spacing
 from plus_spacing import plus_spacing
 from structured_indent import structured_indent
 from line_carry_over import line_carry_over
-from space_spacing import space_spacing
 from format import format
 
 
@@ -28,8 +26,11 @@ class fortify:
         self.ff_column_len = ff_column_len  # Reserved space for fixed format
         self.tab_len = tab_len  # Make default tab space 3
         self.free_form = False
+        self.empty = ''
         self.space = ' '
-        self.comment_char = '!'
+        self.comment = '!'
+        self.newline = '\n'
+        self.tab = '\t'
         self.data_types = [
             'integer',
             'real',
@@ -60,8 +61,6 @@ class fortify:
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
         self.comma_spacing = comma_spacing
-        self.colon_spacing = colon_spacing
-        self.space_spacing = space_spacing
         self.format = format
 
         self.keywords_increase = [

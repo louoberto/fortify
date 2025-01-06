@@ -16,9 +16,9 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i):
             if temp_line[-5:].strip() == 'then':
                 indenter += 1
                 skip = True
-            elif temp_line[-2].strip() == '&':
-                if self.file_lines[j+1][-2].strip() == '&':
-                    while self.file_lines[j+1][-2].strip() == '&':
+            elif temp_line[-2].strip() == self.continuation_char:
+                if self.file_lines[j+1][-2].strip() == self.continuation_char:
+                    while self.file_lines[j+1][-2].strip() == self.continuation_char:
                         if temp_line[-5:].strip() == 'then':
                             indenter += 1
                             skip = True

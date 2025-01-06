@@ -18,7 +18,7 @@ def format(self):
         # Skip formatting if any of the following conditions are met
         if not line.strip(): # If blank line
             if i != len(self.file_lines) - 1:
-                new_file_lines.append('\n')
+                new_file_lines.append(self.newline)
             continue
         elif no_format(line): # Do no format in the line
             new_file_lines.append(line)
@@ -27,20 +27,20 @@ def format(self):
             new_file_lines.append(line)
             continue
         elif line[0] in ['*','C','c'] and not self.free_form: # Convert old-style comment chars to !
-            line = "!" + line[1:]
+            line = self.comment + line[1:]
             while(line[-2] == self.space):
                 line = line[:-2] + line[-1:]
             new_file_lines.append(line)
             continue
 
-        cmt_index = line.find("!")
+        cmt_index = line.find(self.comment)
         if cmt_index == 0:
             while(line[-2] == self.space):
                 line = line[:-2] + line[-1:]
             new_file_lines.append(line)
             continue
-        if "\t" in line: # Convert tab characters to spaces
-            line = line.replace("\t", self.space * self.tab)
+        if self.tab in line: # Convert tab characters to spaces
+            line = line.replace(self.tab, self.space * self.tab_len)
         if not self.free_form: # Standardize the line continuation character to & for fixed format
             if len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
                 line = line[:5] + self.continuation_char + line[6:]
@@ -65,7 +65,7 @@ def format(self):
         if not self.free_form:
             ff_line = line[:self.ff_column_len]
         if code_line:
-            code_line = code_line.replace(self.space*2, '')
+            code_line = code_line.replace(self.space*2, self.empty)
         else:
             code_line = ff_line + code_line + cmnt_line
             while(code_line[-2] == self.space):
@@ -90,12 +90,8 @@ def format(self):
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
                 elif char == ",":
                     temp = self.comma_spacing(self, j, char, code_line, temp)
-                # elif char == ":":
-                #     temp = self.colon_spacing(self, j, char, code_line, temp)
                 elif char in ["(", ")"]:
                     temp = self.paren_spacing(self, j, char, code_line, temp)
-                # elif char == self.space:
-                #     temp = self.space_spacing(self, j, char, code_line, temp)
                 elif char in ["<", ">", "/", "="]:
                     temp = self.relational_op_spacing(self, j, char, code_line, temp)
                 elif char == "*" and "*" not in [code_line[j - 1], code_line[j + 1]] and code_line[j - 4 : j] not in self.data_types:

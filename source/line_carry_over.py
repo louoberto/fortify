@@ -29,7 +29,7 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line, indenter, skip):
             j = comloc
         else:
             j = self.last_col
-            if self.free_form and temp_line[j] != '/n':
+            if self.free_form and temp_line[j] != self.newline:
                 j -= 1
 
         if temp_line[j] != self.space:
@@ -41,23 +41,23 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line, indenter, skip):
                 line1 = temp_line[:j] + self.continuation_char
                 if cmnt_line:
                     line1 += self.space + cmnt_line
-                line2 = ''
+                line2 = self.empty
             else:
                 line1 = temp_line[:j] + self.continuation_char
                 if cmnt_line:
                     line1 += self.space + cmnt_line
                 else:
-                    line1 += "\n"
+                    line1 += self.newline
                 indent = len(line1) - len(line1.lstrip())
-                line2 = self.space * indent + temp_line[j:].strip() + "\n"
+                line2 = self.space * indent + temp_line[j:].strip() + self.newline
         else:
             line1 = ff_line + temp_line[:j] + cmnt_line
             line2 = ff_line[-1] + self.continuation_char + temp_line[j:].strip()
 
-        if line1[-1] != '\n':
-            line1 += '\n'
-        if line2 and line2[-1] != '\n':
-            line2 += '\n'
+        if line1[-1] != self.newline:
+            line1 += self.newline
+        if line2 and line2[-1] != self.newline:
+            line2 += self.newline
 
         return line1, line2
     else:

@@ -9,9 +9,6 @@ import sys
 
 
 def read_file(self, filename):
-    """
-    Open the file and return all the lines in an array
-    """
     free_form = True
     try:
         with open(filename, "r") as in_file:
