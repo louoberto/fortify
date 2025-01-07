@@ -65,7 +65,7 @@ class fortify:
 
         self.keywords_increase = [
             'contains',
-            'do',
+            'do ',
             ': do',
             'function',
             'if',

@@ -84,7 +84,7 @@ def format(self):
             if char == '"' and not single_quote_skip:
                 double_quote_skip = not double_quote_skip
                 string_count += 1
-            if not single_quote_skip and not double_quote_skip and string_count%2 == 0:
+            if not single_quote_skip and not double_quote_skip:
                 char = char.lower() # Lowercase all working code; no global CAPS at this time
                 if char == ".":
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
