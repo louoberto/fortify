@@ -5,8 +5,7 @@
 # The purpose of this is to carry over lines that might have been
 # formatted past the last usable column
 # ========================================================================
-import sys
-def line_carry_over(self, ff_line, temp_line, cmnt_line, indenter, skip):
+def line_carry_over(self, ff_line, temp_line, cmnt_line):
     single_quote_skip = False  # Skip strings
     double_quote_skip = False  # Skip strings
     lineCont = False

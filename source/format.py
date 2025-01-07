@@ -57,11 +57,11 @@ def format(self):
                 code_line = line[self.ff_column_len:].lstrip()
             else:
                 code_line = line.lstrip()
-            cmnt_line = ""
+            cmnt_line = self.empty
         if len(code_line) > 0:
             while(code_line[-2] == self.space):
                 code_line = code_line[:-2] + code_line[-1:]
-        ff_line = "" # Fixed format columns
+        ff_line = self.empty # Fixed format columns
         if not self.free_form:
             ff_line = line[:self.ff_column_len]
         if code_line:
@@ -73,7 +73,7 @@ def format(self):
             new_file_lines.append(code_line)
             continue
 
-        temp = ""
+        temp = self.empty
         single_quote_skip = False  # Skip strings
         double_quote_skip = False  # Skip strings
         for j, char in enumerate(code_line):
@@ -109,7 +109,7 @@ def format(self):
             temp = temp.replace("= =", "==") # Taking this into account
         
         temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i)
-        temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line, indenter, skip)
+        temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
         temp = temp1 + temp2
         new_file_lines.append(temp)
     self.file_lines = new_file_lines
