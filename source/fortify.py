@@ -76,7 +76,7 @@ class fortify:
             'select',
             'structure',
             'subroutine',
-            # 'type',
+            'type',
             'type,',
             'where',
         ]

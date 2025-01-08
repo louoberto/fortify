@@ -29,6 +29,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i):
                         indenter += 1
                         skip = True
         else:
+            # if temp_line.startswith('type'):
             indenter += 1
             skip = True
     elif temp_line.startswith("case"):
