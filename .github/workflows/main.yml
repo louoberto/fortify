@@ -52,7 +52,7 @@ jobs:
             echo "Comparing $file with $keyfile"
             diff "$file" "$keyfile" > reports/diff_${base#testfile_}.log
             diff_output=$(diff "$file" "$keyfile")
-            echo "$diff_output"
+            cat reports/diff_${base#testfile_}.log
             if [[ $? -ne 0 ]]; then
               echo "Diff found for $file" >> reports/diff.log
               exit 1
