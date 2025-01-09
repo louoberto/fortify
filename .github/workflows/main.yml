@@ -50,13 +50,11 @@ jobs:
             echo "Running: python fortify/source/driver.py $file"
             python3 fortify/source/driver.py "$file"
             echo "Comparing $file with $keyfile"
-            
-            diff_output=$(diff "$file" "$keyfile")
+
+            # Use tee to capture and display diff output
+            diff "$file" "$keyfile" | tee reports/diff_${base#testfile_}.log
             if [[ $? -ne 0 ]]; then
-              echo "Diff found for $file:"
-              echo "$diff_output"
-              echo "Saving diff to reports/diff_${base#testfile_}.log"
-              echo "$diff_output" > reports/diff_${base#testfile_}.log
+              echo "Diff found for $file. See reports/diff_${base#testfile_}.log"
               echo "Diff found for $file" >> reports/diff.log
               exit 1
             else
