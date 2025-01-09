@@ -28,8 +28,11 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i):
                     if self.file_lines[j+1][-5:].strip() == 'then':
                         indenter += 1
                         skip = True
-        else:
-            # if temp_line.startswith('type'):
+        elif not temp_line.replace(self.space,self.empty).startswith('type('):
+            # print(temp_line)
+            # indenter += 1
+            # skip = True
+            #else:
             indenter += 1
             skip = True
     elif temp_line.startswith("case"):
