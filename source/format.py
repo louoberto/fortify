@@ -69,10 +69,21 @@ def format(self):
         if code_line:
             new_code_line = []
             prev_char = ""
+            single_quote_skip = False  # Skip strings
+            double_quote_skip = False  # Skip strings
             for char in code_line:
-                if not (char == self.space and prev_char == self.space):
+                if char == "'" and not double_quote_skip:
+                    single_quote_skip = not single_quote_skip
+                    string_count += 1
+                if char == '"' and not single_quote_skip:
+                    double_quote_skip = not double_quote_skip
+                    string_count += 1
+                if not single_quote_skip and not double_quote_skip:
+                    if not (char == self.space and prev_char == self.space):
+                        new_code_line.append(char)
+                    prev_char = char
+                else:
                     new_code_line.append(char)
-                prev_char = char
             code_line = "".join(new_code_line)
         else:
             code_line = ff_line + code_line + cmnt_line
