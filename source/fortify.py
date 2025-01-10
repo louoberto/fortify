@@ -103,5 +103,6 @@ class fortify:
             'end type',
             'endwhere',
             'end where',
-            'end'
+            'end',
+            'continue'
         ]
