@@ -23,9 +23,9 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
             if char == '/':
                 if code_line[j + 1] == '/':
                     temp = temp_line + (self.space if code_line[j - 1] != self.space else self.empty) + char
-                elif code_line[j - 1] == '/':
+                elif code_line[j - 1] in ['/', '.']:
                     temp = temp_line + char + self.space
-                elif code_line[j - 1] in ['(', self.space]:
+                elif code_line[j - 1] in ['(', self.space] or code_line[j + 1] == self.newline:
                     temp = temp_line + char
                 elif code_line[j + 1] == ',':
                     temp = temp_line + self.space + char

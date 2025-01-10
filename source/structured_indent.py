@@ -27,7 +27,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                     if self.file_lines[j+1][-5:].strip() == 'then':
                         indenter += 1
                         skip = True
-        elif temp_line.startswith('do '):
+        elif temp_line.startswith('do ') or temp_line.strip() == 'do':
             indenter += 1
             skip = True
             if not self.free_form:

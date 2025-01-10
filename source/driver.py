@@ -20,8 +20,8 @@ if __name__ == "__main__":
         myfile = fortify()
         myfile.read_file(myfile, fortran_file)
         if myfile.free_form:
-            myfile.last_col = 131  # Last usable column in Fortran
+            myfile.last_col = 10000  # Last usable column in Fortran, as per the standard
         else:
-            myfile.last_col = 77  # Last usable column in Fortran
+            myfile.last_col = 72  # Last usable column in Fortran, as per the standard
         myfile.format(myfile)
         myfile.print_file(myfile, fortran_file)

@@ -12,16 +12,16 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line):
     comloc = 0
     # The whole point of this is to look for a string
     for j, char in enumerate(temp_line):
+        if not single_quote_skip and not double_quote_skip:
+            comloc = j
+        if j > self.last_col - len(ff_line) - 1:
+            lineCont = True
+            break  # We know we have to bump over to the next, so no need to be in here anymore
         # String check
         if char == "'" and not double_quote_skip:
             single_quote_skip = not single_quote_skip
         if char == '"' and not single_quote_skip:
             double_quote_skip = not double_quote_skip
-        if not single_quote_skip and not double_quote_skip:
-            comloc = j
-        if j > self.last_col - len(ff_line):
-            lineCont = True
-            break  # We know we have to bump over to the next, so no need to be in here anymore
     if lineCont:  # then we need to find a good place to stop this line
         # Let's find the first, last space and call it there...
         if single_quote_skip or double_quote_skip:  # unless it was a comment that went overboard, then we need that to go over
@@ -31,8 +31,6 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line):
             if self.free_form and temp_line[j] != self.newline:
                 j -= 1
 
-        #if j > self.last_col:
-        # print(len(temp_line),j)
         if temp_line[j] != self.space:
             while temp_line[j] != self.space:
                 j = j - 1

@@ -9,7 +9,7 @@ def if_logicals_spacing(self, j, char, code_line, temp_line):
         i = 5
     elif code_line[j - 3 : j + 1].lower() in self.iftypes2:
         i = 4
-    elif code_line[j - 1].isnumeric() and not code_line[j + 1].isnumeric() and code_line[j + 1] != ')' and code_line[j + 1] != self.newline:
+    elif code_line[j - 1].isnumeric() and not code_line[j + 1].isnumeric() and code_line[j + 1] not in [')', self.newline, 'D', 'd', 'E', 'e']:
         if code_line[j:j + 4].lower() not in self.iftypes2 and code_line[j:j + 5].lower() not in self.iftypes and code_line[j + 1] != self.space:
             temp = temp_line + char + self.space
         else:
@@ -20,7 +20,7 @@ def if_logicals_spacing(self, j, char, code_line, temp_line):
         return temp
 
     if code_line[j - i] != self.space and code_line[j + 1] != self.space: #?.gt.?
-        if temp_line[-i] != self.space:
+        if temp_line[-i] not in [self.space, '(']:
             temp = temp_line[:1 - i] + self.space + temp_line[1 - i:] + char + self.space
         else:
             temp = temp_line[:1 - i] + temp_line[1 - i:] + char + self.space
