@@ -27,10 +27,12 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line):
         if single_quote_skip or double_quote_skip:  # unless it was a comment that went overboard, then we need that to go over
             j = comloc
         else:
-            j = self.last_col
+            j = self.last_col - len(ff_line)
             if self.free_form and temp_line[j] != self.newline:
                 j -= 1
 
+        #if j > self.last_col:
+        # print(len(temp_line),j)
         if temp_line[j] != self.space:
             while temp_line[j] != self.space:
                 j = j - 1
@@ -51,7 +53,9 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line):
                 line2 = self.space * indent + temp_line[j:].strip() + self.newline
         else:
             line1 = ff_line + temp_line[:j] + cmnt_line
-            line2 = ff_line[-1] + self.continuation_char + temp_line[j:].strip()
+            indent = len(temp_line[:j]) - len(temp_line[:j].lstrip())
+            line2 = ff_line[:-1] + self.continuation_char + self.space * indent + temp_line[j:].strip() + self.newline
+            # print(line2)
 
         if line1[-1] != self.newline:
             line1 += self.newline

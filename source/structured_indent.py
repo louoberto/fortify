@@ -5,8 +5,7 @@
 # This will properly nest and indent code largely based on the keyword
 # lists found in keywords_increase and keywords_decrease
 # ========================================================================
-do_list = []
-def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line):
+def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_list,do_count):
     j = i
     if ": do" in temp_line and not temp_line[temp_line.find(": do") - 1] == ":":
         indenter += 1
@@ -20,8 +19,6 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line):
                 if self.file_lines[j+1][-2].strip() == self.continuation_char:
                     while self.file_lines[j+1][-2].strip() == self.continuation_char:
                         j += 1
-                        print(self.file_lines[j+1])
-                        print(self.file_lines[j+1][-2].strip())
                     if self.file_lines[j+1][-5:].strip() == 'then':
                             # print(self.file_lines[j+1])
                             indenter += 1
@@ -30,7 +27,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line):
                     if self.file_lines[j+1][-5:].strip() == 'then':
                         indenter += 1
                         skip = True
-        elif temp_line.startswith('do'):
+        elif temp_line.startswith('do '):
             indenter += 1
             skip = True
             if not self.free_form:
@@ -39,12 +36,18 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line):
                 while temp_line[i] == self.space:
                     i += 1
                 if temp_line[i].isnumeric():
-                    temp_num = ''
+                    temp_num = self.empty
                     while temp_line[i].isnumeric():
                         temp_num += temp_line[i]
                         i += 1
-                    do_list.append(temp_num)
-        elif not temp_line.replace(self.space,self.empty).startswith('type('):
+                    if any(temp_num == item[0] for item in do_list):
+                        for index, item in enumerate(do_list):
+                            if temp_num == item[0]:
+                                do_list[index] = (item[0], item[1] + 1)
+                                break
+                    else:
+                        do_list.append((temp_num, do_count))
+        elif not temp_line.replace(self.space, self.empty).startswith('type(') and not temp_line.startswith('do'):
             indenter += 1
             skip = True
     elif temp_line.startswith("case"):
@@ -57,8 +60,8 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line):
             indenter -= 2
         elif temp_line.startswith("continue"):
             for goto in do_list:
-                if ff_line.startswith(goto):
-                    indenter -= 1
+                if ff_line.lstrip().startswith(goto[0]):
+                    indenter -= (1 + goto[1])
                     do_list.remove(goto)
                     break
         else:

@@ -15,7 +15,7 @@ def plus_spacing(self, j, char, code_line, temp_line):
             if j == 0:
                 temp = temp_line + char
             elif code_line[j - 1] == "=":  # =+?
-                temp = temp_line + self.space + char
+                temp = temp_line + char #self.space + char
             else:  # ?+?
                 if code_line[j - 1] not in ['(',')','.','/']:
                     temp = temp_line + self.space + char

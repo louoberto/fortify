@@ -14,6 +14,8 @@ def format(self):
     first_case = False
     new_file_lines = []
     string_count = 0
+    do_list = []
+    do_count = 0
     for i, line in enumerate(self.file_lines):
         # Skip formatting if any of the following conditions are met
         if not line.strip(): # If blank line
@@ -114,7 +116,7 @@ def format(self):
         if "= =" in temp:
             temp = temp.replace("= =", "==") # Taking this into account
         
-        temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line)
+        temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list,do_count)
         temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
         temp = temp1 + temp2
         new_file_lines.append(temp)
