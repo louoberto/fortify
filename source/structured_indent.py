@@ -43,15 +43,9 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line):
                         temp_num += temp_line[i]
                         i += 1
                     do_list.append(temp_num)
-
         elif not temp_line.replace(self.space,self.empty).startswith('type('):
-            # print(temp_line)
-            # indenter += 1
-            # skip = True
-            #else:
             indenter += 1
             skip = True
-            # print(temp_line)
     elif temp_line.startswith("case"):
         if not first_case:
             first_case = True
@@ -68,8 +62,10 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line):
                     break
         else:
             indenter -= 1
+
     if ("else" in temp_line[:4] or "elseif" in temp_line[:6] or "elsewhere" in temp_line[:6]):  # else statements go back one, but that's it
         skip = True
+
     if skip:
         temp_line = self.space * self.tab_len * (indenter - 1) + temp_line
         if temp_line.strip()[-1] == self.continuation_char:

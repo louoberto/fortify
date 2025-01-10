@@ -26,6 +26,7 @@ class fortify:
         self.ff_column_len = ff_column_len  # Reserved space for fixed format
         self.tab_len = tab_len  # Make default tab space 3
         self.free_form = False
+        # self.free_form_goto = False
         self.empty = ''
         self.space = ' '
         self.comment = '!'
@@ -65,8 +66,8 @@ class fortify:
 
         self.keywords_increase = [
             'contains',
-            'do ',
-            ': do',
+            'do',
+            ': do', # Still don't know what this one is doing
             'function',
             'if',
             'interface',

@@ -65,7 +65,13 @@ def format(self):
         if not self.free_form:
             ff_line = line[:self.ff_column_len]
         if code_line:
-            code_line = code_line.replace(self.space*2, self.empty)
+            new_code_line = []
+            prev_char = ""
+            for char in code_line:
+                if not (char == self.space and prev_char == self.space):
+                    new_code_line.append(char)
+                prev_char = char
+            code_line = "".join(new_code_line)
         else:
             code_line = ff_line + code_line + cmnt_line
             while(code_line[-2] == self.space):
