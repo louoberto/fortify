@@ -13,18 +13,19 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line):
         skip = True
     elif any(temp_line.startswith(keyword) for keyword in self.keywords_increase) or any(temp_line.startswith(item + " function ") for item in self.data_types):
         if temp_line.startswith('if'):
-            # print(temp_line)
             if temp_line[-5:].strip() == 'then':
                 indenter += 1
                 skip = True
             elif temp_line[-2].strip() == self.continuation_char:
                 if self.file_lines[j+1][-2].strip() == self.continuation_char:
                     while self.file_lines[j+1][-2].strip() == self.continuation_char:
-                        if temp_line[-5:].strip() == 'then':
+                        j += 1
+                        print(self.file_lines[j+1])
+                        print(self.file_lines[j+1][-2].strip())
+                    if self.file_lines[j+1][-5:].strip() == 'then':
+                            # print(self.file_lines[j+1])
                             indenter += 1
                             skip = True
-                        else:
-                            j += 1
                 else:
                     if self.file_lines[j+1][-5:].strip() == 'then':
                         indenter += 1
