@@ -13,13 +13,12 @@ def format(self):
     skip = False
     first_case = False
     new_file_lines = []
-    string_count = 0
     do_list = []
     do_count = 0
     for i, line in enumerate(self.file_lines):
         # Skip formatting if any of the following conditions are met
         if not line.strip(): # If blank line
-            if i != len(self.file_lines) - 1:
+            if i != len(self.file_lines):
                 new_file_lines.append(self.newline)
             continue
         elif no_format(line): # Do no format in the line
@@ -92,10 +91,8 @@ def format(self):
             # String check
             if char == "'" and not double_quote_skip:
                 single_quote_skip = not single_quote_skip
-                string_count += 1
             if char == '"' and not single_quote_skip:
                 double_quote_skip = not double_quote_skip
-                string_count += 1
             if not single_quote_skip and not double_quote_skip:
                 char = char.lower() # Lowercase all working code; no global CAPS at this time
                 if char == self.space:
