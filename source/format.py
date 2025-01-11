@@ -41,9 +41,8 @@ def format(self):
             line = line.replace(self.tab, self.space * self.tab_len)
         
         # Standardize the line continuation character to & for fixed format
-        if not self.free_form:
-            if line[0] != self.comment and len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
-                line = line[:5] + self.continuation_char + line[6:]
+        if not self.free_form and line[0] != self.comment and len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
+            line = line[:5] + self.continuation_char + line[6:]
 
         cmt_index = line.find(self.comment)
         if cmt_index > 0:
