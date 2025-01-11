@@ -6,7 +6,7 @@
 # ========================================================================
 def star_spacing(self, j, char, code_line, temp_line):
     if code_line[j - 1] != self.space and code_line[j + 1] != self.space: #?*?
-        if code_line[j - 1].isalnum() and code_line[j + 1].isalnum(): #5*5
+        if code_line[j - 1].isalnum() and (code_line[j + 1].isalnum() or code_line[j + 1] == '('): #5*5
             temp = temp_line + self.space + char + self.space
         elif code_line[j - 1].isalnum() and not code_line[j + 1].isalnum(): #5*?
             temp = temp_line + self.space + char
