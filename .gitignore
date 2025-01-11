@@ -11,6 +11,8 @@ archive/
 *.exe
 .DS_Store
 repo
+node_modules
+out/
 
 # C extensions
 *.so
