@@ -21,13 +21,12 @@ from format import format
 
 class fortify:
     # Constructor to initialize object attributes
-    def __init__(self, continuation_char='&', ff_column_len=6, tab_len=3):
+    def __init__(self, continuation_char = '&', ff_column_len = 6, tab_len = 3):
         # These are variables
         self.continuation_char = continuation_char  # Can make this user defined I suppose, but only for ff
         self.ff_column_len = ff_column_len  # Reserved space for fixed format
         self.tab_len = tab_len  # Make default tab space 3
         self.free_form = False
-        # self.free_form_goto = False
         self.empty = ''
         self.space = ' '
         self.comment = '!'
@@ -53,7 +52,6 @@ class fortify:
         ]
         # These are functions
         self.read_file = read_file  # Read and stoe the file_lines of the file to format
-        # These should have toggles below
         self.if_logicals_spacing = if_logicals_spacing
         self.paren_spacing = paren_spacing
         self.relational_op_spacing = relational_op_spacing
@@ -69,7 +67,7 @@ class fortify:
         self.keywords_increase = [
             'contains',
             'do',
-            ': do', # Still don't know what this one is doing
+            ': do', # Still don't know what this one was doing
             'function',
             'if',
             'interface',

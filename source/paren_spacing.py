@@ -4,8 +4,6 @@
 # Purpose:
 # Handles formatting for objects around and inside parens ()
 # ========================================================================
-debug_me = True
-
 def paren_spacing(self, j, char, code_line, temp_line):
     if code_line.lower().startswith("if(") and j == 2:
         temp = temp_line + self.space + char

@@ -7,7 +7,6 @@
 # ========================================================================
 import sys
 
-
 def read_file(self, filename):
     free_form = True
     try:

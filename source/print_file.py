@@ -6,7 +6,6 @@
 # ========================================================================
 import sys
 
-
 def print_file(self, fortran_file):
     try:
         with open(fortran_file, "w") as out_file:

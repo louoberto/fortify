@@ -119,7 +119,7 @@ def format(self):
         if "= =" in temp:
             temp = temp.replace("= =", "==") # Taking this into account
         
-        temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list,do_count)
+        temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count)
         temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
         temp = temp1 + temp2
         new_file_lines.append(temp)
