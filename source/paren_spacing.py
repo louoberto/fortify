@@ -24,5 +24,7 @@ def paren_spacing(self, j, char, code_line, temp_line):
     if char == ')' and len(temp) > 1:
         while len(temp) > 1 and temp[-2].isspace():
             temp = temp[:-2] + temp[-1]
+    # if char == '(':
+    #     print(repr(temp))
     # print(temp)
     return temp
