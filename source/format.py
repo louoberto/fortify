@@ -30,25 +30,23 @@ def format(self):
             continue
         elif line[0] in ['*','C','c'] and not self.free_form: # Convert old-style comment chars to !
             line = self.comment + line[1:]
+            # Remove empty whitespace at the end of a comment-only line
             while(line[-2] == self.space):
                 line = line[:-2] + line[-1:]
             new_file_lines.append(line)
             continue
 
         # Convert tab characters to spaces
-        # This needs to be first to ensure proper counting
+        # This needs to be first to ensure proper character counting
         if self.tab in line:
             line = line.replace(self.tab, self.space * self.tab_len)
-
-        cmt_index = line.find(self.comment)
-        if cmt_index == 0:
-            while(line[-2] == self.space):
-                line = line[:-2] + line[-1:]
-            new_file_lines.append(line)
-            continue
-        if not self.free_form: # Standardize the line continuation character to & for fixed format
+        
+        # Standardize the line continuation character to & for fixed format
+        if not self.free_form:
             if len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
                 line = line[:5] + self.continuation_char + line[6:]
+
+        cmt_index = line.find(self.comment)
         if cmt_index > 0:
             if not self.free_form:
                 code_line = line[self.ff_column_len:cmt_index].lstrip()
@@ -63,36 +61,20 @@ def format(self):
             else:
                 code_line = line.lstrip()
             cmnt_line = self.empty
-        # if len(code_line) > 0:
-        #     temp = code_line
-        #     while(temp[-2] == self.space):
-        #         code_line = temp
-        #         temp = temp[:-2] + temp[-1:]
-        #     print(code_line)
-        ff_line = self.empty # Fixed format columns
-        if not self.free_form:
-            ff_line = line[:self.ff_column_len]
-        if code_line:
-            new_code_line = []
-            prev_char = ""
-            single_quote_skip = False  # Skip strings
-            double_quote_skip = False  # Skip strings
-            for char in code_line:
-                if char == "'" and not double_quote_skip:
-                    single_quote_skip = not single_quote_skip
-                    string_count += 1
-                if char == '"' and not single_quote_skip:
-                    double_quote_skip = not double_quote_skip
-                    string_count += 1
-                if not single_quote_skip and not double_quote_skip:
-                    if not (char == self.space and prev_char == self.space):
-                        new_code_line.append(char)
-                    prev_char = char
-                else:
-                    new_code_line.append(char)
-            code_line = "".join(new_code_line)
+        
+        if self.free_form:
+            ff_line = self.empty # Fixed format columns
         else:
+            ff_line = line[:self.ff_column_len]
+
+        # Remove empty whitespace at the end of a comment-only line
+        if not code_line:
             code_line = ff_line + code_line + cmnt_line
+            while(code_line[-2] == self.space):
+                code_line = code_line[:-2] + code_line[-1:]
+            new_file_lines.append(code_line)
+            continue
+        elif code_line[0] == self.comment:
             while(code_line[-2] == self.space):
                 code_line = code_line[:-2] + code_line[-1:]
             new_file_lines.append(code_line)
@@ -111,7 +93,9 @@ def format(self):
                 string_count += 1
             if not single_quote_skip and not double_quote_skip:
                 char = char.lower() # Lowercase all working code; no global CAPS at this time
-                if char == ".":
+                if char == self.space:
+                    temp = self.remove_extra_space(self, j, char, code_line, temp)
+                elif char == ".":
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
                 elif char == ",":
                     temp = self.comma_spacing(self, j, char, code_line, temp)

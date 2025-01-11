@@ -15,6 +15,7 @@ from star_spacing import star_spacing
 from plus_spacing import plus_spacing
 from structured_indent import structured_indent
 from line_carry_over import line_carry_over
+from remove_extra_space import remove_extra_space
 from format import format
 
 
@@ -62,6 +63,7 @@ class fortify:
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
         self.comma_spacing = comma_spacing
+        self.remove_extra_space = remove_extra_space
         self.format = format
 
         self.keywords_increase = [
