@@ -51,7 +51,7 @@ class fortify:
             '.or.',
         ]
         # These are functions
-        self.read_file = read_file  # Read and store the file_lines of the file to format
+        self.read_file = read_file  # Read and stoe the file_lines of the file to format
         self.if_logicals_spacing = if_logicals_spacing
         self.paren_spacing = paren_spacing
         self.relational_op_spacing = relational_op_spacing
@@ -62,6 +62,7 @@ class fortify:
         self.line_carry_over = line_carry_over
         self.comma_spacing = comma_spacing
         self.remove_extra_space = remove_extra_space
+        self.format = format
 
         self.keywords_increase = [
             'contains',
