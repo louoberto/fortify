@@ -35,14 +35,17 @@ def format(self):
             new_file_lines.append(line)
             continue
 
+        # Convert tab characters to spaces
+        # This needs to be first to ensure proper counting
+        if self.tab in line:
+            line = line.replace(self.tab, self.space * self.tab_len)
+
         cmt_index = line.find(self.comment)
         if cmt_index == 0:
             while(line[-2] == self.space):
                 line = line[:-2] + line[-1:]
             new_file_lines.append(line)
             continue
-        if self.tab in line: # Convert tab characters to spaces
-            line = line.replace(self.tab, self.space * self.tab_len)
         if not self.free_form: # Standardize the line continuation character to & for fixed format
             if len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
                 line = line[:5] + self.continuation_char + line[6:]
@@ -60,9 +63,12 @@ def format(self):
             else:
                 code_line = line.lstrip()
             cmnt_line = self.empty
-        if len(code_line) > 0:
-            while(code_line[-2] == self.space):
-                code_line = code_line[:-2] + code_line[-1:]
+        # if len(code_line) > 0:
+        #     temp = code_line
+        #     while(temp[-2] == self.space):
+        #         code_line = temp
+        #         temp = temp[:-2] + temp[-1:]
+        #     print(code_line)
         ff_line = self.empty # Fixed format columns
         if not self.free_form:
             ff_line = line[:self.ff_column_len]
