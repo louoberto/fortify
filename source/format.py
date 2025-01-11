@@ -43,7 +43,7 @@ def format(self):
         
         # Standardize the line continuation character to & for fixed format
         if not self.free_form:
-            if len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
+            if line[0] != self.comment and len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
                 line = line[:5] + self.continuation_char + line[6:]
 
         cmt_index = line.find(self.comment)
@@ -55,6 +55,11 @@ def format(self):
             add_space = len(code_line) - len(code_line.rstrip()) # Keep original spacing
             cmnt_line = self.space * add_space + line[cmt_index:]
             code_line = code_line.rstrip()
+        elif cmt_index == 0:
+            while(line[-2] == self.space):
+                line = line[:-2] + line[-1:]
+            new_file_lines.append(line)
+            continue
         else:
             if not self.free_form:
                 code_line = line[self.ff_column_len:].lstrip()
