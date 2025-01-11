@@ -1,43 +1,67 @@
-# fortify
+# Fortify
 Fortran Formatting Tool
 
 ## Overview
 Fortify is a Fortran formatting tool designed to help developers maintain consistent and readable code. It provides various features to handle spacing, indentation, and other formatting aspects of Fortran code.
 
 ## Features
+### 1. Structure Indentation
+Will properly indent and nest if, do, subroutine, program, and any other keyword statements that can be ended with an `end`. This works for both free format and fixed format files.
 
-### 1. Parenthesis Spacing
-Handles formatting for objects around and inside parentheses `()` to ensure proper spacing.
+In the case of the do-continue F77 statement, it will find the matching goto-continue and unindent on that. This will work even in a do-loop that contains multiple do's that end on the same continue.
+
+*Note*: All fixed format files will have the first 6 columns reserved, while all free format files use every column
+
+### 2. Line Carry Over
+Manages line continuation by finding appropriate places to break lines and carry over to the next line, ensuring code remains within the specified column width.
+
+### 3. Logical/Relational/Math Operator Spacing
+Adds spaces around operators such as `<`, `<=`, `>`, `>=`, `/=`, `==`, `//`, `+`, `-`, `*`, `/` as well as their text based counter to ensure proper spacing. This converts, for example, `x.gt.y` to `x .gt. y`.
+
+Special care is taken for `+-` operators for cases such exponentiation (`D` and `E`), as well as cases where a minus (or plus) tends to be connected with the character. For example, the following will be maintained or enforced: `x = -5` instead of `x = - 5`.
+
+### 4. Tab character replacement
+Converts the `\t` character to the default tab space of 3. Note that if you change the tab length, and then run it will convert to the updated tab length instead, but once a tab is converted to a set of spaces it will remain that number of spaces if re-run on the same file.
+
+### 5. Comment spacing preservation
+Will retain the original spacing between a line comment and a the code. This is done since it is a common practice to have comments lined up in a series after related code.
+
+Lines which are only comments are kept on the first column and kept this way. This can be user defined.
+
+### F77 (.f) Features
+#### Continuation Character
+In older Fortran, any character may become the continuation character. This formatter enforces the modern `&` in the 6th column. You may change this if you wish.
+
+#### Comment Character
+In older Fortran, `*`, `C`, and `c` will change to become `!` by default. You may change this if you wish in the settings.
+
+### Code modernization techinques
+By default, it will lower all non-string code. As Fortran is case-insensitive, this does change any code logic, and modernizes the all CAP past of older Fortran code.
+
+### 2. Parenthesis Spacing
+Removes spaces formatting for objects around and inside parentheses `( x )` -> `(x)`.
 
 ### 2. Remove Extra Space
 Removes unnecessary double spacing in a code line to maintain clean and readable code.
 
-### 3. Relational Operator Spacing
-Adds spaces around relational operators such as `<`, `<=`, `>`, `>=`, `/=`, `==`, and `//` to ensure proper spacing.
-
 ### 4. Comma Spacing
 Handles spacing around commas to ensure there is a space after each comma, improving readability.
-
-### 5. Logical Operator Spacing
-Adds spaces between logical expressions, converting `x.gt.y` to `x .gt. y`.
-
-### 6. Line Carry Over
-Manages line continuation by finding appropriate places to break lines and carry over to the next line, ensuring code remains within a specified column width.
-
-### 7. Plus Spacing
-Handles spacing around the plus `+` operator to ensure proper spacing in various contexts.
 
 ### 8. String Handling
 Properly handles strings enclosed in single or double quotes, ensuring they are not broken or improperly formatted.
 
-### 9. Comment Handling
-Maintains the integrity of comments, ensuring they are not altered or misplaced during formatting.
+## User defined inputs
+Many defaults are set to the modern Fortran standard, but are able to be re-defined by the user. These include:
+| Variable                          | Default Value |
+|-----------------------------------|---------------|
+| Continuation Character (F77 only)      | `&`           |
+| Comment Character (F77 only)           | `!`           |
+| Tab Length                             | 3             |
+| Last column length                     | Free Format: `10000`, Fixed Format: `72` |
+| Lowercase all non-string code          | True          |
+| Remove extra spaces                    | True          |
+| Comment-only lines structured indented | False         |
 
-### 10. Tab to Space Conversion
-Converts tab characters to spaces to maintain consistent indentation throughout the code.
-
-### 11. Continuation Character Standardization
-Standardizes the line continuation character to `&` for fixed format, ensuring consistency.
 
 ## Usage
 To use Fortify, simply run the tool on your Fortran source files. The tool will automatically apply the formatting rules and update the files accordingly.
@@ -49,4 +73,14 @@ To install Fortify, clone the repository and run the setup script:
 git clone https://github.com/yourusername/fortify.git
 cd fortify
 python setup.py install
+```
+
+## Contributing
+Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+
+## License
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+## Contact
+For any questions or issues, please open an issue on the GitHub repository or contact the maintainer at your.email@example.com.
 ```
