@@ -13,7 +13,11 @@
     "activationEvents": [
         "onLanguage:fortran"
     ],
-    "main": "./source/extension.js",
+    "main": "./source/extension.py",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/louoberto/fortify"
+    },
     "contributes": {
         "languages": [
             {
@@ -30,19 +34,19 @@
         "commands": [
             {
                 "command": "fortify.format",
-                "title": "Fortify: Format Fortran Code"
+                "title": "Format Fortran Code"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "fortify.format",
+                "key": "ctrl+shift+f",
+                "when": "editorLangId == fortran"
             }
         ]
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "lint": "eslint . --ext .ts,.js",
-        "test": "node ./out/test/runTest.js"
+        "vscode:prepublish": "echo 'No prepublish step needed for Python extension'"
     },
-    "devDependencies": {
-        "@types/vscode": "^1.80.0",
-        "eslint": "^8.20.0",
-        "typescript": "^4.9.5"
-    }
+    "devDependencies": {}
 }
