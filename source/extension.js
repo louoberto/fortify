@@ -12,7 +12,7 @@ function activate(context) {
     const document = editor.document;
     const text = document.getText();
     
-    exec('python fortify.py', { input: text }, (error, stdout, stderr) => {
+    exec('python driver.py', { input: text }, (error, stdout, stderr) => {
       if (error) {
         vscode.window.showErrorMessage(`Fortify Error: ${stderr}`);
       } else {
