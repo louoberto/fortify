@@ -14,6 +14,7 @@ repo
 node_modules
 out/
 *.vsix
+*-lock.json
 
 # C extensions
 *.so
