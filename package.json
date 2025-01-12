@@ -8,13 +8,7 @@
         "vscode": "^1.80.0"
     },
     "categories": [
-        "formatters"
-    ],
-    "activationEvents": [
-        "onLanguage:fortran",
-        "onLanguage:fortran-modern",
-        "onLanguage:FortranFreeForm",
-        "onLanguage:FortranFixedForm"
+        "Formatters"
     ],
     "main": "./source/extension.js",
     "repository": {
@@ -30,6 +24,35 @@
                     ".f95",
                     ".f03",
                     ".f"
+                ],
+                "configuration": "./language-configuration.json"
+            },
+            {
+                "id": "fortran-modern",
+                "extensions": [
+                    ".f90",
+                    ".f95",
+                    ".f03",
+                    ".f"
+                ],
+                "configuration": "./language-configuration.json"
+            },
+            {
+                "id": "FortranFreeForm",
+                "extensions": [
+                    ".f90",
+                    ".f95",
+                    ".f03",
+                    ".f"
+                ],
+                "configuration": "./language-configuration.json"
+            },
+            {
+                "id": "FortranFixedForm",
+                "extensions": [
+                    ".f",
+                    ".for",
+                    ".f77"
                 ],
                 "configuration": "./language-configuration.json"
             }
@@ -51,12 +74,25 @@
             {
                 "language": "fortran",
                 "command": "fortify.format"
+            },
+            {
+                "command": "fortify.format",
+                "key": "ctrl+shift+f",
+                "when": "editorLangId == fortran-modern"
+            },
+            {
+                "command": "fortify.format",
+                "key": "ctrl+shift+f",
+                "when": "editorLangId == FortranFreeForm"
+            },
+            {
+                "command": "fortify.format",
+                "key": "ctrl+shift+f",
+                "when": "editorLangId == FortranFixedForm"
             }
         ]
     },
-    "scripts": {
-        "vscode:prepublish": "echo 'No prepublish step needed for Python extension'"
-    },
+
     "devDependencies": {}
 }
 
