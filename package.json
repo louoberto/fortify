@@ -2,7 +2,7 @@
     "name": "fortify",
     "displayName": "Fortify - Fortran Formatter",
     "description": "A powerful and simple Fortran formatting tool for Visual Studio Code.",
-    "version": "0.9.1",
+    "version": "0.9.15",
     "publisher": "LouOberto",
     "engines": {
         "vscode": "^1.80.0"
@@ -66,7 +66,22 @@
         "keybindings": [
             {
                 "command": "fortify.format",
-                "key": "ctrl+shift+f",
+                "key": "shift+alt+f",
+                "when": "editorLangId == fortran-modern"
+            },
+            {
+                "command": "fortify.format",
+                "key": "shift+alt+f",
+                "when": "editorLangId == FortranFreeForm"
+            },
+            {
+                "command": "fortify.format",
+                "key": "shift+alt+f",
+                "when": "editorLangId == FortranFixedForm"
+            },
+            {
+                "command": "fortify.format",
+                "key": "shift+alt+f",
                 "when": "editorLangId == fortran"
             }
         ],
@@ -77,22 +92,24 @@
             },
             {
                 "command": "fortify.format",
-                "key": "ctrl+shift+f",
+                "key": "shift+alt+f",
                 "when": "editorLangId == fortran-modern"
             },
             {
                 "command": "fortify.format",
-                "key": "ctrl+shift+f",
+                "key": "shift+alt+f",
                 "when": "editorLangId == FortranFreeForm"
             },
             {
                 "command": "fortify.format",
-                "key": "ctrl+shift+f",
+                "key": "shift+alt+f",
                 "when": "editorLangId == FortranFixedForm"
             }
         ]
     },
-
+    "scripts": {
+        "vscode:prepublish": "echo 'No prepublish step needed for Python extension'"
+    },
     "devDependencies": {}
 }
 

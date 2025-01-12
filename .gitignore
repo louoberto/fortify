@@ -13,6 +13,7 @@ archive/
 repo
 node_modules
 out/
+*.vsix
 
 # C extensions
 *.so
