@@ -11,7 +11,10 @@
         "formatters"
     ],
     "activationEvents": [
-        "onLanguage:fortran"
+        "onLanguage:fortran",
+        "onLanguage:fortran-modern",
+        "onLanguage:FortranFreeForm",
+        "onLanguage:FortranFixedForm"
     ],
     "main": "./source/extension.py",
     "repository": {
