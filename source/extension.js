@@ -2,6 +2,7 @@
 const vscode = require('vscode');
 const { exec } = require('child_process');
 const path = require('path');
+const settings = require('./settings');
 
 let outputChannel;
 
@@ -20,7 +21,17 @@ function activate(context) {
         const filePath = document.fileName;
         const scriptPath = path.join(__dirname, 'driver.py');
 
-        exec(`python "${scriptPath}" "${filePath}"`, (error, stdout, stderr) => {
+        const config = settings.getSettings();
+        const commentLines = config.commentLines;
+        const lowercasing = config.lowercasing;
+        const lineCarryOver = config.lineCarryOver;
+        const lineCarryOverLastColumnFreeForm = config.lineCarryOverLastColumnFreeForm;
+        const lineCarryOverLastColumnFixedForm = config.lineCarryOverLastColumnFixedForm;
+        const commentCharacter = config.commentCharacter;
+        const continuationCharacter = config.continuationCharacter;
+        const tabLength = config.tabLength;
+
+        exec(`python "${scriptPath}" "${filePath}" ${lineCarryOverLastColumnFreeForm} ${lineCarryOverLastColumnFixedForm} ${lowercasing} ${lineCarryOver} ${commentCharacter} ${continuationCharacter} ${commentLines} ${tabLength}`, (error, stdout, stderr) => {
             if (error) {
                 vscode.window.showErrorMessage(`Error: ${stderr}`);
                 outputChannel.appendLine(`Error: ${stderr}`);

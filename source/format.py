@@ -32,9 +32,10 @@ def format(self):
             # Remove empty whitespace at the end of a comment-only line
             while(line[-2] == self.space):
                 line = line[:-2] + line[-1:]
-            new_file_lines.append(line)
-            continue
-#5suyChfF417bbpjYMd0I3qqywVjG55x1AVq5VVDTp788WpXv0XdaJQQJ99BAACAAAAAAAAAAAAASAZDOkgpd
+            if self.comment_behavior in [self.as_is, self.first_col]:
+                new_file_lines.append(line)
+                continue
+
         # Convert tab characters to spaces
         # This needs to be first to ensure proper character counting
         if self.tab in line:
@@ -44,56 +45,61 @@ def format(self):
         if not self.free_form and line[0] != self.comment and len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
             line = line[:5] + self.continuation_char + line[6:]
 
+        # Break up line into 3 parts: ff_line, code_line, cmnt_line
         cmt_index = line.find(self.comment)
         if cmt_index > 0:
             if not self.free_form:
                 code_line = line[self.ff_column_len:cmt_index].lstrip()
+                ff_line = line[:self.ff_column_len]
             else:
                 code_line = line[:cmt_index].lstrip()
+                ff_line = self.empty
             add_space = len(code_line) - len(code_line.rstrip()) # Keep original spacing
             cmnt_line = self.space * add_space + line[cmt_index:]
             code_line = code_line.rstrip()
         elif cmt_index == 0:
             while(line[-2] == self.space):
                 line = line[:-2] + line[-1:]
-            new_file_lines.append(line)
-            continue
+            if self.comment_behavior in [self.as_is, self.first_col]:
+                new_file_lines.append(line)
+                continue
+            else:
+                cmnt_line = line
+                code_line = self.empty
+                ff_line = self.empty
         else:
             if not self.free_form:
                 code_line = line[self.ff_column_len:].lstrip()
+                ff_line = line[:self.ff_column_len]
             else:
                 code_line = line.lstrip()
+                ff_line = self.empty
             cmnt_line = self.empty
-        
-        if self.free_form:
-            ff_line = self.empty # Fixed format columns
-        else:
-            ff_line = line[:self.ff_column_len]
 
         # Remove empty whitespace at the end of a comment-only line
         if not code_line:
             code_line = ff_line + code_line + cmnt_line
             while(code_line[-2] == self.space):
                 code_line = code_line[:-2] + code_line[-1:]
-            new_file_lines.append(code_line)
-            continue
-        elif code_line[0] == self.comment:
-            while(code_line[-2] == self.space):
-                code_line = code_line[:-2] + code_line[-1:]
-            new_file_lines.append(code_line)
-            continue
+            if self.comment_behavior in [self.as_is, self.first_col]:
+                new_file_lines.append(code_line)
+                continue
 
         temp = self.empty
         single_quote_skip = False  # Skip strings
         double_quote_skip = False  # Skip strings
+        comment_skip = False  # Skip comment
         for j, char in enumerate(code_line):
             # String check
             if char == "'" and not double_quote_skip:
                 single_quote_skip = not single_quote_skip
             if char == '"' and not single_quote_skip:
                 double_quote_skip = not double_quote_skip
-            if not single_quote_skip and not double_quote_skip:
-                char = char.lower() # Lowercase all working code; no global CAPS at this time
+            if char == self.comment:
+                comment_skip = True
+            if not single_quote_skip and not double_quote_skip and not comment_skip:
+                if self.lowercasing: # User defined; default is true
+                    char = char.lower() # Lowercase all working code; no global CAPS at this time
                 if char == self.space:
                     temp = self.remove_extra_space(self, j, char, code_line, temp)
                 elif char == ".":
@@ -114,8 +120,9 @@ def format(self):
                 temp += char
 
         temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count)
-        temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
-        temp = temp1 + temp2
+        if self.do_carry_over and not comment_skip: # User defined; default is true
+            temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
+            temp = temp1 + temp2
         new_file_lines.append(temp)
     self.file_lines = new_file_lines
     return

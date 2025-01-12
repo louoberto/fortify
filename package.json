@@ -2,7 +2,7 @@
     "name": "fortify",
     "displayName": "Fortify - Fortran Formatter",
     "description": "A powerful and simple Fortran formatting tool for Visual Studio Code.",
-    "version": "0.9.15",
+    "version": "0.9.21",
     "publisher": "LouOberto",
     "engines": {
         "vscode": "^1.80.0"
@@ -10,6 +10,7 @@
     "categories": [
         "Formatters"
     ],
+    "icon": "images/fortify-logo.png",
     "main": "./source/extension.js",
     "repository": {
         "type": "git",
@@ -20,39 +21,88 @@
             {
                 "id": "fortran",
                 "extensions": [
-                    ".f90",
-                    ".f95",
-                    ".f03",
-                    ".f"
+                    ".f90", ".F90",
+                    ".f95", ".F95",
+                    ".f03", ".F03",
+                    ".f08", ".F08",
+                    ".f15", ".F15",
+                    ".f18", ".F18",
+                    ".f", ".F",
+                    ".for", ".FOR",
+                    ".f77", ".F77",
+                    ".ftn", ".FTN",
+                    ".fpp", ".FPP",
+                    ".f04", ".F04",
+                    ".f66", ".F66",
+                    ".f2k", ".F2K",
+                    ".f2k3", ".F2K3",
+                    ".cmn", ".CMN"
                 ],
                 "configuration": "./language-configuration.json"
             },
             {
                 "id": "fortran-modern",
                 "extensions": [
-                    ".f90",
-                    ".f95",
-                    ".f03",
-                    ".f"
+                    ".f90", ".F90",
+                    ".f95", ".F95",
+                    ".f03", ".F03",
+                    ".f08", ".F08",
+                    ".f15", ".F15",
+                    ".f18", ".F18",
+                    ".f", ".F",
+                    ".for", ".FOR",
+                    ".f77", ".F77",
+                    ".ftn", ".FTN",
+                    ".fpp", ".FPP",
+                    ".f04", ".F04",
+                    ".f66", ".F66",
+                    ".f2k", ".F2K",
+                    ".f2k3", ".F2K3",
+                    ".cmn", ".CMN"
                 ],
                 "configuration": "./language-configuration.json"
             },
             {
                 "id": "FortranFreeForm",
                 "extensions": [
-                    ".f90",
-                    ".f95",
-                    ".f03",
-                    ".f"
+                    ".f90", ".F90",
+                    ".f95", ".F95",
+                    ".f03", ".F03",
+                    ".f08", ".F08",
+                    ".f15", ".F15",
+                    ".f18", ".F18",
+                    ".f", ".F",
+                    ".for", ".FOR",
+                    ".f77", ".F77",
+                    ".ftn", ".FTN",
+                    ".fpp", ".FPP",
+                    ".f04", ".F04",
+                    ".f66", ".F66",
+                    ".f2k", ".F2K",
+                    ".f2k3", ".F2K3",
+                    ".cmn", ".CMN"
                 ],
                 "configuration": "./language-configuration.json"
             },
             {
                 "id": "FortranFixedForm",
                 "extensions": [
-                    ".f",
-                    ".for",
-                    ".f77"
+                    ".f90", ".F90",
+                    ".f95", ".F95",
+                    ".f03", ".F03",
+                    ".f08", ".F08",
+                    ".f15", ".F15",
+                    ".f18", ".F18",
+                    ".f", ".F",
+                    ".for", ".FOR",
+                    ".f77", ".F77",
+                    ".ftn", ".FTN",
+                    ".fpp", ".FPP",
+                    ".f04", ".F04",
+                    ".f66", ".F66",
+                    ".f2k", ".F2K",
+                    ".f2k3", ".F2K3",
+                    ".cmn", ".CMN"
                 ],
                 "configuration": "./language-configuration.json"
             }
@@ -105,7 +155,56 @@
                 "key": "shift+alt+f",
                 "when": "editorLangId == FortranFixedForm"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Fortify Configuration",
+            "properties": {
+                "fortify.commentLines": {
+                    "type": "string",
+                    "default": "as_is",
+                    "description": "How to treat comment-only lines",
+                    "enum": ["first_column", "as_is", "indent"],
+                    "enumDescriptions": ["Moved to first column of code", "Completely ignore these lines, leaving comment-only lines as is", "Indent with the rest of the code"]
+                },
+                "fortify.lowercasing": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Lowercasing all code. If false, leaves case as is."
+                },
+                "fortify.lineCarryOver": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Line carry over formatting; when formatting runs past column limit"
+                },
+                "fortify.lineCarryOverLastColumnFreeForm": {
+                    "type": "number",
+                    "default": 10000,
+                    "description": "Line carry over: Last usable column in Fortran free form."
+                },
+                "fortify.lineCarryOverLastColumnFixedForm": {
+                    "type": "number",
+                    "default": 72,
+                    "description": "Line carry over: Last usable column in Fortran fixed form."
+                }, 
+                "fortify.commentCharacter": {
+                    "type": "string",
+                    "default": "!",
+                    "description": "F77 only: Fortran comment character",
+                    "enum": ["!", "*", "C", "c"]
+                },
+                "fortify.continuationCharacter": {
+                    "type": "string",
+                    "default": "&",
+                    "description": "F77 only: Fortran fixed format continuation character"
+                },
+                "fortify.tabLength": {
+                    "type": "number",
+                    "default": 3,
+                    "description": "Fortran default tab length"
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "echo 'No prepublish step needed for Python extension'"

@@ -21,17 +21,28 @@ from format import format
 
 class fortify:
     # Constructor to initialize object attributes
-    def __init__(self, continuation_char = '&', tab_len = 3):
-        # These are variables
-        self.continuation_char = continuation_char  # Can make this user defined I suppose, but only for ff
+    def __init__(self):
+        # User defined variables
+        self.continuation_char = '&'
+        self.tab_len = 3
+        self.last_col = 10000
+        self.comment = '!'
+        self.lowercasing = True
+        self.do_carry_over = True
+        self.indent = "indent"
+        self.as_is = "as_is"
+        self.first_col = "first_column"
+        self.comment_behavior = self.first_col
+
+        # Intrinsic to Fortran or Python
         self.ff_column_len = 6  # Reserved space for fixed format
-        self.tab_len = tab_len  # Make default tab space 3
-        self.free_form = False
+        self.free_form = True
         self.empty = ''
         self.space = ' '
-        self.comment = '!'
         self.newline = '\n'
         self.tab = '\t'
+
+        # Fortran data types (not a complete list yet)
         self.data_types = [
             'integer',
             'real',
@@ -39,31 +50,27 @@ class fortify:
             'character',
             'logical',
             'double precision',
-        ]  # Variable declartion types, referenced in multiple functions
-        self.iftypes = ['.and.', '.not.']  # These are 3 letter
-        self.iftypes2 = [  # These are 2 letter
-            '.eq.',
-            '.ge.',
-            '.gt.',
-            '.le.',
-            '.lt.',
-            '.ne.',
-            '.or.',
         ]
-        # These are functions
+
+        # Logical expressions
+        self.iftypes = ['.and.', '.not.']
+        self.iftypes2 = ['.eq.', '.ge.', '.gt.', '.le.', '.lt.', '.ne.', '.or.']
+
+        # Formatting functions
         self.read_file = read_file  # Read and stoe the file_lines of the file to format
+        self.print_file = print_file
+        self.format = format
+        self.remove_extra_space = remove_extra_space
         self.if_logicals_spacing = if_logicals_spacing
+        self.comma_spacing = comma_spacing
         self.paren_spacing = paren_spacing
         self.relational_op_spacing = relational_op_spacing
         self.star_spacing = star_spacing
         self.plus_spacing = plus_spacing
-        self.print_file = print_file
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
-        self.comma_spacing = comma_spacing
-        self.remove_extra_space = remove_extra_space
-        self.format = format
 
+        # Keywords for indenting
         self.keywords_increase = [
             'contains',
             'do',
