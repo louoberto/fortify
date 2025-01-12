@@ -1,0 +1,16 @@
+# Exclude node_modules except for specific packages
+node_modules/**
+!node_modules/some-package/**
+
+# Exclude test files
+tests/**
+
+# Exclude build output
+out/**
+
+# Exclude configuration files
+.vscode/**
+.git/**
+.gitignore
+npm-debug.log
+.vscodeignore
