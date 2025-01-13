@@ -52,15 +52,16 @@ Properly handles strings enclosed in single or double quotes, ensuring they are 
 
 ## User defined inputs
 Many defaults are set to the modern Fortran standard, but are able to be re-defined by the user. These include:
-| Variable                          | Default Value |
-|-----------------------------------|---------------|
-| Continuation Character (F77 only)      | `&`           |
-| Comment Character (F77 only)           | `!`           |
-| Tab Length                             | 3             |
-| Last column length                     | Free Format: `10000`, Fixed Format: `72` |
-| Lowercase all non-string code          | True          |
-| Remove extra spaces                    | True          |
-| Comment-only lines structured indented | False         |
+| Variable                          | Default Value | Description | 
+|-----------------------------------|---------------|---------------|
+| Comment Character (F77 only)           | `!`           | Change the first-column comment character |
+| Comment Lines | `as_is` | Determine behavior for how comment-only lines are positioned |
+| Continuation Character (F77 only)      | `&`           | Can change the 6th column continuation character |
+| Tab Length                             | 3             | Set the default tab length |
+| Line carry over | `T` | If a formatted line goes past the compiler column limit, automatically continue code to next line |
+| Last column length                     | Free Format: `10000`, Fixed Format: `72` | Sets the last usable column, as determined by the current standard. 
+| Lowercase all non-string code          | `T`          | Lowercase all code
+| Remove extra spaces                    | `T`          | Removed 2 or more spaces between code, but not comments |
 
 
 ## Usage
@@ -74,13 +75,13 @@ git clone https://github.com/yourusername/fortify.git
 cd fortify
 python setup.py install
 ```
-
+<!-- 
 ## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+Contributions are welcome! Please fork the repository and submit a pull request with your changes. -->
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Contact
-For any questions or issues, please open an issue on the GitHub repository or contact the maintainer at your.email@example.com.
+For any questions or issues, please ask a question on the Q&A or open an issue on the GitHub repository.
 ```
