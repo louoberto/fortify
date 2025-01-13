@@ -44,8 +44,8 @@ jobs:
           base=$(basename "$file")
           keyfile="test/keyfile_${base#testfile_}"
           if [[ -f "$keyfile" ]]; then
-            echo "Running: python fortify/source/driver.py $file"
-            python3 fortify/source/driver.py "$file"
+            echo "Running: python fortify/source/fortify $file"
+            python3 fortify/source/fortify "$file"
             # echo "Comparing $file with $keyfile"
 
             # Use tee to capture and display diff output
@@ -70,9 +70,9 @@ jobs:
           base=$(basename "$file")
           keyfile="test/keyfile_${base#testfile_}"
           if [[ -f "$keyfile" ]]; then
-            echo "Running: python fortify/source/driver.py $file"
-            python3 fortify/source/driver.py "$file"
-            python3 fortify/source/driver.py "$file"
+            echo "Running: python fortify/source/fortify $file"
+            python3 fortify/source/fortify "$file"
+            python3 fortify/source/fortify "$file"
             # echo "Comparing $file with $keyfile"
 
             # Use tee to capture and display diff output
