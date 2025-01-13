@@ -43,7 +43,6 @@ def plus_spacing(self, j, char, code_line, temp_line):
             temp = temp_line + char
         else:
             temp = temp_line + self.space + char
-        # print(temp, code_line[:j+10])
     else:  # ? + ?
         temp = temp_line + char
     

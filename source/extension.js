@@ -31,8 +31,9 @@ function activate(context) {
         const continuationCharacter = config.continuationCharacter;
         const tabLength = config.tabLength;
         const removeSpacing = config.removeSpacing;
+        const noFormat = config.noFormat;
 
-        exec(`python "${scriptPath}" "${filePath}" ${lineCarryOverLastColumnFreeForm} ${lineCarryOverLastColumnFixedForm} ${lowercasing} ${lineCarryOver} ${commentCharacter} ${continuationCharacter} ${commentLines} ${tabLength}`, (error, stdout, stderr) => {
+        exec(`python "${scriptPath}" "${filePath}" ${lineCarryOverLastColumnFreeForm} ${lineCarryOverLastColumnFixedForm} ${lowercasing} ${lineCarryOver} ${commentCharacter} ${continuationCharacter} ${commentLines} ${tabLength} ${removeSpacing} ${noFormat}`, (error, stdout, stderr) => {
             if (error) {
                 vscode.window.showErrorMessage(`Error: ${stderr}`);
                 outputChannel.appendLine(`Error: ${stderr}`);

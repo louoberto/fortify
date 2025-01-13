@@ -34,6 +34,7 @@ class fortify_class:
         self.first_col = "first_column"
         self.comment_behavior = self.first_col
         self.remove_spacing = True
+        self.no_format = "do not format"
 
         # Intrinsic to Fortran or Python
         self.ff_column_len = 6  # Reserved space for fixed format

@@ -21,6 +21,7 @@ if __name__ == "__main__":
     parser.add_argument("--comment_lines", type=str, default=None, help="How to treat comment-only lines")
     parser.add_argument("--tab_length", type=int, default=None, help="Fortran default tab length")
     parser.add_argument("--remove_spacing", type=bool, default=None, help="Enforces one space between code objects")
+    parser.add_argument("--no_format", type=str, default=None, help="Skip formatting line if it sees this string in the comment line")
 
 
     args = parser.parse_args()
@@ -35,6 +36,7 @@ if __name__ == "__main__":
     comment_lines = args.comment_lines if args.comment_lines is not None else 'first_column'
     tab_length = args.tab_length if args.tab_length is not None else 3
     remove_spacing = args.remove_spacing if args.remove_spacing is not None else True
+    no_format = args.no_format if args.no_format is not None else 'do not format'
 
 
     for fortran_file in fortran_files:
@@ -45,6 +47,7 @@ if __name__ == "__main__":
         myfile.comment_behavior = comment_lines
         myfile.tab_length = tab_length
         myfile.remove_spacing = remove_spacing
+        myfile.no_format = no_format
         if myfile.free_form:
             myfile.last_col = last_column_free_form
         else:

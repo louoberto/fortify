@@ -22,7 +22,8 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
         if code_line[j - 1] != '=' and ')' not in [code_line[j - 1], code_line[j + 1]]: # ?=?, ?+?, ?-?, ?/?
             if char == '/':
                 if code_line[j + 1] == '/':
-                    temp = temp_line + (self.space if code_line[j - 1] != self.space else self.empty) + char
+                    # print(repr(code_line[j]),j)
+                    temp = temp_line + (self.space if code_line[j - 1] != self.space and j > 0 else self.empty) + char
                 elif code_line[j - 1] in ['/', '.']:# and not code_line.startswith('namelist /') and temp_line != 'namelist ':
                     if temp_line[-1].isspace() and code_line[j - 1] == '/':
                         temp = temp_line[:-1] + char + self.space

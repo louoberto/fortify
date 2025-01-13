@@ -21,7 +21,7 @@ def format(self):
             if i != len(self.file_lines):
                 new_file_lines.append(self.newline)
             continue
-        elif no_format(line): # Do no format in the line
+        elif no_format(self, line): # Do no format in the line
             new_file_lines.append(line)
             continue
         elif line.strip()[0] == '#': # Preprocesser directive, leave line be

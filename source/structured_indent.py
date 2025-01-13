@@ -20,7 +20,6 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                     while self.file_lines[j+1][-2].strip() == self.continuation_char:
                         j += 1
                     if self.file_lines[j+1][-5:].strip() == 'then':
-                            # print(self.file_lines[j+1])
                             indenter += 1
                             skip = True
                 else:
@@ -80,7 +79,6 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
         else:
             if len(self.file_lines) > j + 1 and len(self.file_lines[j + 1]) > 5 and self.file_lines[j + 1][5] != self.space and not self.file_lines[j + 1][0].isalpha() and self.file_lines[j + 1][0] not in ['*', self.comment]:
                 skip = True
-                # print(repr(self.file_lines[j+1][5]), self.file_lines[j+1], self.file_lines[j+1][5] == self.space)
             else:
                 skip = False
     else:
