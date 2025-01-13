@@ -30,6 +30,7 @@ function activate(context) {
         const commentCharacter = config.commentCharacter;
         const continuationCharacter = config.continuationCharacter;
         const tabLength = config.tabLength;
+        const removeSpacing = config.removeSpacing;
 
         exec(`python "${scriptPath}" "${filePath}" ${lineCarryOverLastColumnFreeForm} ${lineCarryOverLastColumnFixedForm} ${lowercasing} ${lineCarryOver} ${commentCharacter} ${continuationCharacter} ${commentLines} ${tabLength}`, (error, stdout, stderr) => {
             if (error) {

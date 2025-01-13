@@ -20,6 +20,7 @@ if __name__ == "__main__":
     parser.add_argument("--continuation_character", type=str, default=None, help="Fortran fixed format continuation character")
     parser.add_argument("--comment_lines", type=str, default=None, help="How to treat comment-only lines")
     parser.add_argument("--tab_length", type=int, default=None, help="Fortran default tab length")
+    parser.add_argument("--remove_spacing", type=bool, default=None, help="Enforces one space between code objects")
 
 
     args = parser.parse_args()
@@ -33,6 +34,7 @@ if __name__ == "__main__":
     continuation_character = args.continuation_character if args.continuation_character is not None else '&'
     comment_lines = args.comment_lines if args.comment_lines is not None else 'first_column'
     tab_length = args.tab_length if args.tab_length is not None else 3
+    remove_spacing = args.remove_spacing if args.remove_spacing is not None else True
 
 
     for fortran_file in fortran_files:
@@ -42,6 +44,7 @@ if __name__ == "__main__":
         myfile.do_carry_over = line_carry_over
         myfile.comment_behavior = comment_lines
         myfile.tab_length = tab_length
+        myfile.remove_spacing = remove_spacing
         if myfile.free_form:
             myfile.last_col = last_column_free_form
         else:

@@ -18,7 +18,8 @@ function getSettings() {
         commentCharacter: config.get('commentCharacter'),
         continuationCharacter: continuationCharacter,
         commentLines: config.get('commentLines'),
-        tabLength: config.get('tabLength')
+        tabLength: config.get('tabLength'),
+        removeSpacing: config.get('removeSpacing')
     };
 }
 

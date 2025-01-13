@@ -33,6 +33,7 @@ class fortify_class:
         self.as_is = "as_is"
         self.first_col = "first_column"
         self.comment_behavior = self.first_col
+        self.remove_spacing = True
 
         # Intrinsic to Fortran or Python
         self.ff_column_len = 6  # Reserved space for fixed format

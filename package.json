@@ -202,6 +202,11 @@
                     "type": "number",
                     "default": 3,
                     "description": "Fortran default tab length"
+                },
+                "fortify.removeSpacing": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Enforces one space between code objects, but not between code and comments"
                 }
             }
         }
