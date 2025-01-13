@@ -2,7 +2,7 @@
     "name": "fortify",
     "displayName": "Fortify - Fortran Formatter",
     "description": "A powerful and simple Fortran formatting tool for Visual Studio Code.",
-    "version": "0.9.25",
+    "version": "1.0.0",
     "publisher": "LouOberto",
     "engines": {
         "vscode": "^1.80.0"
