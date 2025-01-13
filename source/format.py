@@ -100,7 +100,7 @@ def format(self):
             if not single_quote_skip and not double_quote_skip and not comment_skip:
                 if self.lowercasing: # User defined; default is true
                     char = char.lower() # Lowercase all working code; no global CAPS at this time
-                if char.isspace() and self.remove_spacing:
+                if char == self.space and self.remove_spacing:
                     temp = self.remove_extra_space(self, j, char, code_line, temp)
                 elif char == ".":
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
