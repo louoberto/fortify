@@ -6,7 +6,7 @@
 # all the class object functions.
 # ==============================================================================
 import argparse
-from fortify import fortify
+from fortify_class import fortify_class
 
 if __name__ == "__main__":
     # Arg parsing command line
@@ -36,7 +36,7 @@ if __name__ == "__main__":
 
 
     for fortran_file in fortran_files:
-        myfile = fortify()
+        myfile = fortify_class()
         myfile.read_file(myfile, fortran_file)
         myfile.lowercasing = lowercasing
         myfile.do_carry_over = line_carry_over

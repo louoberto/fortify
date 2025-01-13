@@ -19,7 +19,7 @@ function activate(context) {
 
         const document = editor.document;
         const filePath = document.fileName;
-        const scriptPath = path.join(__dirname, 'driver.py');
+        const scriptPath = path.join(__dirname, 'fortify');
 
         const config = settings.getSettings();
         const commentLines = config.commentLines;

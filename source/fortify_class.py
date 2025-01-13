@@ -1,8 +1,8 @@
 # ========================================================================
-# Function: fortify
+# Class: fortify_class
 # ========================================================================
 # Purpose:
-# Creates the fortify class, which contains all the needed objects
+# Creates the fortify_class class, which contains all the needed objects
 # to format a Fortran file
 # ========================================================================
 from read_file import read_file
@@ -19,7 +19,7 @@ from remove_extra_space import remove_extra_space
 from format import format
 
 
-class fortify:
+class fortify_class:
     # Constructor to initialize object attributes
     def __init__(self):
         # User defined variables

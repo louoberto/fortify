@@ -10,7 +10,7 @@ Will properly indent and nest if, do, subroutine, program, and any other keyword
 
 In the case of the do-continue F77 statement, it will find the matching goto-continue and unindent on that. This will work even in a do-loop that contains multiple do's that end on the same continue.
 
-*Note*: All fixed format files will have the first 6 columns reserved, while all free format files use every column
+**Note:** All fixed format files will have the first 6 columns reserved, while all free format files use every column
 
 ### 2. Line Carry Over
 Manages line continuation by finding appropriate places to break lines and carry over to the next line, ensuring code remains within the specified column width.
@@ -71,9 +71,9 @@ To use Fortify, simply run the tool on your Fortran source files. The tool will 
 To install Fortify, clone the repository and run the setup script:
 
 ```sh
-git clone https://github.com/yourusername/fortify.git
+git clone https://github.com/louoberto/fortify.git
 cd fortify
-python setup.py install
+export PATH=$PATH:$(pwd)/source
 ```
 <!-- 
 ## Contributing
