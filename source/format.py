@@ -79,7 +79,7 @@ def format(self):
         # Remove empty whitespace at the end of a comment-only line
         if not code_line:
             code_line = ff_line + code_line + cmnt_line
-            while(code_line[-2] == self.space):
+            while(len(code_line) > 1 and code_line[-2] == self.space):
                 code_line = code_line[:-2] + code_line[-1:]
             if self.comment_behavior in [self.as_is, self.first_col]:
                 new_file_lines.append(code_line)
