@@ -52,7 +52,7 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line):
         else:
             line1 = ff_line + temp_line[:j].rstrip() + cmnt_line
             indent = len(temp_line[:j]) - len(temp_line[:j].lstrip())
-            line2 = ff_line[:-1] + self.continuation_char + self.space * indent + temp_line[j:].strip() + self.newline
+            line2 = self.space * 5 + self.continuation_char + self.space * indent + temp_line[j:].strip() + self.newline
             # print(line2)
 
         if line1[-1] != self.newline:
