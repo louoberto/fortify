@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # ==============================================================================
-# Function: driver
+# Function: fortify
 # Purpose:
 # This is the entry point from the command line. It creates the object and calls
 # all the class object functions.
