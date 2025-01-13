@@ -2,7 +2,7 @@
     "name": "fortify",
     "displayName": "Fortify - Fortran Formatter",
     "description": "A powerful and simple Fortran formatting tool for Visual Studio Code.",
-    "version": "0.9.22",
+    "version": "0.9.25",
     "publisher": "LouOberto",
     "engines": {
         "vscode": "^1.80.0"
@@ -12,12 +12,6 @@
     ],
     "icon": "images/fortify-logo.png",
     "main": "./source/extension.js",
-    "activationEvents": [
-        "onLanguage:fortran",
-        "onLanguage:fortran-modern",
-        "onLanguage:FortranFreeForm",
-        "onLanguage:FortranFixedForm"
-    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/louoberto/fortify"
@@ -42,7 +36,8 @@
                     ".f66", ".F66",
                     ".f2k", ".F2K",
                     ".f2k3", ".F2K3",
-                    ".cmn", ".CMN"
+                    ".cmn", ".CMN",
+                    ".inc", ".INC"
                 ],
                 "configuration": "./language-configuration.json"
             },
@@ -64,7 +59,8 @@
                     ".f66", ".F66",
                     ".f2k", ".F2K",
                     ".f2k3", ".F2K3",
-                    ".cmn", ".CMN"
+                    ".cmn", ".CMN",
+                    ".inc", ".INC"
                 ],
                 "configuration": "./language-configuration.json"
             },
@@ -86,7 +82,8 @@
                     ".f66", ".F66",
                     ".f2k", ".F2K",
                     ".f2k3", ".F2K3",
-                    ".cmn", ".CMN"
+                    ".cmn", ".CMN",
+                    ".inc", ".INC"
                 ],
                 "configuration": "./language-configuration.json"
             },
@@ -108,7 +105,8 @@
                     ".f66", ".F66",
                     ".f2k", ".F2K",
                     ".f2k3", ".F2K3",
-                    ".cmn", ".CMN"
+                    ".cmn", ".CMN",
+                    ".inc", ".INC"
                 ],
                 "configuration": "./language-configuration.json"
             }
@@ -213,6 +211,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Enforces one space between code objects, but not between code and comments"
+                },
+                "fortify.noFormat": {
+                    "type": "string",
+                    "default": "do not format",
+                    "description": "Fortify will skip formatting line if it sees this string in the comment line"
                 }
             }
         }
@@ -222,4 +225,3 @@
     },
     "devDependencies": {}
 }
-

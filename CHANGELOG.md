@@ -1,5 +1,5 @@
 # Changelog
 
-## [0.9.20] - 0001-01-01
+## [1.0.0] - 2025-Jan-12
 ### Added
-- This is a test
+- Initial release of Fortify v1.0.0
