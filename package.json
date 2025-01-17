@@ -2,7 +2,7 @@
     "name": "fortify",
     "displayName": "Fortify - Fortran Formatter",
     "description": "A powerful and simple Fortran formatting tool for Visual Studio Code.",
-    "version": "1.0.0",
+    "version": "1.0.16",
     "publisher": "LouOberto",
     "engines": {
         "vscode": "^1.80.0"
@@ -215,7 +215,7 @@
                 "fortify.noFormat": {
                     "type": "string",
                     "default": "do not format",
-                    "description": "Fortify will skip formatting line if it sees this string in the comment line"
+                    "description": "Skip formatting line if it sees this string in the comment line. Example: ! do not format"
                 }
             }
         }

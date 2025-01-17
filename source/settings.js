@@ -11,15 +11,16 @@ function getSettings() {
     }
 
     return {
-        lastColumnFreeForm: config.get('lastColumnFreeForm'),
-        lastColumnFixedForm: config.get('lastColumnFixedForm'),
+        lineCarryOverLastColumnFreeForm: config.get('lineCarryOverLastColumnFreeFormv'),
+        lineCarryOverLastColumnFixedForm: config.get('lineCarryOverLastColumnFixedForm'),
         lowercasing: config.get('lowercasing'),
         lineCarryOver: config.get('lineCarryOver'),
         commentCharacter: config.get('commentCharacter'),
         continuationCharacter: continuationCharacter,
         commentLines: config.get('commentLines'),
         tabLength: config.get('tabLength'),
-        removeSpacing: config.get('removeSpacing')
+        removeSpacing: config.get('removeSpacing'),
+        noFormat: config.get('noFormat')
     };
 }
 
