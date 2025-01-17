@@ -21,7 +21,6 @@ function activate(context) {
         const scriptPath = path.join(__dirname, 'fortify');
 
         const config = settings.getSettings();
-        outputChannel.appendLine(`'Config:', ${config}`);
         const lowercasing = config.lowercasing !== undefined ? config.lowercasing : true;
         const lineCarryOver = config.lineCarryOver !== undefined ? config.lineCarryOver : true;
         const lineCarryOverLastColumnFreeForm = config.lineCarryOverLastColumnFreeForm !== undefined ? config.lineCarryOverLastColumnFreeForm : 10000;
