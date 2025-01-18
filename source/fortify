@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-# ==============================================================================
+# ========================================================================
 # Function: fortify
 # Purpose:
-# This is the entry point from the command line. It creates the object and calls
-# all the class object functions.
-# ==============================================================================
+# This is the entry point from the command line. It creates the object
+# and calls all the class object functions.
+# ========================================================================
 import argparse
 from fortify_class import fortify_class
 
@@ -12,45 +12,71 @@ if __name__ == "__main__":
     # Arg parsing command line
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("filename", action="store", nargs="+", help="Path(s) to input file(s)")
-    parser.add_argument("--last_column_free_form", type=int, default=None, help="Line carry over: Last usable column in Fortran free form.")
-    parser.add_argument("--last_column_fixed_form", type=int, default=None, help="Line carry over: Last usable column in Fortran fixed form.")
-    parser.add_argument("--lowercasing", type=bool, default=None, help="Lowercasing all code. If false, leaves case as is.")
-    parser.add_argument("--line_carry_over", type=bool, default=None, help="Line carry over formatting; when formatting runs past column limit")
-    parser.add_argument("--comment_character", type=str, default=None, help="Fortran comment character")
-    parser.add_argument("--continuation_character", type=str, default=None, help="Fortran fixed format continuation character")
+    parser.add_argument("--last_column_free_form", type=int, default=10000, help="Line carry over: Last usable column in Fortran free form.")
+    parser.add_argument("--last_column_fixed_form", type=int, default=72, help="Line carry over: Last usable column in Fortran fixed form.")
+    parser.add_argument("--lowercasing", type=str, default='T', help="Lowercasing all code. If false, leaves case as is.")
+    parser.add_argument("--line_carry_over", type=str, default='T', help="Line carry over formatting; when formatting runs past column limit")
+    parser.add_argument("--comment_character", type=str, default='!', help="Fortran comment character")
+    parser.add_argument("--continuation_character", type=str, default='&', help="Fortran fixed format continuation character")
     parser.add_argument("--comment_lines", type=str, default=None, help="How to treat comment-only lines")
-    parser.add_argument("--tab_length", type=int, default=None, help="Fortran default tab length")
-    parser.add_argument("--remove_spacing", type=bool, default=None, help="Enforces one space between code objects")
-    parser.add_argument("--no_format", type=str, default=None, help="Skip formatting line if it sees this string in the comment line")
-    
+    parser.add_argument("--tab_length", type=int, default=3, help="Fortran default tab length")
+    parser.add_argument("--remove_spacing", type=str, default='T', help="Enforces one space between code objects")
+    parser.add_argument("--no_format", type=str, default='do not format', help="Skip formatting line if it sees this string in the comment line")
     args = parser.parse_args()
-    fortran_files = args.filename  # Set of args supplied to us.
-    last_column_free_form = args.last_column_free_form if args.last_column_free_form is not None else 10000
-    last_column_fixed_form = args.last_column_fixed_form if args.last_column_fixed_form is not None else 72
-    lowercasing = args.lowercasing if args.lowercasing is not None else True
-    line_carry_over = args.line_carry_over if args.line_carry_over is not None else True
-    comment_character = args.comment_character if args.comment_character is not None else '!'
-    continuation_character = args.continuation_character if args.continuation_character is not None else '&'
-    comment_lines = args.comment_lines if args.comment_lines is not None else 'first_column'
-    tab_length = args.tab_length if args.tab_length is not None else 3
-    remove_spacing = args.remove_spacing if args.remove_spacing is not None else True
-    no_format = args.no_format if args.no_format is not None else 'do not format'
 
-    for fortran_file in fortran_files:
-        myfile = fortify_class()
-        myfile.read_file(myfile, fortran_file)
-        myfile.lowercasing = lowercasing
-        myfile.do_carry_over = line_carry_over
-        myfile.comment_behavior = comment_lines
-        myfile.tab_length = tab_length
-        myfile.remove_spacing = remove_spacing
-        myfile.no_format = no_format
-        if myfile.free_form:
-            myfile.last_col = last_column_free_form
+    # ====================================================================
+    # Create the class instance and proceed with defining values for it,
+    # based on what options were or were not given
+    # ====================================================================
+    fortify_instance = fortify_class() # Create the class instance
+
+    # Get the file lines
+    fortify_instance.read_file(fortify_instance, args.filename[0])
+
+    # Set how comment-only lines behave
+    if args.comment_lines == 'first_column':
+        fortify_instance.comment_behavior = fortify_instance.first_col
+    elif args.comment_lines == 'indent':
+        fortify_instance.comment_behavior = fortify_instance.indent
+    else:
+        fortify_instance.comment_behavior = fortify_instance.as_is
+    
+    # Set whether we lowercase all code, sparing comments
+    if args.lowercasing.lower() in ['f', 'false', '0']:
+        fortify_instance.lowercasing = False
+    else:
+        fortify_instance.lowercasing = True
+
+    # Set tab length
+    fortify_instance.tab_len = args.tab_length
+
+    # Remove any empty whitespace that existed at the end of a line
+    if args.remove_spacing.lower() in ['f', 'false', '0']:
+        fortify_instance.remove_spacing = False
+    else:
+        fortify_instance.remove_spacing = True
+
+    # Set the no-format string identifier
+    fortify_instance.no_format = args.no_format
+
+    # Set the last column lenght based on free or fixed form
+    # If fixed form, set additional comment and continuation chars
+    if fortify_instance.free_form:
+        fortify_instance.last_col = args.last_column_free_form
+        # Automatically carries over text to the next line
+        # if it runs past the last column, due to formatting
+        if args.line_carry_over.lower() in ['f', 'false', '0']:
+            fortify_instance.do_carry_over = False
         else:
-            myfile.last_col = last_column_fixed_form
-            myfile.comment = comment_character
-            myfile.continuation_char = continuation_character
+            fortify_instance.do_carry_over = True
+    else:
+        fortify_instance.do_carry_over = True
+        fortify_instance.last_col = args.last_column_fixed_form
+        fortify_instance.comment = args.comment_character[0]
+        fortify_instance.continuation_char = args.continuation_character[0]
 
-        myfile.format(myfile)
-        myfile.print_file(myfile, fortran_file)
+    # Send to the formatter
+    fortify_instance.format(fortify_instance)
+
+    # Print the result back to the original file
+    fortify_instance.print_file(fortify_instance, args.filename[0])

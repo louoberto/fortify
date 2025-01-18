@@ -6,11 +6,12 @@
 # ========================================================================
 import sys
 
-def print_file(self, fortran_file):
+def print_file(self, filename):
     try:
-        with open(fortran_file, "w") as out_file:
+        with open(filename, "w") as out_file:
             out_file.writelines(self.file_lines)
-    except:
-        print("Could not open/read: ", fortran_file)
+    except Exception as e:
+        print(f"Could not open/read: {filename}")
+        print(f"Error: {e}")
         print("Quitting")
         sys.exit(2)

@@ -16,7 +16,8 @@ def read_file(self, filename):
                 free_form = False
             self.free_form = free_form
             return
-    except:
-        print("Could not open/read: ", filename)
+    except Exception as e:
+        print(f"Could not open/read: {filename}")
+        print(f"Error: {e}")
         print("Quitting")
         sys.exit(1)

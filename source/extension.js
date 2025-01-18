@@ -21,29 +21,29 @@ function activate(context) {
         const scriptPath = path.join(__dirname, 'fortify');
 
         const config = settings.getSettings();
-        const lowercasing = config.lowercasing !== undefined ? config.lowercasing : true;
-        const lineCarryOver = config.lineCarryOver !== undefined ? config.lineCarryOver : true;
-        const lineCarryOverLastColumnFreeForm = config.lineCarryOverLastColumnFreeForm !== undefined ? config.lineCarryOverLastColumnFreeForm : 10000;
-        const lineCarryOverLastColumnFixedForm = config.lineCarryOverLastColumnFixedForm !== undefined ? config.lineCarryOverLastColumnFixedForm : 72;
-        const commentCharacter = config.commentCharacter !== undefined ? config.commentCharacter : '!';
-        const commentLines = config.commentLines !== undefined ? config.commentLines : 'first_column';
-        const continuationCharacter = config.continuationCharacter !== undefined ? config.continuationCharacter : '&';
-        const tabLength = config.tabLength !== undefined ? config.tabLength : 3;
-        const removeSpacing = config.removeSpacing !== undefined ? config.removeSpacing : true;
-        const noFormat = config.noFormat !== undefined ? config.noFormat : 'do not format';
+        const lowercasing = config.lowercasing;
+        const lineCarryOver = config.lineCarryOver;
+        const lineCarryOverLastColumnFreeForm = config.lineCarryOverLastColumnFreeForm;
+        const lineCarryOverLastColumnFixedForm = config.lineCarryOverLastColumnFixedForm;
+        const commentCharacter = config.commentCharacter;
+        const commentLines = config.commentLines;
+        const continuationCharacter = config.continuationCharacter;
+        const tabLength = config.tabLength;
+        const removeSpacing = config.removeSpacing;
+        const noFormat = config.noFormat;
 
         exec(
-            `python "${scriptPath}" "${filePath}" ` +
+            `python '${scriptPath}' '${filePath}' ` +
             `--last_column_free_form ${lineCarryOverLastColumnFreeForm} ` +
             `--last_column_fixed_form ${lineCarryOverLastColumnFixedForm} ` +
             `--lowercasing ${lowercasing} ` + 
             `--line_carry_over ${lineCarryOver} ` +
-            `--comment_character ${commentCharacter} ` +
-            `--continuation_character ${continuationCharacter} ` +
-            `--comment_lines "${commentLines}" ` +
+            `--comment_character '${commentCharacter}' ` +
+            `--continuation_character '${continuationCharacter}' ` +
+            `--comment_lines '${commentLines}' ` +
             `--tab_length ${tabLength} ` + 
             `--remove_spacing ${removeSpacing} ` +
-            `--no_format "${noFormat}"`,
+            `--no_format '${noFormat}'`,
             (error, stdout, stderr) => {
                 if (error) {
                 // vscode.window.showErrorMessage(`Command execution failed.\nError: ${error.message}\nStderr: ${stderr}`);

@@ -2,7 +2,7 @@
     "name": "fortify",
     "displayName": "Fortify - Fortran Formatter",
     "description": "A powerful and simple Fortran formatting tool for Visual Studio Code.",
-    "version": "1.0.17",
+    "version": "1.0.18",
     "publisher": "LouOberto",
     "engines": {
         "vscode": "^1.80.0"
@@ -15,6 +15,9 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/louoberto/fortify"
+    },
+    "activationEvents": {
+        "when": "editorLangId == fortran-modern"
     },
     "contributes": {
         "languages": [
@@ -179,7 +182,7 @@
                 "fortify.lineCarryOver": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Line carry over formatting; when formatting runs past column limit"
+                    "description": "Free format only: Line carry over formatting; when formatting runs past column limit"
                 },
                 "fortify.lineCarryOverLastColumnFreeForm": {
                     "type": "number",

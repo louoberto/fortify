@@ -26,7 +26,7 @@ def if_logicals_spacing(self, j, char, code_line, temp_line):
             temp = temp_line[:1 - i] + temp_line[1 - i:] + char + self.space
     elif code_line[j - i] not in [self.space, self.newline, '('] and code_line[j + 1] == self.space:
         temp = temp_line[:1 - i] + self.space + temp_line[1 - i:] + char
-    elif code_line[j - i] == self.space and code_line[j + 1] not in [self.space, self.continuation_char]:
+    elif code_line[j - i] == self.space and len(code_line) > j + 1 and code_line[j + 1] not in [self.space, self.continuation_char]:
         temp = temp_line + char + self.space
     else:
         temp = temp_line + char
