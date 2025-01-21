@@ -21,20 +21,22 @@ def format(self):
             if i != len(self.file_lines):
                 new_file_lines.append(self.newline)
             continue
-        elif no_format(self, line): # Do no format in the line
-            new_file_lines.append(line)
-            continue
         elif line.strip()[0] == '#': # Preprocesser directive, leave line be
             new_file_lines.append(line)
             continue
-        elif line[0] in ['*','C','c'] and not self.free_form: # Convert old-style comment chars to !
-            line = self.comment + line[1:]
-            # Remove empty whitespace at the end of a comment-only line
-            while(line[-2] == self.space):
+        elif line[0] in ['*','C','c','!'] and not self.free_form: # Check for F77 comments
+            line = self.comment + line[1:] # Convert to what user wants
+            while(line[-2] == self.space): # Remove empty whitespace at the end of a comment-only line
                 line = line[:-2] + line[-1:]
-            if self.comment_behavior in [self.as_is, self.first_col]:
-                new_file_lines.append(line)
-                continue
+            new_file_lines.append(line) # Append and go back
+            continue
+        elif not self.free_form: # We've dealt with column 0 comments, so change this to '!'
+            old_comment = self.comment
+            self.comment = '!'
+        
+        if no_format(self, line): # Do no format in the line
+            new_file_lines.append(line)
+            continue
 
         # Convert tab characters to spaces
         # This needs to be first to ensure proper character counting
@@ -42,7 +44,7 @@ def format(self):
             line = line.replace(self.tab, self.space * self.tab_len)
         
         # Standardize the line continuation character to & for fixed format
-        if not self.free_form and line[0] != self.comment and len(line) > 4 and (line[5] != self.space and line[5] != self.continuation_char):
+        if not self.free_form and len(line) >= 6 and (line[5] != self.space and line[5] != self.continuation_char):
             line = line[:5] + self.continuation_char + line[6:]
 
         # Break up line into 3 parts: ff_line, code_line, cmnt_line
@@ -89,6 +91,8 @@ def format(self):
         single_quote_skip = False  # Skip strings
         double_quote_skip = False  # Skip strings
         comment_skip = False  # Skip comment
+        # print(code_line)
+
         for j, char in enumerate(code_line):
             # String check
             if char == "'" and not double_quote_skip:
@@ -124,5 +128,7 @@ def format(self):
             temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
             temp = temp1 + temp2
         new_file_lines.append(temp)
+        if not self.free_form: # Change the F77 comment back to whatever it was to begin with
+            self.comment = old_comment
     self.file_lines = new_file_lines
     return

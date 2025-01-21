@@ -32,14 +32,6 @@ if __name__ == "__main__":
 
     # Get the file lines
     fortify_instance.read_file(fortify_instance, args.filename[0])
-
-    # Set how comment-only lines behave
-    if args.comment_lines == 'first_column':
-        fortify_instance.comment_behavior = fortify_instance.first_col
-    elif args.comment_lines == 'indent':
-        fortify_instance.comment_behavior = fortify_instance.indent
-    else:
-        fortify_instance.comment_behavior = fortify_instance.as_is
     
     # Set whether we lowercase all code, sparing comments
     if args.lowercasing.lower() in ['f', 'false', '0']:
@@ -69,13 +61,24 @@ if __name__ == "__main__":
             fortify_instance.do_carry_over = False
         else:
             fortify_instance.do_carry_over = True
+        
+        # Set how comment-only lines behave
+        if args.comment_lines == 'first_column':
+            fortify_instance.comment_behavior = fortify_instance.first_col
+        elif args.comment_lines == 'indent':
+            fortify_instance.comment_behavior = fortify_instance.indent
+        else:
+            fortify_instance.comment_behavior = fortify_instance.as_is
+
     else:
         fortify_instance.do_carry_over = True
         fortify_instance.last_col = args.last_column_fixed_form
         fortify_instance.comment = args.comment_character[0]
         fortify_instance.continuation_char = args.continuation_character[0]
+        fortify_instance.comment_behavior = fortify_instance.first_col
 
     # Send to the formatter
+    # print(fortify_instance.file_lines)
     fortify_instance.format(fortify_instance)
 
     # Print the result back to the original file

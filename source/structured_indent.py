@@ -7,15 +7,15 @@
 # ========================================================================
 def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_list,do_count):
     j = i
-    if ": do" in temp_line and not temp_line[temp_line.find(": do") - 1] == ":":
+    if ": do" in temp_line.lower() and not temp_line.lower()[temp_line.find(": do") - 1] == ":":
         indenter += 1
         skip = True
-    elif any(temp_line.startswith(keyword) for keyword in self.keywords_increase) or any(temp_line.startswith(item + " function ") for item in self.data_types):
-        if temp_line.startswith('if'):
-            if temp_line[-5:].strip() == 'then':
+    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_increase) or any(temp_line.lower().startswith(item + " function ") for item in self.data_types):
+        if temp_line.lower().startswith('if'):
+            if temp_line.lower()[-5:].strip() == 'then':
                 indenter += 1
                 skip = True
-            elif temp_line[-2].strip() == self.continuation_char:
+            elif temp_line.lower()[-2].strip() == self.continuation_char:
                 if self.file_lines[j+1][-2].strip() == self.continuation_char:
                     while self.file_lines[j+1][-2].strip() == self.continuation_char:
                         j += 1
@@ -26,17 +26,17 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                     if self.file_lines[j+1][-5:].strip() == 'then':
                         indenter += 1
                         skip = True
-        elif temp_line.startswith('do ') or temp_line.strip() == 'do':
+        elif temp_line.lower().startswith('do ') or temp_line.lower().strip() == 'do':
             indenter += 1
             skip = True
             if not self.free_form:
                 # Need to check if there is a continue with it
                 i = len('do')
-                while temp_line[i] == self.space:
+                while temp_line.lower()[i] == self.space:
                     i += 1
-                if temp_line[i].isnumeric():
+                if temp_line.lower()[i].isnumeric():
                     temp_num = self.empty
-                    while temp_line[i].isnumeric():
+                    while temp_line.lower()[i].isnumeric():
                         temp_num += temp_line[i]
                         i += 1
                     if any(temp_num == item[0] for item in do_list):
@@ -46,18 +46,18 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                                 break
                     else:
                         do_list.append((temp_num, do_count))
-        elif not temp_line.replace(self.space, self.empty).startswith('type(') and not temp_line.startswith('do'):
+        elif not temp_line.lower().replace(self.space, self.empty).startswith('type(') and not temp_line.lower().startswith('do'):
             indenter += 1
             skip = True
-    elif temp_line.startswith("case"):
+    elif temp_line.lower().startswith("case"):
         if not first_case:
             first_case = True
             indenter += 1
             skip = True
-    elif any(temp_line.startswith(keyword) for keyword in self.keywords_decrease):
-        if temp_line.startswith("endselect") or temp_line.startswith("end select"):
+    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_decrease):
+        if temp_line.lower().startswith("endselect") or temp_line.lower().startswith("end select"):
             indenter -= 2
-        elif temp_line.startswith("continue"):
+        elif temp_line.lower().startswith("continue"):
             for goto in do_list:
                 if ff_line.lstrip().startswith(goto[0]):
                     indenter -= (1 + goto[1])
@@ -66,11 +66,12 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
         else:
             indenter -= 1
 
-    if ("else" in temp_line[:4] or "elseif" in temp_line[:6] or "elsewhere" in temp_line[:6]):  # else statements go back one, but that's it
+    if ("else" in temp_line.lower()[:4] or "elseif" in temp_line.lower()[:6] or "elsewhere" in temp_line.lower()[:6]):  # else statements go back one, but that's it
         skip = True
 
     if skip:
         temp_line = self.space * self.tab_len * (indenter - 1) + temp_line
+        # print(temp_line)
         if self.free_form:
             if temp_line.strip()[-1] == self.continuation_char:
                 skip = True

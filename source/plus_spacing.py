@@ -5,7 +5,7 @@
 # Handles formatting for + and -
 # ========================================================================
 def plus_spacing(self, j, char, code_line, temp_line):
-    if self.space not in [code_line[j - 1], code_line[j + 1]]:  # ?+?
+    if len(code_line) > j + 1 and self.space not in [code_line[j - 1], code_line[j + 1]]:  # ?+?
         if code_line[j - 1] in ['D','d','E','e']:  # d+?
             if code_line[j - 2].isnumeric() and code_line[j + 1].isnumeric():  # 5d+5
                 temp = temp_line + char
@@ -30,7 +30,7 @@ def plus_spacing(self, j, char, code_line, temp_line):
                 else:
                     
                     temp = temp_line + char + self.space
-    elif code_line[j - 1] == self.space and code_line[j + 1] != self.space:  # ? +?
+    elif len(code_line) > j + 1 and code_line[j - 1] == self.space and code_line[j + 1] != self.space:  # ? +?
         if code_line[j - 2] in ['=', ','] and (code_line[j + 1].isalnum() or code_line[j + 1] == '('):
             temp = temp_line + char
         else:
@@ -38,7 +38,7 @@ def plus_spacing(self, j, char, code_line, temp_line):
                 temp = temp_line + char
             else:
                 temp = temp_line + char + self.space
-    elif code_line[j - 1] != self.space and code_line[j + 1] == self.space:  # ?+ ?
+    elif len(code_line) > j + 1 and code_line[j - 1] != self.space and code_line[j + 1] == self.space:  # ?+ ?
         if j == 0:
             temp = temp_line + char
         else:
