@@ -19,7 +19,6 @@ function activate(context) {
         const document = editor.document;
         const filePath = document.fileName;
         const scriptPath = path.join(__dirname, 'fortify');
-
         const config = settings.getSettings();
         const lowercasing = config.lowercasing;
         const lineCarryOverLastColumnFreeForm = config.lineCarryOverLastColumnFreeForm;
@@ -28,8 +27,6 @@ function activate(context) {
         const commentLines = config.commentLines;
         const continuationCharacter = config.continuationCharacter;
         const tabLength = config.tabLength;
-        const removeSpacing = config.removeSpacing;
-        const noFormat = config.noFormat;
 
         exec(
             `python '${scriptPath}' '${filePath}' ` +
@@ -39,8 +36,7 @@ function activate(context) {
             `--comment_character '${commentCharacter}' ` +
             `--continuation_character '${continuationCharacter}' ` +
             `--comment_lines '${commentLines}' ` +
-            `--tab_length ${tabLength} ` +
-            `--no_format '${noFormat}'`,
+            `--tab_length ${tabLength} `,
             (error, stdout, stderr) => {
                 if (error) {
                 // vscode.window.showErrorMessage(`Command execution failed.\nError: ${error.message}\nStderr: ${stderr}`);

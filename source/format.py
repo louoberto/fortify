@@ -34,7 +34,7 @@ def format(self):
             old_comment = self.comment
             self.comment = '!'
         
-        if no_format(self, line): # Do no format in the line
+        if no_format(self, line): # "No format" in the line
             new_file_lines.append(line)
             continue
 

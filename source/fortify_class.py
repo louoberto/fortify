@@ -32,7 +32,7 @@ class fortify_class:
         self.as_is = "as_is"
         self.first_col = "first_column"
         self.comment_behavior = self.first_col
-        self.no_format = "do not format"
+        self.no_format = "no format"
 
         # Intrinsic to Fortran or Python
         self.ff_column_len = 6  # Reserved space for fixed format

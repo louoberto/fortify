@@ -19,7 +19,6 @@ if __name__ == "__main__":
     parser.add_argument("--continuation_character", type=str, default='&', help="Fortran fixed format continuation character")
     parser.add_argument("--comment_lines", type=str, default=None, help="How to treat comment-only lines")
     parser.add_argument("--tab_length", type=int, default=3, help="Fortran default tab length")
-    parser.add_argument("--no_format", type=str, default='do not format', help="Skip formatting line if it sees this string in the comment line")
     args = parser.parse_args()
 
     # ====================================================================
@@ -39,9 +38,6 @@ if __name__ == "__main__":
 
     # Set tab length
     fortify_instance.tab_len = args.tab_length
-
-    # Set the no-format string identifier
-    fortify_instance.no_format = args.no_format
 
     # Set the last column lenght based on free or fixed form
     # If fixed form, set additional comment and continuation chars

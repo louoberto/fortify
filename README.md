@@ -46,6 +46,12 @@ By default, it will lower all non-string code. As Fortran is case-insensitive, t
 ### Parenthesis Spacing
 Removes spaces formatting for objects around and inside parentheses `( x )` -> `(x)`.
 
+<!-- // "fortify.noFormat": {
+                //     "type": "string",
+                //     "default": "do not format",
+                //     "description": "Warning: this may cause intended side effects if places on an indent identifier (e.g. if, do, endif, enddo lines). Skip formatting line if it sees this string in the comment line. Example: ! do not format. Must be in a comment."
+                // } -->
+
 ### Remove Extra Space
 Removes unnecessary double spacing in a code line to maintain clean and readable code.
 
@@ -65,10 +71,8 @@ Many defaults are set to the modern Fortran standard, but are able to be re-defi
 | Comment Lines | `as_is` | Determine behavior for how comment-only lines are positioned |
 | Continuation Character (F77 only)      | `&`           | Can change the 6th column continuation character |
 | Tab Length                             | 3             | Set the default tab length |
-| Line carry over | `T` | If a formatted line goes past the compiler column limit, automatically continue code to next line |
 | Last column length                     | Free Format: `10000`, Fixed Format: `72` | Sets the last usable column, as determined by the current standard. 
 | Lowercase all non-string code          | `T`          | Lowercase all code
-| Remove extra spaces                    | `T`          | Removed 2 or more spaces between code, but not comments |
 
 
 ## Usage

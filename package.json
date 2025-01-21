@@ -205,11 +205,6 @@
                     "default": 3,
                     "description": "Fortran default indent/tab length. Will not effect first 6 column rule in fixed format",
                     "enum": [2, 3, 4]
-                },
-                "fortify.noFormat": {
-                    "type": "string",
-                    "default": "do not format",
-                    "description": "Warning: this may cause intended side effects if places on an indent identifier (e.g. if, do, endif, enddo lines). Skip formatting line if it sees this string in the comment line. Example: ! do not format. Must be in a comment."
                 }
             }
         }

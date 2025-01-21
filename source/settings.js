@@ -17,8 +17,7 @@ function getSettings() {
         commentCharacter: config.get('commentCharacter'),
         continuationCharacter: continuationCharacter,
         commentLines: config.get('commentLines'),
-        tabLength: config.get('tabLength'),
-        noFormat: config.get('noFormat')
+        tabLength: config.get('tabLength')
     };
 }
 
