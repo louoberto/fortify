@@ -22,7 +22,6 @@ function activate(context) {
 
         const config = settings.getSettings();
         const lowercasing = config.lowercasing;
-        const lineCarryOver = config.lineCarryOver;
         const lineCarryOverLastColumnFreeForm = config.lineCarryOverLastColumnFreeForm;
         const lineCarryOverLastColumnFixedForm = config.lineCarryOverLastColumnFixedForm;
         const commentCharacter = config.commentCharacter;
@@ -37,12 +36,10 @@ function activate(context) {
             `--last_column_free_form ${lineCarryOverLastColumnFreeForm} ` +
             `--last_column_fixed_form ${lineCarryOverLastColumnFixedForm} ` +
             `--lowercasing ${lowercasing} ` + 
-            `--line_carry_over ${lineCarryOver} ` +
             `--comment_character '${commentCharacter}' ` +
             `--continuation_character '${continuationCharacter}' ` +
             `--comment_lines '${commentLines}' ` +
-            `--tab_length ${tabLength} ` + 
-            `--remove_spacing ${removeSpacing} ` +
+            `--tab_length ${tabLength} ` +
             `--no_format '${noFormat}'`,
             (error, stdout, stderr) => {
                 if (error) {

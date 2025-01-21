@@ -2,7 +2,7 @@
     "name": "fortify",
     "displayName": "Fortify - Fortran Formatter",
     "description": "A powerful and simple Fortran formatting tool for Visual Studio Code.",
-    "version": "1.0.18",
+    "version": "1.0.19",
     "publisher": "LouOberto",
     "engines": {
         "vscode": "^1.80.0"
@@ -16,9 +16,9 @@
         "type": "git",
         "url": "https://github.com/louoberto/fortify"
     },
-    "activationEvents": {
-        "when": "editorLangId == fortran-modern"
-    },
+    "activationEvents": [
+        "onLanguage:fortran"
+    ],
     "contributes": {
         "languages": [
             {
@@ -170,7 +170,7 @@
                 "fortify.commentLines": {
                     "type": "string",
                     "default": "as_is",
-                    "description": "How to treat comment-only lines",
+                    "description": "Free form only: how to treat comment-only lines",
                     "enum": ["first_column", "as_is", "indent"],
                     "enumDescriptions": ["Moved to first column of code", "Completely ignore these lines, leaving comment-only lines as is", "Indent with the rest of the code"]
                 },
@@ -178,11 +178,6 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Lowercasing all code. If false, leaves case as is."
-                },
-                "fortify.lineCarryOver": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Free format only: Line carry over formatting; when formatting runs past column limit"
                 },
                 "fortify.lineCarryOverLastColumnFreeForm": {
                     "type": "number",
@@ -197,28 +192,24 @@
                 "fortify.commentCharacter": {
                     "type": "string",
                     "default": "!",
-                    "description": "F77 only: Fortran comment character",
+                    "description": ".f/.F only: Fortran comment character",
                     "enum": ["!", "*", "C", "c"]
                 },
                 "fortify.continuationCharacter": {
                     "type": "string",
                     "default": "&",
-                    "description": "F77 only: Fortran fixed format continuation character"
+                    "description": ".f/.F only: Fortran fixed format continuation character"
                 },
                 "fortify.tabLength": {
                     "type": "number",
                     "default": 3,
-                    "description": "Fortran default tab length"
-                },
-                "fortify.removeSpacing": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Enforces one space between code objects, but not between code and comments"
+                    "description": "Fortran default indent/tab length. Will not effect first 6 column rule in fixed format",
+                    "enum": [2, 3, 4]
                 },
                 "fortify.noFormat": {
                     "type": "string",
                     "default": "do not format",
-                    "description": "Skip formatting line if it sees this string in the comment line. Example: ! do not format"
+                    "description": "Warning: this may cause intended side effects if places on an indent identifier (e.g. if, do, endif, enddo lines). Skip formatting line if it sees this string in the comment line. Example: ! do not format. Must be in a comment."
                 }
             }
         }

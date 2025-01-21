@@ -15,12 +15,10 @@ if __name__ == "__main__":
     parser.add_argument("--last_column_free_form", type=int, default=10000, help="Line carry over: Last usable column in Fortran free form.")
     parser.add_argument("--last_column_fixed_form", type=int, default=72, help="Line carry over: Last usable column in Fortran fixed form.")
     parser.add_argument("--lowercasing", type=str, default='T', help="Lowercasing all code. If false, leaves case as is.")
-    parser.add_argument("--line_carry_over", type=str, default='T', help="Line carry over formatting; when formatting runs past column limit")
     parser.add_argument("--comment_character", type=str, default='!', help="Fortran comment character")
     parser.add_argument("--continuation_character", type=str, default='&', help="Fortran fixed format continuation character")
     parser.add_argument("--comment_lines", type=str, default=None, help="How to treat comment-only lines")
     parser.add_argument("--tab_length", type=int, default=3, help="Fortran default tab length")
-    parser.add_argument("--remove_spacing", type=str, default='T', help="Enforces one space between code objects")
     parser.add_argument("--no_format", type=str, default='do not format', help="Skip formatting line if it sees this string in the comment line")
     args = parser.parse_args()
 
@@ -42,12 +40,6 @@ if __name__ == "__main__":
     # Set tab length
     fortify_instance.tab_len = args.tab_length
 
-    # Remove any empty whitespace that existed at the end of a line
-    if args.remove_spacing.lower() in ['f', 'false', '0']:
-        fortify_instance.remove_spacing = False
-    else:
-        fortify_instance.remove_spacing = True
-
     # Set the no-format string identifier
     fortify_instance.no_format = args.no_format
 
@@ -55,12 +47,6 @@ if __name__ == "__main__":
     # If fixed form, set additional comment and continuation chars
     if fortify_instance.free_form:
         fortify_instance.last_col = args.last_column_free_form
-        # Automatically carries over text to the next line
-        # if it runs past the last column, due to formatting
-        if args.line_carry_over.lower() in ['f', 'false', '0']:
-            fortify_instance.do_carry_over = False
-        else:
-            fortify_instance.do_carry_over = True
         
         # Set how comment-only lines behave
         if args.comment_lines == 'first_column':
@@ -71,7 +57,6 @@ if __name__ == "__main__":
             fortify_instance.comment_behavior = fortify_instance.as_is
 
     else:
-        fortify_instance.do_carry_over = True
         fortify_instance.last_col = args.last_column_fixed_form
         fortify_instance.comment = args.comment_character[0]
         fortify_instance.continuation_char = args.continuation_character[0]

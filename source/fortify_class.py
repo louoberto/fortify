@@ -28,12 +28,10 @@ class fortify_class:
         self.last_col = 10000
         self.comment = '!'
         self.lowercasing = True
-        self.do_carry_over = True
         self.indent = "indent"
         self.as_is = "as_is"
         self.first_col = "first_column"
         self.comment_behavior = self.first_col
-        self.remove_spacing = True
         self.no_format = "do not format"
 
         # Intrinsic to Fortran or Python

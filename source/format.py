@@ -104,7 +104,7 @@ def format(self):
             if not single_quote_skip and not double_quote_skip and not comment_skip:
                 if self.lowercasing: # User defined; default is true
                     char = char.lower() # Lowercase all working code; no global CAPS at this time
-                if char == self.space and self.remove_spacing:
+                if char == self.space:
                     temp = self.remove_extra_space(self, j, char, code_line, temp)
                 elif char == ".":
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
@@ -124,7 +124,7 @@ def format(self):
                 temp += char
 
         temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count)
-        if self.do_carry_over and not comment_skip: # User defined; default is true
+        if not comment_skip: # User defined; default is true
             temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
             temp = temp1 + temp2
         new_file_lines.append(temp)
