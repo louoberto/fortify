@@ -100,7 +100,7 @@ jobs:
                 new_file="combo_keyfile_$(printf "%02d" $num).f"
 
                 # Create temporary file with command
-                echo "$comment_char --lowercasing $lowercasing --comment_lines $comment_opt --tab_length $tab_len" > temp_file.txt
+                echo "$comment_char --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len" > temp_file.txt
                 echo "Combo: --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len"
 
                 # Copy the test file and prepend the command
