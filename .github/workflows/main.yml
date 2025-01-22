@@ -90,7 +90,7 @@ jobs:
           fi
         done
 
-    - name: Run combo tests
+    - name: Run combo tests fixed format
       run: |
         num=1
         for lowercasing in "true" "false"; do
@@ -101,7 +101,7 @@ jobs:
 
                 # Create temporary file with command
                 echo "$comment_char fortify $new_file --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len" > temp_file.txt
-                echo "$comment_char fortify $new_file --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len"
+                echo "Combo: --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len"
 
                 # Copy the test file and prepend the command
                 cp test/testfile_38.f $new_file
