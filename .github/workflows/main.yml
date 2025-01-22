@@ -101,6 +101,7 @@ jobs:
 
                 # Create temporary file with command
                 echo "$comment_char fortify $new_file --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len" > temp_file.txt
+                echo "$comment_char fortify $new_file --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len"
 
                 # Copy the test file and prepend the command
                 cp test/testfile_38.f $new_file
@@ -114,7 +115,7 @@ jobs:
                   --tab_length "$tab_len"
                 
                 # Use tee to capture and display diff output
-                diff "$file" "$keyfile" | tee reports/diff_${base#testfile_}.log
+                diff "$new_file" "test/$new_file" | tee reports/diff_${base#testfile_}.log
                 if [[ $? -ne 0 ]]; then
                   echo "Diff found for $file. See reports/diff_${base#testfile_}.log"
                   echo "Diff found for $file" >> reports/diff.log
