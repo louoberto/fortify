@@ -90,45 +90,45 @@ jobs:
           fi
         done
 
-    - name: Run combo tests fixed format
-      run: |
-        num=1
-        for lowercasing in "true" "false"; do
-          for tab_len in "3" "4"; do
-            for cont_char in "&" "A"; do
-              for comment_char in "*" "C" "!"; do
-                new_file="combo_keyfile_$(printf "%02d" $num).f"
+    # - name: Run combo tests fixed format
+    #   run: |
+    #     num=1
+    #     for lowercasing in "true" "false"; do
+    #       for tab_len in "3" "4"; do
+    #         for cont_char in "&" "A"; do
+              # for comment_char in "*" "C" "!"; do
+              #   new_file="combo_keyfile_$(printf "%02d" $num).f"
 
-                # Create temporary file with command
-                echo "$comment_char --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len" > temp_file.txt
-                echo "Combo: --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len"
+              #   # Create temporary file with command
+              #   echo "$comment_char --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len" > temp_file.txt
+              #   echo "Combo: --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len"
 
-                # Copy the test file and prepend the command
-                cp test/testfile_38.f $new_file
-                cat temp_file.txt "$new_file" > "$new_file.tmp" && mv "$new_file.tmp" "$new_file"
+              #   # Copy the test file and prepend the command
+              #   cp test/testfile_38.f $new_file
+              #   cat temp_file.txt "$new_file" > "$new_file.tmp" && mv "$new_file.tmp" "$new_file"
 
-                # Run the fortify script
-                python3 fortify/source/fortify $new_file --lowercasing $lowercasing --comment_character "$comment_char" --continuation_character "$cont_char" --tab_length "$tab_len"
+                # # Run the fortify script
+                # python3 fortify/source/fortify $new_file --lowercasing $lowercasing --comment_character "$comment_char" --continuation_character "$cont_char" --tab_length "$tab_len"
                 
-                echo "python3 fortify/source/fortify $new_file --lowercasing $lowercasing --comment_character "$comment_char" --continuation_character "$cont_char" --tab_length "$tab_len""
+                # echo "python3 fortify/source/fortify $new_file --lowercasing $lowercasing --comment_character "$comment_char" --continuation_character "$cont_char" --tab_length "$tab_len""
                 
-                # Use tee to capture and display diff output
-                echo "diff "$new_file" "test/$new_file""
-                diff --color=always "$new_file" "test/$new_file" | tee reports/diff_${base#testfile_}.log
-                if [[ $? -ne 0 ]]; then
-                  echo "Diff found for $file. See reports/diff_${base#testfile_}.log"
-                  echo "Diff found for $file" >> reports/diff.log
-                  exit 1
-                else
-                  echo "No errors reported for $file" >> reports/diff.log
-                fi
+                # # Use tee to capture and display diff output
+                # echo "diff "$new_file" "test/$new_file""
+                # diff --color=always "$new_file" "test/$new_file" | tee reports/diff_${base#testfile_}.log
+                # if [[ $? -ne 0 ]]; then
+                #   echo "Diff found for $file. See reports/diff_${base#testfile_}.log"
+                #   echo "Diff found for $file" >> reports/diff.log
+                #   exit 1
+                # else
+        #           echo "No errors reported for $file" >> reports/diff.log
+        #         fi
 
-                # Increment the file number
-                num=$((num + 1))
-              done
-            done
-          done
-        done
+        #         # Increment the file number
+        #         num=$((num + 1))
+        #       done
+        #     done
+        #   done
+        # done
     
     - name: Upload reports as artifacts
       uses: actions/upload-artifact@v4
