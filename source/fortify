@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser.add_argument("--lowercasing", type=str, default='T', help="Lowercasing all code. If false, leaves case as is.")
     parser.add_argument("--comment_character", type=str, default='!', help="Fortran comment character")
     parser.add_argument("--continuation_character", type=str, default='&', help="Fortran fixed format continuation character")
-    parser.add_argument("--comment_lines", type=str, default=None, help="How to treat comment-only lines")
+    parser.add_argument("--comment_lines", type=str, default='indent', help="How to treat comment-only lines")
     parser.add_argument("--tab_length", type=int, default=3, help="Fortran default tab length")
     args = parser.parse_args()
 
@@ -44,16 +44,16 @@ if __name__ == "__main__":
         fortify_instance.last_col = 10000
         
         # Set how comment-only lines behave
-        if args.comment_lines == 'first_column':
+        if 'first_column' in args.comment_lines:
             fortify_instance.comment_behavior = fortify_instance.first_col
-        elif args.comment_lines == 'indent':
+        elif 'indent' in args.comment_lines:
             fortify_instance.comment_behavior = fortify_instance.indent
         else:
             fortify_instance.comment_behavior = fortify_instance.as_is
 
     else:
         fortify_instance.last_col = args.last_column_fixed_form
-        fortify_instance.comment = args.comment_character[0]
+        fortify_instance.comment = args.comment_character
         fortify_instance.continuation_char = args.continuation_character[0]
         fortify_instance.comment_behavior = fortify_instance.first_col
 

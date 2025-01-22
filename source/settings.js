@@ -7,7 +7,6 @@ function getSettings() {
     // Validate continuationCharacter length
     if (continuationCharacter.length !== 1) {
         vscode.window.showWarningMessage('Continuation character must be a single character. Only the first letter of the string will be used.');
-        continuationCharacter = continuationCharacter.charAt(0);
     }
 
     return {

@@ -2,7 +2,7 @@
     "name": "fortify",
     "displayName": "Fortify - Fortran Formatter",
     "description": "A powerful and simple Fortran formatting tool for Visual Studio Code.",
-    "version": "1.0.19",
+    "version": "1.0.28",
     "publisher": "LouOberto",
     "engines": {
         "vscode": "^1.80.0"
@@ -169,7 +169,7 @@
             "properties": {
                 "fortify.commentLines": {
                     "type": "string",
-                    "default": "as_is",
+                    "default": "indent",
                     "description": "Free form only: how to treat comment-only lines",
                     "enum": ["first_column", "as_is", "indent"],
                     "enumDescriptions": ["Moved to first column of code", "Completely ignore these lines, leaving comment-only lines as is", "Indent with the rest of the code"]
@@ -179,16 +179,12 @@
                     "default": true,
                     "description": "Lowercasing all code. If false, leaves case as is."
                 },
-                "fortify.lineCarryOverLastColumnFreeForm": {
-                    "type": "number",
-                    "default": 10000,
-                    "description": "Line carry over: Last usable column in Fortran free form."
-                },
                 "fortify.lineCarryOverLastColumnFixedForm": {
                     "type": "number",
                     "default": 72,
-                    "description": "Line carry over: Last usable column in Fortran fixed form."
-                }, 
+                    "description": ".f/.F only: Line carry over: Last usable column in Fortran fixed form. See: https://www.intel.com/content/www/us/en/docs/fortran-compiler/developer-guide-reference/2024-1/fixed-format-lines.html",
+                    "enum": [72, 132]
+                },
                 "fortify.commentCharacter": {
                     "type": "string",
                     "default": "!",

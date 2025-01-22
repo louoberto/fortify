@@ -35,9 +35,9 @@ function activate(context) {
             `python "${normalizedScriptPath}" "${normalizedFilePath}" ` +
             `--last_column_fixed_form ${lineCarryOverLastColumnFixedForm} ` +
             `--lowercasing ${lowercasing} ` + 
-            `--comment_character '${commentCharacter}' ` +
-            `--continuation_character '${continuationCharacter}' ` +
-            `--comment_lines '${commentLines}' ` +
+            `--comment_character "${commentCharacter}" ` +
+            `--continuation_character "${continuationCharacter}" ` +
+            `--comment_lines "${commentLines}" ` +
             `--tab_length ${tabLength} `,
             (error, stdout, stderr) => {
                 if (error) {
