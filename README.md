@@ -70,14 +70,14 @@ Properly handles strings enclosed in single or double quotes, ensuring they are 
 
 ## User defined inputs
 Many defaults are set to the modern Fortran standard, but are able to be re-defined by the user. These include:
-| Variable | Default Value | Format | Description | 
-|----------|---------------|--------|-------------|
-| Comment Character | `!`  | Fixed only |Change the first-column comment character |
-| Comment Lines | `as_is` | Free only | Determine behavior for how comment-only lines are positioned |
-| Continuation Character | `&` | Fixed only |Can change the 6th column continuation character |
-| Last column length | `72` | Fixed only | Sets the last usable column, either 72 or 132 |
-| Lowercase all non-string code  | `T` | Fixed and free | Lowercase all code |
-| Tab Length  | `3`  | Fixed and free | Set the default tab length either `(2, 3, 4)` |
+| Variable | Default Value | Values | Format | Description | 
+|----------|---------------|--------|-------------|-------------|
+| Comment Character | `!`  | `(!, *, C, c)` | Fixed only |Change the first-column comment character. |
+| Comment Lines | `indent` | `(first_column, as_is, indent)` | Free only | Determine behavior for how comment-only lines are positioned.|
+| Continuation Character | `&` | any character | Fixed only | Can change the 6th column continuation character. |
+| Last column length | `72` | `(72, 132)` |Fixed only | Sets the last usable column |
+| Lowercase all non-string code  | `T` | `(T, F)` | Fixed and free | Lowercase all code |
+| Tab Length  | `3`  | `(2, 3, 4)`|Fixed and free | Set the default tab length |
 
 
 ## Usage
