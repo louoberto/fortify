@@ -115,6 +115,7 @@ jobs:
                   --tab_length "$tab_len"
                 
                 # Use tee to capture and display diff output
+                echo "diff "$new_file" "test/$new_file""
                 diff "$new_file" "test/$new_file" | tee reports/diff_${base#testfile_}.log
                 if [[ $? -ne 0 ]]; then
                   echo "Diff found for $file. See reports/diff_${base#testfile_}.log"
