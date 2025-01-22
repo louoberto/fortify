@@ -16,8 +16,8 @@ In the case of the do-continue F77 statement, it will find the matching goto-con
 
 **Note:** All fixed format files will have the first 6 columns reserved, while all free format files use every column
 
-### Line Carry Over
-Manages line continuation by finding appropriate places to break lines and carry over to the next line, ensuring code remains within the specified column width.
+### Tab indentation length
+You may set the tab length to either 2, 3, or 4. It is set to 3 by default.
 
 ### Logical/Relational/Math Operator Spacing
 Adds spaces around operators such as `<`, `<=`, `>`, `>=`, `/=`, `==`, `//`, `+`, `-`, `*`, `/` as well as their text based counter to ensure proper spacing. This converts, for example, `x.gt.y` to `x .gt. y`.
@@ -25,32 +25,37 @@ Adds spaces around operators such as `<`, `<=`, `>`, `>=`, `/=`, `==`, `//`, `+`
 Special care is taken for `+-` operators for cases such exponentiation (`D` and `E`), as well as cases where a minus (or plus) tends to be connected with the character. For example, the following will be maintained or enforced: `x = -5` instead of `x = - 5`.
 
 ### Tab character replacement
-Converts the `\t` character to the default tab space of 3. Note that if you change the tab length, and then run it will convert to the updated tab length instead, but once a tab is converted to a set of spaces it will remain that number of spaces if re-run on the same file.
+Converts the `\t` character to the default tab space.
 
 ### Comment spacing preservation
 Will retain the original spacing between a line comment and a the code. This is done since it is a common practice to have comments lined up in a series after related code.
 
 Lines which are only comments are kept on the first column and kept this way. This can be user defined.
 
-## F77 (.f) Features
+### Skip line formatting option
+If you wish for a line to skip formatting, simply add `no format` to a comment in-line (e.g. `! no format`). The phrase `no format` may appear anywhere in the comment.
+**Warning:** this may cause intended side effects if placed on an indent identifier (e.g. if, do, endif, enddo lines).
+
+## Free format features
+### Comment line treatment
+This allows comment-only lines (lines which only have comments them, no executable code) to moved around in 1 of 3 ways; either indent them with the rest of the code, leave them as is, or move them all to the first column. The default is indent. You can change this behavior in the settings. 
+
+## Fixed format features
 #### Continuation Character
-In older Fortran, any character may become the continuation character. This formatter enforces the modern `&` in the 6th column. You may change this if you wish.
+In older Fortran, any character may become the continuation character. This formatter enforces the modern `&` in the 6th column, by default. You may change this if you wish.
 
 #### Comment Character
 In older Fortran, `*`, `C`, and `c` will change to become `!` by default. You may change this if you wish in the settings.
 
+### Line Carry Over
+Manages line continuation by finding appropriate places to break lines and carry over to the next line, ensuring code remains within the specified column width. The final usable line is default set to 72, but can be set to 132 in the settings.
+
 ## Other Features
 ### Code modernization techinques
-By default, it will lower all non-string code. As Fortran is case-insensitive, this does change any code logic, and modernizes the all CAP past of older Fortran code.
+By default, it will lower all non-string code. As Fortran is case-insensitive, this does change any code logic, and modernizes the all CAP past of older Fortran code. This may be changed in the user settings.
 
 ### Parenthesis Spacing
 Removes spaces formatting for objects around and inside parentheses `( x )` -> `(x)`.
-
-<!-- // "fortify.noFormat": {
-                //     "type": "string",
-                //     "default": "do not format",
-                //     "description": "Warning: this may cause intended side effects if places on an indent identifier (e.g. if, do, endif, enddo lines). Skip formatting line if it sees this string in the comment line. Example: ! do not format. Must be in a comment."
-                // } -->
 
 ### Remove Extra Space
 Removes unnecessary double spacing in a code line to maintain clean and readable code.
@@ -65,14 +70,14 @@ Properly handles strings enclosed in single or double quotes, ensuring they are 
 
 ## User defined inputs
 Many defaults are set to the modern Fortran standard, but are able to be re-defined by the user. These include:
-| Variable                          | Default Value | Description | 
-|-----------------------------------|---------------|---------------|
-| Comment Character (F77 only)           | `!`           | Change the first-column comment character |
-| Comment Lines | `as_is` | Determine behavior for how comment-only lines are positioned |
-| Continuation Character (F77 only)      | `&`           | Can change the 6th column continuation character |
-| Tab Length                             | 3             | Set the default tab length |
-| Last column length                     | Free Format: `10000`, Fixed Format: `72` | Sets the last usable column, as determined by the current standard. 
-| Lowercase all non-string code          | `T`          | Lowercase all code
+| Variable | Default Value | Format | Description | 
+|----------|---------------|--------|-------------|
+| Comment Character | `!`  | Fixed only |Change the first-column comment character |
+| Comment Lines | `as_is` | Free only | Determine behavior for how comment-only lines are positioned |
+| Continuation Character | `&` | Fixed only |Can change the 6th column continuation character |
+| Last column length | `72` | Fixed only | Sets the last usable column, either 72 or 132 |
+| Lowercase all non-string code  | `T` | Fixed and free | Lowercase all code |
+| Tab Length  | `3`  | Fixed and free | Set the default tab length either `(2, 3, 4)` |
 
 
 ## Usage
