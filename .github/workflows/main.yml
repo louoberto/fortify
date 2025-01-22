@@ -89,15 +89,36 @@ jobs:
             echo "Keyfile $keyfile not found for $file" >> reports/diff.log
           fi
         done
-      
-    - name: Run driver on tests twice
+
+    - name: Run combo tests
       run: |
-        # Make the script executable
-        chmod +x test/combo.sh
-      
-        # Execute the shell script
-        test/combo.sh
-        
+        num=1
+        for lowercasing in "true" "false"; do
+          for tab_len in "3" "4"; do
+            for cont_char in "&" "A"; do
+              for comment_char in "*" "C" "!"; do
+                new_file="combo_keyfile_$(printf "%02d" $num).f"
+
+                # Create temporary file with command
+                echo "$comment_char fortify $new_file --lowercasing $lowercasing --comment_character $comment_char --continuation_character $cont_char --tab_length $tab_len" > temp_file.txt
+
+                # Copy the test file and prepend the command
+                cp test/testfile_38.f $new_file
+                cat temp_file.txt "$new_file" > "$new_file.tmp" && mv "$new_file.tmp" "$new_file"
+
+                # Run the fortify script
+                python3 fortify/source/fortify $new_file \
+                  --lowercasing $lowercasing \
+                  --comment_character "$comment_char" \
+                  --continuation_character "$cont_char" \
+                  --tab_length "$tab_len"
+
+                # Increment the file number
+                num=$((num + 1))
+              done
+            done
+          done
+        done
     
     - name: Upload reports as artifacts
       uses: actions/upload-artifact@v4
