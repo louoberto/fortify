@@ -6,12 +6,11 @@ function getSettings() {
 
     // Validate continuationCharacter length
     if (continuationCharacter.length !== 1) {
-        vscode.window.showErrorMessage('Continuation character must be a single character.');
-        throw new Error('Continuation character must be a single character.');
+        vscode.window.showWarningMessage('Continuation character must be a single character. Only the first letter of the string will be used.');
+        continuationCharacter = continuationCharacter.charAt(0);
     }
 
     return {
-        lineCarryOverLastColumnFreeForm: config.get('lineCarryOverLastColumnFreeFormv'),
         lineCarryOverLastColumnFixedForm: config.get('lineCarryOverLastColumnFixedForm'),
         lowercasing: config.get('lowercasing'),
         commentCharacter: config.get('commentCharacter'),

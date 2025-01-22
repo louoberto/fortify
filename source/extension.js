@@ -21,16 +21,18 @@ function activate(context) {
         const scriptPath = path.join(__dirname, 'fortify');
         const config = settings.getSettings();
         const lowercasing = config.lowercasing;
-        const lineCarryOverLastColumnFreeForm = config.lineCarryOverLastColumnFreeForm;
         const lineCarryOverLastColumnFixedForm = config.lineCarryOverLastColumnFixedForm;
         const commentCharacter = config.commentCharacter;
         const commentLines = config.commentLines;
         const continuationCharacter = config.continuationCharacter;
         const tabLength = config.tabLength;
 
+        // Normalize paths to handle any system-specific issues
+        const normalizedScriptPath = path.normalize(scriptPath);
+        const normalizedFilePath = path.normalize(filePath);
+
         exec(
-            `python '${scriptPath}' '${filePath}' ` +
-            `--last_column_free_form ${lineCarryOverLastColumnFreeForm} ` +
+            `python "${normalizedScriptPath}" "${normalizedFilePath}" ` +
             `--last_column_fixed_form ${lineCarryOverLastColumnFixedForm} ` +
             `--lowercasing ${lowercasing} ` + 
             `--comment_character '${commentCharacter}' ` +

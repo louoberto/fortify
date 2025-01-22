@@ -12,7 +12,6 @@ if __name__ == "__main__":
     # Arg parsing command line
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("filename", action="store", nargs="+", help="Path(s) to input file(s)")
-    parser.add_argument("--last_column_free_form", type=int, default=10000, help="Line carry over: Last usable column in Fortran free form.")
     parser.add_argument("--last_column_fixed_form", type=int, default=72, help="Line carry over: Last usable column in Fortran fixed form.")
     parser.add_argument("--lowercasing", type=str, default='T', help="Lowercasing all code. If false, leaves case as is.")
     parser.add_argument("--comment_character", type=str, default='!', help="Fortran comment character")
@@ -42,7 +41,7 @@ if __name__ == "__main__":
     # Set the last column lenght based on free or fixed form
     # If fixed form, set additional comment and continuation chars
     if fortify_instance.free_form:
-        fortify_instance.last_col = args.last_column_free_form
+        fortify_instance.last_col = 10000
         
         # Set how comment-only lines behave
         if args.comment_lines == 'first_column':
