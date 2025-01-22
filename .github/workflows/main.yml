@@ -108,17 +108,9 @@ jobs:
                 cat temp_file.txt "$new_file" > "$new_file.tmp" && mv "$new_file.tmp" "$new_file"
 
                 # Run the fortify script
-                python3 fortify/source/fortify $new_file \
-                  --lowercasing $lowercasing \
-                  --comment_character "$comment_char" \
-                  --continuation_character "$cont_char" \
-                  --tab_length "$tab_len"
+                python3 fortify/source/fortify $new_file --lowercasing $lowercasing --comment_character "$comment_char" --continuation_character "$cont_char" --tab_length "$tab_len"
                 
-                echo "python3 fortify/source/fortify $new_file \
-                  --lowercasing $lowercasing \
-                  --comment_character "$comment_char" \
-                  --continuation_character "$cont_char" \
-                  --tab_length "$tab_len""
+                echo "python3 fortify/source/fortify $new_file --lowercasing $lowercasing --comment_character "$comment_char" --continuation_character "$cont_char" --tab_length "$tab_len""
                 
                 # Use tee to capture and display diff output
                 echo "diff "$new_file" "test/$new_file""
