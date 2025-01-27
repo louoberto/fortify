@@ -1,6 +1,11 @@
 # Changelog
 
-## [1.1.0] - 2025-Jan-22
+## [1.1.0] - 2025-Jan-21
+### Added
+- Fixed a bug where indentation would not work with data type functions (e.g. `integer*4 function` or `integer(4) function`)
+- Now properly indents this, but must be of the form: `data_type function`, `data_type*num function`, or `data_type(num) function`, where `data_type` is `integer, real, complex`, etc and `num = 1, 2, 4, 8`.
+
+## [1.1.0] - 2025-Jan-21
 ### Added
 - Fixed a lot of bugs with the extension not working well with VS Code's interface.
 - User settings have been updated, tested, and have had testing added for all possible user combinations.
