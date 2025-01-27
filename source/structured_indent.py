@@ -10,7 +10,9 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
     if ": do" in temp_line.lower() and not temp_line.lower()[temp_line.find(": do") - 1] == ":":
         indenter += 1
         skip = True
-    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_increase) or any(temp_line.lower().startswith(item + " function ") for item in self.data_types):
+    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_increase) or any(
+    temp_line.lower().startswith(item + " function ") or 
+    any(temp_line.lower().startswith(f"{item}({x}) function") or temp_line.lower().startswith(f"{item}*{x} function") for x in [1, 2, 4, 8, 16]) for item in self.data_types):
         if temp_line.lower().startswith('if'):
             if temp_line.lower()[-5:].strip() == 'then':
                 indenter += 1
