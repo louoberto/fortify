@@ -72,9 +72,7 @@ class fortify_class:
 
         # Keywords for indenting
         self.keywords_increase = [
-            'contains',
             'do',
-            ': do', # Still don't know what this one was doing
             'function',
             'if',
             'interface',
@@ -87,6 +85,7 @@ class fortify_class:
             'type',
             'type,',
             'where',
+            'block'
         ]
         self.keywords_decrease = [
             'enddo',
@@ -112,5 +111,6 @@ class fortify_class:
             'endwhere',
             'end where',
             'end',
-            'continue'
+            'continue',
+            'endblock'
         ]

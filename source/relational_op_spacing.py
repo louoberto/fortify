@@ -13,14 +13,18 @@
 #    add space to either side of the line.
 # ========================================================================
 def relational_op_spacing(self, j, char, code_line, temp_line):
+    # print(code_line, repr(code_line[j]),j)
     if len(code_line) > j + 1 and code_line[j + 1] == "=": # ?==, ?+=, ?-=, ?/=
+        # print(code_line, repr(code_line[j]),j)
         if code_line[j - 1] != self.space: # ?==, ?+=, ?-=, ?/=
+            # print(code_line, repr(code_line[j]),j)
             temp = temp_line + self.space + char
         else: # ? ==, ? +=, ? -=, ? /=
             temp = temp_line + char
     elif len(code_line) > j + 1 and code_line[j + 1] != self.space: # ?=?, ?+?, ?-?, ?/?
         # print(code_line, repr(code_line[j]),j)
         if code_line[j - 1] != '=' and ')' not in [code_line[j - 1], code_line[j + 1]]: # ?=?, ?+?, ?-?, ?/?
+            # print(code_line, repr(code_line[j]),j)
             if char == '/':
                 # print(code_line, repr(code_line[j]),j)
                 if code_line[j + 1] == '/':
@@ -65,11 +69,12 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
                     else:
                         temp = temp_line + self.space + char + self.space
                 else:
-                    if code_line[j + 1] != self.newline:
+                    if code_line[j + 1] not in [self.newline,'>']:
                         temp = temp_line + char + self.space
                     else:
                         temp = temp_line + char
         elif code_line[j + 1] == ')':
+            # print(code_line, repr(code_line[j]),j)
             temp = temp_line + char
         else:
             # print(code_line, repr(code_line[j]),j)
@@ -78,10 +83,12 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
             else:
                 temp = temp_line + char + self.space
     elif code_line[j - 1] != self.space:
+        # print(code_line, repr(code_line[j]),j)
         if code_line[j - 1] in ['(',')','<','>','/','=']:
             temp = temp_line + char
         else:
             temp = temp_line + self.space + char
     else:
+        # print(code_line, repr(code_line[j]),j)
         temp = temp_line + char
     return temp

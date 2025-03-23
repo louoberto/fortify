@@ -5,14 +5,14 @@
 # This will properly nest and indent code largely based on the keyword
 # lists found in keywords_increase and keywords_decrease
 # ========================================================================
+import re
 def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_list,do_count):
     j = i
-    if ": do" in temp_line.lower() and not temp_line.lower()[temp_line.find(": do") - 1] == ":":
-        indenter += 1
-        skip = True
-    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_increase) or any(
-    temp_line.lower().startswith(item + " function ") or 
-    any(temp_line.lower().startswith(f"{item}({x}) function") or temp_line.lower().startswith(f"{item}*{x} function") for x in [1, 2, 4, 8, 16]) for item in self.data_types):
+    if any(temp_line.lower().startswith(keyword) for keyword in self.keywords_increase) or \
+         any(temp_line.lower().startswith(item + " function ") or \
+         any(temp_line.lower().startswith(f"{item}({x}) function") or \
+             temp_line.lower().startswith(f"{item}*{x} function") for x in [1, 2, 4, 8, 16]) for item in self.data_types) or\
+         any(re.search(r"^[a-z0-9_]+:\s*"  + re.escape(keyword) + r"\b", temp_line.lower()) for keyword in self.keywords_increase):
         if temp_line.lower().startswith('if'):
             if temp_line.lower()[-5:].strip() == 'then':
                 indenter += 1
@@ -55,7 +55,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
         if not first_case:
             first_case = True
             indenter += 1
-            skip = True
+        skip = True
     elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_decrease):
         if temp_line.lower().startswith("endselect") or temp_line.lower().startswith("end select"):
             indenter -= 2
