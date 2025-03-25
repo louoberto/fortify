@@ -49,15 +49,22 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                     else:
                         do_list.append((temp_num, do_count))
         elif not temp_line.lower().replace(self.space, self.empty).startswith('type(') and not temp_line.lower().startswith('do'):
-            indenter += 1
-            skip = True
+            if temp_line.lower().startswith('type is'):
+                if not first_case:
+                    first_case = True
+                    indenter += 1
+                skip = True
+            else:
+                indenter += 1
+                skip = True
     elif temp_line.lower().startswith("case"):
         if not first_case:
             first_case = True
             indenter += 1
         skip = True
-    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_decrease):
+    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_decrease) or any(temp_line.lower() == keyword[:-1] for keyword in self.keywords_decrease):
         if temp_line.lower().startswith("endselect") or temp_line.lower().startswith("end select"):
+            first_case = False
             indenter -= 2
         elif temp_line.lower().startswith("continue"):
             for goto in do_list:

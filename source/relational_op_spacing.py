@@ -57,10 +57,17 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
                     temp = temp_line + self.space + char
                 else:
                     # print(code_line, repr(code_line[j]),j)
-                    if code_line[j - 1] != self.space:
+                    if code_line[j - 1] not in [self.space,',']:
+                        # print(code_line, repr(code_line[j]),j)
                         temp = temp_line + self.space + char + self.space
                     else:
-                        temp = temp_line + char + self.space
+                        # print(code_line, repr(code_line[j]),j)
+                        if code_line[j + 1] in [self.space,"'",]:
+                            # print(code_line, repr(code_line[j]),j)
+                            temp = temp_line + char
+                        else:
+                            # print(code_line, repr(code_line[j]),j)
+                            temp = temp_line + char + self.space
             else:
                 # print(code_line, repr(code_line[j]),j)
                 if code_line[j - 1] != self.space:
