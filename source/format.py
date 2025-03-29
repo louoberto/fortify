@@ -12,10 +12,12 @@ def format(self):
     indenter = 0
     skip = False
     first_case = False
+    first_slash = True
     new_file_lines = []
     do_list = []
     do_count = 0
     for i, line in enumerate(self.file_lines):
+        # print(line[0])
         # Skip formatting if any of the following conditions are met
         if not line.strip(): # If blank line
             if i != len(self.file_lines):
@@ -25,12 +27,14 @@ def format(self):
             new_file_lines.append(line)
             continue
         elif line[0] in ['*','C','c','!'] and not self.free_form: # Check for F77 comments
+            # print(line)
             line = self.comment + line[1:] # Convert to what user wants
             while(line[-2] == self.space): # Remove empty whitespace at the end of a comment-only line
                 line = line[:-2] + line[-1:]
             new_file_lines.append(line) # Append and go back
             continue
         elif not self.free_form: # We've dealt with column 0 comments, so change this to '!'
+            # print(line)
             old_comment = self.comment
             self.comment = '!'
         
@@ -110,9 +114,11 @@ def format(self):
                     temp = self.if_logicals_spacing(self, j, char, code_line, temp)
                 elif char == ",":
                     temp = self.comma_spacing(self, j, char, code_line, temp)
-                elif char in ["(", ")"]:
+                elif char in ["(", ")", "[","]"]:
                     temp = self.paren_spacing(self, j, char, code_line, temp)
-                elif char in ["<", ">", "/", "="]:
+                elif char in ["/"]:
+                    temp, first_slash = self.slash_spacing(self, j, char, code_line, temp, first_slash)
+                elif char in ["<", ">", "="]:
                     temp = self.relational_op_spacing(self, j, char, code_line, temp)
                 elif char == "*" and "*" not in [code_line[j - 1], code_line[j + 1]] and code_line[j - 4 : j] not in self.data_types:
                     temp = self.star_spacing(self, j, char, code_line, temp)

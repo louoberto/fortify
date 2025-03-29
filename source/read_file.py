@@ -12,7 +12,7 @@ def read_file(self, filename):
     try:
         with open(filename, "r") as in_file:
             self.file_lines = in_file.readlines()
-            if filename[-2:] in [".f", ".F", ".for", ".FOR", ".f77", ".F77", ".ftn", ".FTN", ".fpp", ".FPP", ".f66", ".F66"]:
+            if filename[-2:].lower() in [".f"] or filename[-4:].lower() in [".for", ".f77", ".ftn", ".fpp", ".f66"]:
                 free_form = False
             self.free_form = free_form
             return

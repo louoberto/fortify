@@ -16,6 +16,8 @@ from plus_spacing import plus_spacing
 from structured_indent import structured_indent
 from line_carry_over import line_carry_over
 from remove_extra_space import remove_extra_space
+from slash_spacing import slash_spacing
+from debug import debug
 from format import format
 
 
@@ -51,6 +53,12 @@ class fortify_class:
             'logical',
             'double precision',
         ]
+        self.common_types = [
+            'namelist',
+            'data',
+            'common',
+        ]
+
 
         # Logical expressions
         self.iftypes = ['.and.', '.not.']
@@ -64,11 +72,13 @@ class fortify_class:
         self.if_logicals_spacing = if_logicals_spacing
         self.comma_spacing = comma_spacing
         self.paren_spacing = paren_spacing
+        self.slash_spacing = slash_spacing
         self.relational_op_spacing = relational_op_spacing
         self.star_spacing = star_spacing
         self.plus_spacing = plus_spacing
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
+        self.debug = debug
 
         # Keywords for indenting
         self.keywords_increase = [

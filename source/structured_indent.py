@@ -6,13 +6,14 @@
 # lists found in keywords_increase and keywords_decrease
 # ========================================================================
 import re
-def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_list,do_count):
+def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_list, do_count):
     j = i
     if any(temp_line.lower().startswith(keyword) for keyword in self.keywords_increase) or \
-         any(temp_line.lower().startswith(item + " function ") or \
-         any(temp_line.lower().startswith(f"{item}({x}) function") or \
-             temp_line.lower().startswith(f"{item}*{x} function") for x in [1, 2, 4, 8, 16]) for item in self.data_types) or\
-         any(re.search(r"^[a-z0-9_]+:\s*"  + re.escape(keyword) + r"\b", temp_line.lower()) for keyword in self.keywords_increase):
+       any(temp_line.lower().startswith(item + " function ") or \
+       any(temp_line.lower().startswith(f"{item}({x}) function") or \
+           temp_line.lower().startswith(f"{item}*{x} function") for x in [1, 2, 4, 8, 16]) for item in self.data_types) or\
+       any(re.search(r"^[a-z0-9_]+:\s*"  + re.escape(keyword) + r"\b", temp_line.lower()) for keyword in self.keywords_increase) or\
+       any(re.search(r'^\s*\d{0,4}\s*' + re.escape(keyword) + r'\b', temp_line.lower()) for keyword in self.keywords_increase):
         if temp_line.lower().startswith('if'):
             if temp_line.lower()[-5:].strip() == 'then':
                 indenter += 1
@@ -31,23 +32,25 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
         elif temp_line.lower().startswith('do ') or temp_line.lower().strip() == 'do':
             indenter += 1
             skip = True
-            if not self.free_form:
-                # Need to check if there is a continue with it
-                i = len('do')
-                while temp_line.lower()[i] == self.space:
+            # print(temp_line)
+            # Check if there is a continue with it
+            i = len('do')
+            while temp_line.lower()[i] == self.space:
+                i += 1
+            if temp_line.lower()[i].isnumeric():
+                # print(temp_line.lower()[i])
+                temp_num = self.empty
+                while temp_line.lower()[i].isnumeric():
+                    temp_num += temp_line[i]
                     i += 1
-                if temp_line.lower()[i].isnumeric():
-                    temp_num = self.empty
-                    while temp_line.lower()[i].isnumeric():
-                        temp_num += temp_line[i]
-                        i += 1
-                    if any(temp_num == item[0] for item in do_list):
-                        for index, item in enumerate(do_list):
-                            if temp_num == item[0]:
-                                do_list[index] = (item[0], item[1] + 1)
-                                break
-                    else:
-                        do_list.append((temp_num, do_count))
+                if any(temp_num == item[0] for item in do_list):
+                    for index, item in enumerate(do_list):
+                        if temp_num == item[0]:
+                            do_list[index] = (item[0], item[1] + 1)
+                            break
+                else:
+                    do_list.append((temp_num, do_count))
+                # print(do_list)
         elif not temp_line.lower().replace(self.space, self.empty).startswith('type(') and not temp_line.lower().startswith('do'):
             if temp_line.lower().startswith('type is'):
                 if not first_case:
@@ -62,18 +65,33 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
             first_case = True
             indenter += 1
         skip = True
-    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_decrease) or any(temp_line.lower() == keyword[:-1] for keyword in self.keywords_decrease):
-        if temp_line.lower().startswith("endselect") or temp_line.lower().startswith("end select"):
-            first_case = False
-            indenter -= 2
-        elif temp_line.lower().startswith("continue"):
-            for goto in do_list:
-                if ff_line.lstrip().startswith(goto[0]):
-                    indenter -= (1 + goto[1])
-                    do_list.remove(goto)
-                    break
+    elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_decrease)\
+      or any(temp_line.lower() == keyword[:-1] for keyword in self.keywords_decrease)\
+      or any(re.search(r'^\s*\d{0,5}\s+' + re.escape(keyword.strip()) + r'\b', temp_line.lower()) for keyword in self.keywords_decrease):
+        # print(temp_line)
+        if temp_line.lower().startswith("end =") or re.match(r'^\s*\d{0,5}\s+end =', temp_line.lower()):
+            pass
         else:
-            indenter -= 1
+            if temp_line.lower().startswith("endselect") or temp_line.lower().startswith("end select"):
+                first_case = False
+                indenter -= 2
+            elif temp_line.lower().startswith("continue") and not self.free_form or re.match(r'^\s*\d{0,4}\s+continue(\s|$)', temp_line, re.IGNORECASE) and self.free_form:
+                    # print(temp_line)
+                    for goto in do_list:
+                        if ff_line.lstrip().startswith(goto[0]) or temp_line.startswith(goto[0]):
+                            indenter -= (1 + goto[1])
+                            do_list.remove(goto)
+                            break
+            else:
+                indenter -= 1
+    elif re.match(r'^\s*\d{0,4}\s+continue(\s|$)', temp_line, re.IGNORECASE) and self.free_form:
+        # print(temp_line, do_list)
+        for goto in do_list:
+            # print(goto[0])
+            if temp_line.startswith(goto[0]):
+                indenter -= (1 + goto[1])
+                do_list.remove(goto)
+                break
 
     if ("else" in temp_line.lower()[:4] or "elseif" in temp_line.lower()[:6] or "elsewhere" in temp_line.lower()[:6]):  # else statements go back one, but that's it
         skip = True
@@ -93,5 +111,5 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                 skip = False
     else:
         temp_line = self.space * self.tab_len * indenter + temp_line
-
+    # print(indenter, temp_line)
     return temp_line, indenter, skip, first_case
