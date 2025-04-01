@@ -12,11 +12,11 @@ def format(self):
     indenter = 0
     skip = False
     first_case = False
-    first_slash = True
     new_file_lines = []
     do_list = []
     do_count = 0
     for i, line in enumerate(self.file_lines):
+        first_slash = True
         # print(line[0])
         # Skip formatting if any of the following conditions are met
         if not line.strip(): # If blank line

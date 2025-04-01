@@ -9,7 +9,7 @@ debug_me = 0
 def slash_spacing(self, j, char, code_line, temp_line, first_slash):
     if debug_me:
         self.debug(currentframe().f_lineno, char, code_line, j)
-    if any(temp_line.lower().startswith(keyword) for keyword in self.common_types):# or any(temp_line.lower().startswith(keyword) for keyword in self.data_types):
+    if any(temp_line.lower().startswith(keyword) for keyword in self.common_types) or (any(temp_line.lower().startswith(keyword) for keyword in self.data_types) and ', parameter' not in temp_line):
         if first_slash:
             first_slash = False
             if temp_line[-1] not in [self.space, '(']:
