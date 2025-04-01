@@ -20,16 +20,14 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
         self.debug(currentframe().f_lineno, char, code_line, j)
         print(repr(temp_line))
     if len(code_line) > j + 1 and code_line[j + 1] == "=": # ?==, ?+=, ?-=
-        # print(code_line, repr(code_line[j]),j)
-        if code_line[j - 1] != self.space: # ?==, ?+=, ?-=
-            # print(code_line, repr(code_line[j]),j)
-            if code_line[j + 1] == '=':
-                if code_line[j - 1] != self.space:
-                    temp = temp_line + self.space + char
-                else:
-                    temp = temp_line + char
-            else:
-                temp = temp_line + self.space + char
+        if debug_me:
+            self.debug(currentframe().f_lineno, char, code_line, j)
+            print(repr(temp_line))
+        if code_line[j - 1] not in [self.space,')']: # ?==, ?+=, ?-=
+            if debug_me:
+                self.debug(currentframe().f_lineno, char, code_line, j)
+                print(repr(temp_line))
+            temp = temp_line + self.space + char
         else: # ? ==, ? +=, ? -=
             temp = temp_line + char
     elif len(code_line) > j + 1 and code_line[j + 1] != self.space: # ?=?, ?+?, ?-?
@@ -54,10 +52,7 @@ def relational_op_spacing(self, j, char, code_line, temp_line):
             temp = temp_line + char
         else:
             # print(code_line, repr(code_line[j]),j)
-            if char == '/' and code_line[j + 1] == '/':
-                temp = temp_line + char
-            else:
-                temp = temp_line + char + self.space
+            temp = temp_line + char + self.space
     elif code_line[j - 1] != self.space:
         # print(code_line, repr(code_line[j]),j)
         if code_line[j - 1] in ['(',')','<','>','/','=']:

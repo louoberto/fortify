@@ -6,14 +6,18 @@
 # lists found in keywords_increase and keywords_decrease
 # ========================================================================
 import re
-def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_list, do_count):
+def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_list, do_count, select_indent):
     j = i
+    # print(temp_line)
     if any(temp_line.lower().startswith(keyword) for keyword in self.keywords_increase) or \
        any(temp_line.lower().startswith(item + " function ") or \
        any(temp_line.lower().startswith(f"{item}({x}) function") or \
            temp_line.lower().startswith(f"{item}*{x} function") for x in [1, 2, 4, 8, 16]) for item in self.data_types) or\
-       any(re.search(r"^[a-z0-9_]+:\s*"  + re.escape(keyword) + r"\b", temp_line.lower()) for keyword in self.keywords_increase) or\
-       any(re.search(r'^\s*\d{0,4}\s*' + re.escape(keyword) + r'\b', temp_line.lower()) for keyword in self.keywords_increase):
+       any(re.search(r"^[a-z0-9_]+:\s*" + re.escape(keyword) + r"\b", temp_line.lower()) for keyword in self.keywords_increase) or\
+       any(re.search(r'^\s*\d{0,4}\s*' + re.escape(keyword) + r'\b', temp_line.lower()) for keyword in self.keywords_increase) or \
+       any(re.search(r"^[a-z0-9_]+:*:" + re.escape(keyword) + r"\b", temp_line.lower()) for keyword in self.keywords_increase):
+        if temp_line.lower().startswith('select'):
+            select_indent = True
         if temp_line.lower().startswith('if'):
             if temp_line.lower()[-5:].strip() == 'then':
                 indenter += 1
@@ -29,7 +33,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                     if self.file_lines[j+1][-5:].strip() == 'then':
                         indenter += 1
                         skip = True
-        elif temp_line.lower().startswith('do ') or temp_line.lower().strip() == 'do':
+        elif temp_line.lower().startswith('do ') or temp_line.lower().strip() == 'do' or re.search(r"^[a-z0-9_]+: *do(?=\n| )", temp_line.lower()):
             indenter += 1
             skip = True
             # print(temp_line)
@@ -53,13 +57,16 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                 # print(do_list)
         elif not temp_line.lower().replace(self.space, self.empty).startswith('type(') and not temp_line.lower().startswith('do'):
             if temp_line.lower().startswith('type is'):
-                if not first_case:
-                    first_case = True
-                    indenter += 1
-                skip = True
+                if select_indent:
+                    if not first_case:
+                        first_case = True
+                        indenter += 1
+                    skip = True
             else:
-                indenter += 1
-                skip = True
+                # print(temp_line, not (temp_line.lower().startswith('type ') and len(temp_line) > j + 1 and temp_line[j+1].isalpha() and temp_line[j+1] in ['('] and not select_indent))
+                if not (temp_line.lower().startswith('type *') and not select_indent):
+                    indenter += 1
+                    skip = True
     elif temp_line.lower().startswith("case"):
         if not first_case:
             first_case = True
@@ -73,6 +80,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
             pass
         else:
             if temp_line.lower().startswith("endselect") or temp_line.lower().startswith("end select"):
+                select_indent = False
                 first_case = False
                 indenter -= 2
             elif temp_line.lower().startswith("continue") and not self.free_form or re.match(r'^\s*\d{0,4}\s+continue(\s|$)', temp_line, re.IGNORECASE) and self.free_form:
@@ -112,4 +120,4 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
     else:
         temp_line = self.space * self.tab_len * indenter + temp_line
     # print(indenter, temp_line)
-    return temp_line, indenter, skip, first_case
+    return temp_line, indenter, skip, first_case, select_indent

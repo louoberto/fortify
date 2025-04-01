@@ -1,15 +1,15 @@
 # ========================================================================
-# Function: if_logicals_spacing
+# Function: period_spacing
 # ========================================================================
 # Purpose:
 # Adds spaces between logical expressions: x.gt.y to x .gt. y
 # ========================================================================
-def if_logicals_spacing(self, j, char, code_line, temp_line):
+def period_spacing(self, j, char, code_line, temp_line):
     if code_line[j - 4:j + 1].lower() in self.iftypes:
         i = 5
     elif code_line[j - 3:j + 1].lower() in self.iftypes2:
         i = 4
-    elif code_line[j - 1].isnumeric() and not code_line[j + 1].isnumeric() and code_line[j + 1] not in [')', self.newline, 'D', 'd', 'E', 'e','_']:
+    elif code_line[j - 1].isnumeric() and len(code_line) > j + 1 and not code_line[j + 1].isnumeric() and code_line[j + 1] not in [')', self.newline, 'D', 'd', 'E', 'e','_']:
         if code_line[j:j + 4].lower() not in self.iftypes2 and code_line[j:j + 5].lower() not in self.iftypes and code_line[j + 1] != self.space:
             temp = temp_line + char + self.space
         else:

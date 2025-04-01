@@ -12,10 +12,12 @@ def format(self):
     indenter = 0
     skip = False
     first_case = False
+    select_indent = False
     new_file_lines = []
     do_list = []
     do_count = 0
     for i, line in enumerate(self.file_lines):
+        # print(line)
         first_slash = True
         # print(line[0])
         # Skip formatting if any of the following conditions are met
@@ -111,9 +113,11 @@ def format(self):
                 if char == self.space:
                     temp = self.remove_extra_space(self, j, char, code_line, temp)
                 elif char == ".":
-                    temp = self.if_logicals_spacing(self, j, char, code_line, temp)
+                    temp = self.period_spacing(self, j, char, code_line, temp)
                 elif char == ",":
                     temp = self.comma_spacing(self, j, char, code_line, temp)
+                elif char == ":":
+                    temp = self.colon_spacing(self, j, char, code_line, temp)
                 elif char in ["(", ")", "[","]"]:
                     temp = self.paren_spacing(self, j, char, code_line, temp)
                 elif char in ["/"]:
@@ -129,7 +133,7 @@ def format(self):
             else:
                 temp += char
 
-        temp, indenter, skip, first_case = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count)
+        temp, indenter, skip, first_case, select_indent = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count, select_indent)
         if not comment_skip: # User defined; default is true
             temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
             temp = temp1 + temp2

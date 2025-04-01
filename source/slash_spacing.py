@@ -18,6 +18,8 @@ def slash_spacing(self, j, char, code_line, temp_line, first_slash):
                 return temp_line + self.space + char, first_slash
         else:
             first_slash = True
+            if len(code_line) > j + 1 and code_line[j + 1] not in [self.space,'\n',',',')']:
+                return temp_line + char + self.space, first_slash
         return temp_line + char, first_slash
     elif len(code_line) > j + 1 and code_line[j + 1] != self.space: # ?/?
         if debug_me:

@@ -7,10 +7,11 @@
 # ========================================================================
 from read_file import read_file
 from print_file import print_file
-from if_logicals_spacing import if_logicals_spacing
+from period_spacing import period_spacing
 from paren_spacing import paren_spacing
 from relational_op_spacing import relational_op_spacing
 from comma_spacing import comma_spacing
+from colon_spacing import colon_spacing
 from star_spacing import star_spacing
 from plus_spacing import plus_spacing
 from structured_indent import structured_indent
@@ -70,8 +71,9 @@ class fortify_class:
         self.print_file = print_file
         self.format = format
         self.remove_extra_space = remove_extra_space
-        self.if_logicals_spacing = if_logicals_spacing
+        self.period_spacing = period_spacing
         self.comma_spacing = comma_spacing
+        self.colon_spacing = colon_spacing
         self.paren_spacing = paren_spacing
         self.slash_spacing = slash_spacing
         self.relational_op_spacing = relational_op_spacing
