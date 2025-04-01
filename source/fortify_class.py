@@ -57,6 +57,7 @@ class fortify_class:
             'namelist',
             'data',
             'common',
+            'structure'
         ]
 
 
