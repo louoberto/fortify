@@ -2,6 +2,8 @@
 # Function: slash_spacing
 # ========================================================================
 # Purpose:
+# Similar to relational_op_spacing except extra code is needed for slash
+# spacing
 # ========================================================================
 from inspect import currentframe
 debug_me = 0

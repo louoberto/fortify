@@ -2,6 +2,7 @@
 # Function: slash_spacing
 # ========================================================================
 # Purpose:
+# Print out line, character, index, and code line for debugging purposes
 # ========================================================================
 from inspect import currentframe
 
