@@ -13,12 +13,14 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
        any(temp_line.lower().startswith(item + " function ") or \
        any(temp_line.lower().startswith(f"{item}({x}) function") or \
            temp_line.lower().startswith(f"{item}*{x} function") for x in [1, 2, 4, 8, 16]) for item in self.data_types) or\
-       any(re.search(r"^[a-z0-9_]+:\s*" + re.escape(keyword) + r"\b", temp_line.lower()) for keyword in self.keywords_increase) or\
-       any(re.search(r'^\s*\d{0,4}\s*' + re.escape(keyword) + r'\b', temp_line.lower()) for keyword in self.keywords_increase) or \
-       any(re.search(r"^[a-z0-9_]+:*:" + re.escape(keyword) + r"\b", temp_line.lower()) for keyword in self.keywords_increase):
+       any(re.match(r"^[a-z0-9_]+:\s*" + re.escape(keyword) + r'(?=\s|\(|$)', temp_line.lower()) for keyword in self.keywords_increase) or\
+       any(re.match(r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$)', temp_line.lower()) for keyword in self.keywords_increase) or \
+       any(re.match(r"^[a-z0-9_]+:" + re.escape(keyword) + r'(?=\s|\(|$)', temp_line.lower()) for keyword in self.keywords_increase):
         if temp_line.lower().startswith('select'):
             select_indent = True
-        if temp_line.lower().startswith('if'):
+        # print(indenter, repr(temp_line))
+        if temp_line.lower().startswith('if'):# or re.search(r"^\s*[a-z0-9_]+ if", temp_line.lower()):
+            # print(temp_line)
             if temp_line.lower()[-5:].strip() == 'then':
                 indenter += 1
                 skip = True
@@ -74,8 +76,8 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
         skip = True
     elif any(temp_line.lower().startswith(keyword) for keyword in self.keywords_decrease)\
       or any(temp_line.lower() == keyword[:-1] for keyword in self.keywords_decrease)\
-      or any(re.search(r'^\s*\d{0,5}\s+' + re.escape(keyword.strip()) + r'\b', temp_line.lower()) for keyword in self.keywords_decrease):
-        # print(temp_line)
+      or any(re.match(r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$)', temp_line.lower()) for keyword in self.keywords_decrease):
+        # print(indenter, repr(temp_line))
         if temp_line.lower().startswith("end =") or re.match(r'^\s*\d{0,5}\s+end =', temp_line.lower()):
             pass
         else:
@@ -119,5 +121,5 @@ def structured_indent(self, temp_line, indenter, skip, first_case,i, ff_line,do_
                 skip = False
     else:
         temp_line = self.space * self.tab_len * indenter + temp_line
-    # print(indenter, temp_line)
+    # print(indenter, repr(temp_line))
     return temp_line, indenter, skip, first_case, select_indent
