@@ -4,7 +4,12 @@
 # Purpose:
 # Handles formatting for objects around and inside parens ()
 # ========================================================================
+from inspect import currentframe
+debug_me = 0
+
 def paren_spacing(self, j, char, code_line, temp_line):
+    if debug_me:
+        self.debug(currentframe().f_lineno, char, code_line, j)
     if code_line.lower().startswith("if(") and j == 2:
         return temp_line + self.space + char
 
@@ -18,5 +23,13 @@ def paren_spacing(self, j, char, code_line, temp_line):
             return temp_line + char
         # print(code_line, repr(code_line[j]),j)
         return temp_line + char + (self.space if code_line[j + 1] not in [")"] else "")
-
-    return temp_line + char
+    else:
+        if debug_me:
+            self.debug(currentframe().f_lineno, char, code_line, j)
+        if code_line[j - 3:j] == '(/ ':
+            if debug_me:
+                self.debug(currentframe().f_lineno, char, code_line, j)
+            return temp_line[:-1] + char
+        else:
+            # print(code_line[j-3:j])
+            return temp_line + char

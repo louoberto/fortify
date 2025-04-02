@@ -42,8 +42,12 @@ def slash_spacing(self, j, char, code_line, temp_line, first_slash):
                 if debug_me:
                     self.debug(currentframe().f_lineno, char, code_line, j)
                 if (code_line[j - 1] == self.space and not code_line[j - 2].isalnum()) or code_line[j - 1] == '(':
+                    if debug_me:
+                        self.debug(currentframe().f_lineno, char, code_line, j)
                     temp = temp_line + char
                 else:
+                    if debug_me:
+                        self.debug(currentframe().f_lineno, char, code_line, j)
                     if code_line[j + 1] == self.newline:
                         if code_line[j - 1] == self.space:
                             temp = temp_line + char
@@ -80,8 +84,12 @@ def slash_spacing(self, j, char, code_line, temp_line, first_slash):
                         # print(code_line, repr(code_line[j]),j)
                         temp = temp_line + char + self.space
         elif code_line[j + 1] == ')':
-            # print(code_line, repr(code_line[j]),j)
-            temp = temp_line + char
+            if debug_me:
+                self.debug(currentframe().f_lineno, char, code_line, j)
+            if code_line[j - 2] == ')' and code_line[j - 1] == self.space:
+                temp = temp_line[:-1] + char
+            else:
+                temp = temp_line + char
         else:
             # print(code_line, repr(code_line[j]),j)
             if code_line[j + 1] == '/':

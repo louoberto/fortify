@@ -20,5 +20,6 @@ def colon_spacing(self, j, char, code_line, temp_line):
     elif len(code_line) > j + 1 and code_line[j + 1] not in [self.space] and code_line[j - 1] == ':':
         return temp_line + char + self.space
     else:
-        # print(code_line, repr(code_line[j]),j)
+        if debug_me:
+            self.debug(currentframe().f_lineno, char, code_line, j)
         return temp_line + char
