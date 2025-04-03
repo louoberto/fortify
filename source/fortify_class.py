@@ -99,7 +99,7 @@ class fortify_class:
             'type,',
             'where',
             'block',
-            'recursive'
+            'recursive subroutine'
         ]
         self.keywords_decrease = [
             'enddo\n',

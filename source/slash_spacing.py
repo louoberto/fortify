@@ -11,6 +11,10 @@ debug_me = 0
 def slash_spacing(self, j, char, code_line, temp_line, first_slash):
     if debug_me:
         self.debug(currentframe().f_lineno, char, code_line, j)
+    # ====================================================================
+    # Concerning single slash on a common type or data type
+    # For example real foo /123/
+    # ====================================================================
     if any(temp_line.lower().startswith(keyword) for keyword in self.common_types) or (any(temp_line.lower().startswith(keyword) for keyword in self.data_types) and ', parameter' not in temp_line):
         if first_slash:
             first_slash = False
@@ -21,6 +25,9 @@ def slash_spacing(self, j, char, code_line, temp_line, first_slash):
             if len(code_line) > j + 1 and code_line[j + 1] not in [self.space,'\n',',',')']:
                 return temp_line + char + self.space, first_slash
         return temp_line + char, first_slash
+    # ====================================================================
+    # Other slash processing
+    # ====================================================================
     elif len(code_line) > j + 1 and code_line[j + 1] != self.space: # ?/?
         if debug_me:
             self.debug(currentframe().f_lineno, char, code_line, j)

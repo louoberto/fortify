@@ -16,6 +16,7 @@ def format(self):
     new_file_lines = []
     do_list = []
     do_count = 0
+    slash_skip = False
     for i, line in enumerate(self.file_lines):
         # print(line)
         first_slash = True
@@ -25,8 +26,12 @@ def format(self):
             if i != len(self.file_lines):
                 new_file_lines.append(self.newline)
             continue
-        elif line.strip()[0] == '#': # Preprocesser directive, leave line be
+        elif line.strip()[0] == '#' or slash_skip: # Preprocesser directive, leave line be
             new_file_lines.append(line)
+            if line.strip()[-1] == '\\':
+                slash_skip = True
+            else:
+                slash_skip = False
             continue
         elif line[0] in ['*','C','c','!'] and not self.free_form: # Check for F77 comments
             # print(line)
