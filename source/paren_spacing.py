@@ -22,7 +22,7 @@ def paren_spacing(self, j, char, code_line, temp_line):
             # print(code_line, repr(code_line[j]),j)
             return temp_line + char
         # print(code_line, repr(code_line[j]),j)
-        return temp_line + char + (self.space if code_line[j + 1] not in [")"] else "")
+        return temp_line + char + (self.space if code_line[j + 1] not in [")", '.'] else "")
     else:
         if debug_me:
             self.debug(currentframe().f_lineno, char, code_line, j)

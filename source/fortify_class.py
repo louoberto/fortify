@@ -95,11 +95,15 @@ class fortify_class:
             'select',
             'structure',
             'subroutine',
-            'type ',
+            # 'type ',
             'type,',
             'where',
             'block',
-            'recursive subroutine'
+            'recursive subroutine',
+            'class is',
+            'class default',
+            'map',
+            'union'
         ]
         self.keywords_decrease = [
             'enddo\n',
