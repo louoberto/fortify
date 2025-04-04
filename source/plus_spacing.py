@@ -31,10 +31,13 @@ def plus_spacing(self, j, char, code_line, temp_line):
                     
                     temp = temp_line + char + self.space
     elif len(code_line) > j + 1 and code_line[j - 1] == self.space and code_line[j + 1] != self.space:  # ? +?
+        # print(code_line)
         if code_line[j - 2] in ['=', ','] and (code_line[j + 1].isalnum() or code_line[j + 1] == '('):
+            # print(code_line)
             temp = temp_line + char
         else:
-            if code_line[j - 1] == self.space and (code_line[j + 1].isalnum() or code_line[j + 1] == self.newline):
+            # print(code_line)
+            if code_line[j + 1].isnumeric() or code_line[j + 1] == self.newline:
                 temp = temp_line + char
             else:
                 temp = temp_line + char + self.space
