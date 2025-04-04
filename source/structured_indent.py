@@ -17,21 +17,37 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
         or re.match(r"^[a-z0-9_]+:\s*" + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) \
         or re.match(r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) \
         or re.match(r"^[a-z0-9_]+:" + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) for keyword in self.keywords_increase) \
-        and ('module procedure' not in temp_line) and ('interface_' not in temp_line)):
+        and ('module procedure' not in temp_lower) and ('interface_' not in temp_lower)):
         if temp_lower.startswith('select'):
             select_indent = True
-        if temp_line.strip().lower().startswith('module procedure'):
+        if temp_lower.strip().startswith('module procedure'):
             # print(indenter, repr(temp_line))
             skip = True
             pass
         # print(indenter, repr(temp_line))
-        if temp_lower.startswith('if') or re.match(r"^\s*[a-z0-9_]+ if ", temp_lower) or re.match(r"^\s*[a-z0-9_]+ if" + r'(?=\s|\()', temp_lower):
+        if temp_lower.lstrip().startswith('type ') and not select_indent:
+            # print(indenter, repr(temp_lower))
+            # look ahead for 'end type'
+            is_type_block = False
+            for k in range(j + 1, len(self.file_lines)):
+                if self.file_lines[k].lower().strip().startswith('endtype') or self.file_lines[k].lower().strip().startswith('end type'):
+                    is_type_block = True
+                    break
+                else:
+                    is_type_block = False
+            if is_type_block:
+                # print(indenter, repr(temp_lower))
+                indenter += 1
+                skip = True
+            # else:
+                # print(indenter, repr(temp_lower))
+        elif temp_lower.startswith('if') or re.match(r"^\s*[a-z0-9_]+ if ", temp_lower) or re.match(r"^\s*[a-z0-9_]+ if" + r'(?=\s|\()', temp_lower):
             # print(temp_line)
             if temp_lower[-5:].strip() == 'then' or (") then;" in temp_lower and not any(keyword in temp_lower for keyword in ['end if', 'endif'])):
                 # print(temp_line)
                 indenter += 1
                 skip = True
-            elif temp_lower[-2].strip() == self.continuation_char or (not self.free_form and self.file_lines[j+1][5] != self.space):
+            elif temp_lower[-2].strip() == self.continuation_char or (not self.free_form and len(self.file_lines[j+1]) > 6 and self.file_lines[j+1][5] != self.space):
                 # print(temp_line)
                 if self.file_lines[j+1][-2].strip() == self.continuation_char or not self.free_form:
                     # print(temp_line)

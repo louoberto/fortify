@@ -95,7 +95,7 @@ class fortify_class:
             'select',
             'structure',
             'subroutine',
-            # 'type ',
+            'type ',
             'type,',
             'where',
             'block',
