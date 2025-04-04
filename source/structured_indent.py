@@ -10,14 +10,28 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
     j = i
     # print(temp_line)
     temp_lower = temp_line.lower()
-    if (any(temp_lower.startswith(item + " function ") \
-        or re.search(rf"{item}\(\w+\) function", temp_line, re.IGNORECASE) \
-        or re.search(rf"{item}\*\w+ function", temp_line, re.IGNORECASE) for item in self.data_types) \
-        or any(temp_lower.startswith(keyword) \
-        or re.match(r"^[a-z0-9_]+:\s*" + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) \
-        or re.match(r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) \
-        or re.match(r"^[a-z0-9_]+:" + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) for keyword in self.keywords_increase) \
-        and ('module procedure' not in temp_lower) and ('interface_' not in temp_lower)):
+    for keyword in self.data_types:
+        if (temp_lower.startswith(keyword + " function ") \
+            or re.search(rf"{keyword}\(\w+\) function", temp_line, re.IGNORECASE) \
+            or re.search(rf"{keyword}\*\w+ function", temp_line, re.IGNORECASE)):
+            keyword_match = True
+            break
+        else:
+            keyword_match = False
+
+    if not keyword_match:
+        for keyword in self.keywords_increase:
+            if (temp_lower.startswith(keyword) \
+                or re.match(r"^[a-z0-9_]+:\s*" + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) \
+                or re.match(r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) \
+                or re.match(r"^[a-z0-9_]+:" + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower) \
+                and ('module procedure' not in temp_lower) and ('interface_' not in temp_lower)):
+                keyword_match = True
+                break
+            else:
+                keyword_match = False
+
+    if keyword_match:
         if temp_lower.startswith('select'):
             select_indent = True
         if temp_lower.strip().startswith('module procedure'):
