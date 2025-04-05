@@ -16,6 +16,7 @@ from star_spacing import star_spacing
 from plus_spacing import plus_spacing
 from semicolon_spacing import semicolon_spacing
 from structured_indent import structured_indent
+from line_breakup import line_breakup
 from line_carry_over import line_carry_over
 from remove_extra_space import remove_extra_space
 from slash_spacing import slash_spacing
@@ -84,6 +85,7 @@ class fortify_class:
         self.plus_spacing = plus_spacing
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
+        self.line_breakup = line_breakup
         self.debug = debug
 
         # Keywords for indenting

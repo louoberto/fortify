@@ -4,18 +4,10 @@
 # Purpose:
 # Finds semicolons in the code and adds a new line after it.
 # ========================================================================
-def semicolon_spacing(self, line, i):
-    while self.semicolon in line:
-        index = line.index(self.semicolon)
-        # Add before part if not empty
-        if index > 0:
-            self.file_lines[i+1:i+1]= (line[:index + 1])
-        # Update line to the remaining part
-        line = line[index + 1:]
-
-    return line
-
-
-# if word == "apple":
-#         # Insert new words directly after current word
-#         words[i+1:i+1] = ["cherry", "date"]
+def semicolon_spacing(self, j, char, code_line, temp_line, i, cmnt_line):
+    if j > 0 and code_line[j+1:].strip():
+        self.file_lines[i+1:i+1] = [code_line[j + 1:]]
+    if cmnt_line:
+        return temp_line + char
+    else:
+        return temp_line + char + '\n'
