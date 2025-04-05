@@ -44,7 +44,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
         # print(keyword, indenter, repr(temp_line))
         if keyword == 'select':
             select_indent = True
-        if keyword == 'type ' and not select_indent:
+        if keyword == 'type ' and not select_indent and not temp_lower.startswith('type ('):
             # print(indenter, repr(temp_lower))
             # =======================================================
             # Look ahead for 'end type'
@@ -74,7 +74,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
                         while self.file_lines[j+1][-2].strip() == self.continuation_char:
                             j += 1
                     else:
-                        while self.file_lines[j+2][5] != self.space:
+                        while len(self.file_lines[j+2]) > 5 and self.file_lines[j+2][5] != self.space:
                             j += 1
                         # will need to come back here possibly in case the if statement goes over and over
                     if self.file_lines[j+1][-5:].strip().lower() == 'then':
@@ -108,6 +108,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
                     do_list.append((temp_num, do_count))
                 # print(do_list)
         elif not temp_lower.replace(self.space, self.empty).startswith('type(') and not temp_lower.startswith('do'):
+            # print(temp_line)
             if keyword + 'is' == 'type is' or keyword in ['class is', 'class default']:
                 # print(temp_line)
                 if select_indent:

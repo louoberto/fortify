@@ -14,6 +14,7 @@ from comma_spacing import comma_spacing
 from colon_spacing import colon_spacing
 from star_spacing import star_spacing
 from plus_spacing import plus_spacing
+from semicolon_spacing import semicolon_spacing
 from structured_indent import structured_indent
 from line_carry_over import line_carry_over
 from remove_extra_space import remove_extra_space
@@ -43,6 +44,7 @@ class fortify_class:
         self.empty = ''
         self.space = ' '
         self.newline = '\n'
+        self.semicolon = ';'
         self.tab = '\t'
 
         # Fortran data types (not a complete list yet)
@@ -76,6 +78,7 @@ class fortify_class:
         self.colon_spacing = colon_spacing
         self.paren_spacing = paren_spacing
         self.slash_spacing = slash_spacing
+        self.semicolon_spacing = semicolon_spacing
         self.relational_op_spacing = relational_op_spacing
         self.star_spacing = star_spacing
         self.plus_spacing = plus_spacing

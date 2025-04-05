@@ -17,14 +17,20 @@ def format(self):
     do_list = []
     do_count = 0
     slash_skip = False
-    for i, line in enumerate(self.file_lines):
+    slash_cont = False
+    i = 0
+    while i < len(self.file_lines):
+        line = self.file_lines[i]
         # print(line)
-        first_slash = True
+        # print(line)
+        if not slash_cont:
+            first_slash = True
         # print(line[0])
         # Skip formatting if any of the following conditions are met
         if not line.strip(): # If blank line
             if i != len(self.file_lines):
                 new_file_lines.append(self.newline)
+            i += 1
             continue
         elif line.strip()[0] == '#' or slash_skip: # Preprocesser directive, leave line be
             new_file_lines.append(line)
@@ -32,6 +38,7 @@ def format(self):
                 slash_skip = True
             else:
                 slash_skip = False
+            i += 1
             continue
         elif line[0] in ['*','C','c','!'] and not self.free_form: # Check for F77 comments
             # print(line)
@@ -39,6 +46,7 @@ def format(self):
             while(line[-2] == self.space): # Remove empty whitespace at the end of a comment-only line
                 line = line[:-2] + line[-1:]
             new_file_lines.append(line) # Append and go back
+            i += 1
             continue
         elif not self.free_form: # We've dealt with column 0 comments, so change this to '!'
             # print(line)
@@ -47,6 +55,7 @@ def format(self):
         
         if no_format(self, line): # "No format" in the line
             new_file_lines.append(line)
+            i += 1
             continue
 
         # Convert tab characters to spaces
@@ -71,10 +80,11 @@ def format(self):
             cmnt_line = self.space * add_space + line[cmt_index:]
             code_line = code_line.rstrip()
         elif cmt_index == 0:
-            while(line[-2] == self.space):
+            while len(line) > 2 and line[-2] == self.space:
                 line = line[:-2] + line[-1:]
             if self.comment_behavior in [self.as_is, self.first_col]:
                 new_file_lines.append(line)
+                i += 1
                 continue
             else:
                 cmnt_line = line
@@ -96,6 +106,7 @@ def format(self):
                 code_line = code_line[:-2] + code_line[-1:]
             if self.comment_behavior in [self.as_is, self.first_col]:
                 new_file_lines.append(code_line)
+                i += 1
                 continue
 
         temp = self.empty
@@ -103,6 +114,15 @@ def format(self):
         double_quote_skip = False  # Skip strings
         comment_skip = False  # Skip comment
         # print(code_line)
+
+        if self.semicolon in code_line and code_line[0] != self.comment:
+            # print(code_line)
+            index = code_line.index(self.semicolon)
+            # Add before part if not empty
+            if index > 0 and code_line[index+1:].strip():
+                print(code_line[index + 1:])
+                self.file_lines[i+1:i+1] = code_line[index + 1:]
+                code_line = code_line[:index+1]
 
         for j, char in enumerate(code_line):
             # String check
@@ -126,10 +146,10 @@ def format(self):
                 elif char in ["(", ")", "[","]"]:
                     temp = self.paren_spacing(self, j, char, code_line, temp)
                 elif char in ["/"]:
-                    temp, first_slash = self.slash_spacing(self, j, char, code_line, temp, first_slash)
+                    temp, first_slash, slash_cont = self.slash_spacing(self, j, char, code_line, temp, first_slash, i, slash_cont)
                 elif char in ["<", ">", "="]:
                     temp = self.relational_op_spacing(self, j, char, code_line, temp)
-                elif char == "*" and "*" not in [code_line[j - 1], code_line[j + 1]] and code_line[j - 4 : j] not in self.data_types:
+                elif len(code_line) > j + 1 and char == "*" and "*" not in [code_line[j - 1], code_line[j + 1]] and code_line[j - 4 : j] not in self.data_types:
                     temp = self.star_spacing(self, j, char, code_line, temp)
                 elif char in ["+", "-"]:
                     temp = self.plus_spacing(self, j, char, code_line, temp)
@@ -145,5 +165,6 @@ def format(self):
         new_file_lines.append(temp)
         if not self.free_form: # Change the F77 comment back to whatever it was to begin with
             self.comment = old_comment
+        i += 1
     self.file_lines = new_file_lines
     return

@@ -8,23 +8,34 @@
 from inspect import currentframe
 debug_me = 0
 
-def slash_spacing(self, j, char, code_line, temp_line, first_slash):
+def slash_spacing(self, j, char, code_line, temp_line, first_slash, i, slash_cont):
     if debug_me:
         self.debug(currentframe().f_lineno, char, code_line, j)
     # ====================================================================
     # Concerning single slash on a common type or data type
     # For example real foo /123/
     # ====================================================================
-    if any(temp_line.lower().startswith(keyword) for keyword in self.common_types) or (any(temp_line.lower().startswith(keyword) for keyword in self.data_types) and ', parameter' not in temp_line):
+    # print(slash_cont, temp_line)
+    if slash_cont or any(temp_line.lower().startswith(keyword) for keyword in self.common_types) or (any(temp_line.lower().startswith(keyword) for keyword in self.data_types) and ', parameter' not in temp_line):
+        # print(slash_cont, temp_line)
+        if len(self.file_lines) > i + 1 and len(self.file_lines[i + 1]) > 5 and self.file_lines[i + 1][5] == self.continuation_char:
+            slash_cont = True
+        else:
+            slash_cont = False
         if first_slash:
+            # print(slash_cont, temp_line)
             first_slash = False
             if temp_line[-1] not in [self.space, '(']:
-                return temp_line + self.space + char, first_slash
+                # self.debug(currentframe().f_lineno, char, code_line, j)
+                return temp_line + self.space + char, first_slash, slash_cont
         else:
+            # print(slash_cont, temp_line)
             first_slash = True
             if len(code_line) > j + 1 and code_line[j + 1] not in [self.space,'\n',',',')']:
-                return temp_line + char + self.space, first_slash
-        return temp_line + char, first_slash
+                # self.debug(currentframe().f_lineno, char, code_line, j)
+                return temp_line + char + self.space, first_slash, slash_cont
+        # print(slash_cont, temp_line)
+        return temp_line + char, first_slash, slash_cont
     # ====================================================================
     # Other slash processing
     # ====================================================================
@@ -112,4 +123,4 @@ def slash_spacing(self, j, char, code_line, temp_line, first_slash):
     else:
         # print(code_line, repr(code_line[j]),j)
         temp = temp_line + char
-    return temp, first_slash
+    return temp, first_slash, slash_cont
