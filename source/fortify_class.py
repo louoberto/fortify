@@ -107,6 +107,7 @@ class fortify_class:
             'recursive function',
             'select',
             'case',
+            'associate',
             'structure',
             'subroutine',
             'type is',
@@ -123,6 +124,7 @@ class fortify_class:
             'class default',
             'map\n',
             'map ',
+            'map',
             'union\n',
             'union '
         ]
