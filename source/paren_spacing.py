@@ -44,5 +44,7 @@ def paren_spacing(self, j, char, code_line, temp_line):
                 self.debug(currentframe().f_lineno, char, code_line, j)
             return temp_line[:-1] + char
         else:
-            # print(code_line[j-3:j])
-            return temp_line + char
+            if temp_line[j-3:] == ' if':
+                return temp_line + self.space + char
+            else:
+                return temp_line + char

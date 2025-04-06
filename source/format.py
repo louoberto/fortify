@@ -108,7 +108,7 @@ def format(self):
                 elif char == ".":
                     temp = self.period_spacing(self, j, char, code_line, temp)
                 elif char == self.semicolon:
-                    temp = self.semicolon_spacing(self, j, char, code_line, temp, i, cmnt_line)
+                    temp = self.semicolon_spacing(self, j, char, code_line, temp, i, cmnt_line, ff_line)
                     # print(temp)
                     break
                 elif char == ",":

@@ -67,6 +67,8 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
                 if re.match(pattern1, temp_lower.strip()[:idx]):
                     keyword_dec_match = True
         #==============================================================================================
+    else:
+        keyword = self.empty
 
     if keyword_match:
         # print(keyword, indenter, repr(temp_line))
@@ -165,6 +167,10 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
                 skip = True
             else:
                 skip = False
+        elif re.search(rf"\b{re.escape('type')}(?:\s*\*\w+|\s*\(\w+\))?\s*function\b", temp_lower):
+            # print(keyword, skip, indenter, repr(temp_line))
+            indenter += 1
+            skip = True
         else:
             # print(keyword, skip, indenter, repr(temp_line))
             skip = False
@@ -190,13 +196,17 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
                 selecter -= 1
         elif (temp_line.strip() == 'continue') or (temp_lower.startswith("continue") and not self.free_form) or (re.match(r'^\s*\d{0,4}\s+continue\s*\S*(\s|$)', temp_lower) and self.free_form) \
             or (re.match(r'^\s*\d{0,4}\s+end do\s*\S*(\s|$)', temp_lower) and self.free_form) or (re.match(r'^\s*\d{0,4}\s+enddo\s*\S*(\s|$)', temp_lower) and self.free_form):
-                # print(ff_line, temp_line)
-                for goto in do_list:
-                    # print(goto)
-                    if re.match(r'^' + re.escape(goto[0]) + r'\b', ff_line.lstrip()) or temp_line.startswith(goto[0]):
-                        indenter -= (1 + goto[1])
-                        do_list.remove(goto)
-                        break
+                # print(keyword, indenter, repr(temp_line))
+                if do_list:
+                    for goto in do_list:
+                        # print(goto)
+                        if re.match(r'^' + re.escape(goto[0]) + r'\b', ff_line.lstrip()) or temp_line.startswith(goto[0]):
+                            indenter -= (1 + goto[1])
+                            do_list.remove(goto)
+                            break
+                elif (re.match(r'^\s*\d{0,4}\s+end do\s*\S*(\s|$)', temp_lower) and self.free_form) or (re.match(r'^\s*\d{0,4}\s+enddo\s*\S*(\s|$)', temp_lower) and self.free_form):
+                    indenter -= 1
+                    skip = False
         else:
             # print(keyword, indenter, repr(temp_line))
             indenter -= 1
