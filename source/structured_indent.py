@@ -155,7 +155,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
                 # print(do_list)
         elif not temp_lower.replace(self.space, self.empty).startswith('type(') and not temp_lower.startswith('do '):
             # print(keyword, indenter, repr(temp_line))
-            if keyword in ['type is', 'class is', 'class default']:
+            if keyword in ['type is', 'class is', 'class default', 'case']:
                 # print(keyword, indenter, repr(temp_line))
                 if select_indent:
                     if not first_case:
@@ -177,12 +177,6 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
     elif keyword_data_types_match:
         # print(temp_lower)
         indenter += 1
-        skip = True
-    elif temp_lower.startswith("case"):
-        if not first_case:
-            first_case = True
-            indenter += 1
-        # print(select_indent, first_case, temp_lower)
         skip = True
     elif keyword_dec_match:
         # print(keyword, indenter, repr(temp_line))

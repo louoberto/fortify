@@ -106,6 +106,7 @@ class fortify_class:
             'pure function',
             'recursive function',
             'select',
+            'case',
             'structure',
             'subroutine',
             'type is',
