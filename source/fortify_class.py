@@ -56,6 +56,7 @@ class fortify_class:
             'character',
             'logical',
             'double precision',
+            'doubleprecision',
         ]
         self.common_types = [
             'namelist',
@@ -90,25 +91,39 @@ class fortify_class:
 
         # Keywords for indenting
         self.keywords_increase = [
-            'do',
-            'function',
-            'if',
+            'do\n',
+            'do ',
+            'function ',
+            'function\n',
+            'if\n',
+            'if ',
+            'if(',
+            'abstract interface',
             'interface',
             'module',
             'program',
+            'elemental function',
+            'pure function',
             'recursive function',
             'select',
             'structure',
             'subroutine',
-            'type ',
+            'type is',
+            'type ::',
             'type,',
+            'type',
             'where',
-            'block',
+            'block ',
+            'block\n',
+            'elemental subroutine',
+            'pure subroutine',
             'recursive subroutine',
             'class is',
             'class default',
-            'map',
-            'union'
+            'map\n',
+            'map ',
+            'union\n',
+            'union '
         ]
         self.keywords_decrease = [
             'continue\n',
@@ -117,6 +132,7 @@ class fortify_class:
             'end ',
             'enddo\n',
             'enddo ',
+            'end do',
             'endfunction\n',
             'endfunction ',
             'endif\n',
