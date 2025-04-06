@@ -20,7 +20,7 @@ def period_spacing(self, j, char, code_line, temp_line):
         return temp
 
     if code_line[j - i] != self.space and code_line[j + 1] != self.space: #?.gt.?
-        if temp_line[-i] not in [self.space, '(']:
+        if len(temp_line) >= i and temp_line[-i] not in [self.space, '(']:
             temp = temp_line[:1 - i] + self.space + temp_line[1 - i:] + char + self.space
         else:
             temp = temp_line[:1 - i] + temp_line[1 - i:] + char + self.space

@@ -16,6 +16,7 @@ from star_spacing import star_spacing
 from plus_spacing import plus_spacing
 from semicolon_spacing import semicolon_spacing
 from structured_indent import structured_indent
+from line_breakup import line_breakup
 from line_carry_over import line_carry_over
 from remove_extra_space import remove_extra_space
 from slash_spacing import slash_spacing
@@ -55,6 +56,7 @@ class fortify_class:
             'character',
             'logical',
             'double precision',
+            'doubleprecision',
         ]
         self.common_types = [
             'namelist',
@@ -84,29 +86,45 @@ class fortify_class:
         self.plus_spacing = plus_spacing
         self.structured_indent = structured_indent
         self.line_carry_over = line_carry_over
+        self.line_breakup = line_breakup
         self.debug = debug
 
         # Keywords for indenting
         self.keywords_increase = [
-            'do',
-            'function',
-            'if',
+            'do\n',
+            'do ',
+            'function ',
+            'function\n',
+            'if\n',
+            'if ',
+            'if(',
+            'abstract interface',
             'interface',
             'module',
             'program',
+            'elemental function',
+            'pure function',
             'recursive function',
             'select',
+            'case',
             'structure',
             'subroutine',
-            'type ',
+            'type is',
+            'type ::',
             'type,',
+            'type',
             'where',
-            'block',
+            'block ',
+            'block\n',
+            'elemental subroutine',
+            'pure subroutine',
             'recursive subroutine',
             'class is',
             'class default',
-            'map',
-            'union'
+            'map\n',
+            'map ',
+            'union\n',
+            'union '
         ]
         self.keywords_decrease = [
             'continue\n',
@@ -115,6 +133,7 @@ class fortify_class:
             'end ',
             'enddo\n',
             'enddo ',
+            'end do',
             'endfunction\n',
             'endfunction ',
             'endif\n',
