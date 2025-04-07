@@ -20,22 +20,15 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
                 keyword_data_types_match = True
                 break
         # if keyword_data_types_match:
-        #     print(temp_line, keyword_match, indenter)
+        #     print(repr(temp_line), keyword_match, repr(keyword))
 
         #==============================================================================================
         # Keyword Increase
         #==============================================================================================
         if not keyword_data_types_match:
             for keyword in self.keywords_increase:
-                pattern1 = r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$)'
-                pattern2 = r"^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?do\b"
-                if ((temp_lower.startswith(keyword)
-                    or re.match(r"^[a-z0-9_]+:\s*" + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower)
-                    or re.match(pattern1, temp_lower)
-                    or re.match(r"^[a-z0-9_]+:" + re.escape(keyword) + r'(?=\s|\(|$)', temp_lower)
-                    or re.match(pattern2, temp_lower))
-                    and ('module procedure' not in temp_lower) and ('interface_' not in temp_lower)\
-                    and not (temp_lower.startswith("type") and temp_lower[4].isalnum())):
+                pattern = r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?' + re.escape(keyword) + r'(?=\b|\s|\(|$)'
+                if re.match(pattern, temp_lower) and ('module procedure' not in temp_lower) and ('interface_' not in temp_lower):
                     keyword_match = True
                     skip = True
                     break
@@ -54,7 +47,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
                     keyword_dec_match = True
                     break
             # if keyword_dec_match:
-            #     print(temp_line[:-1])
+            #     print(repr(temp_line), keyword_match, repr(keyword))
         #==============================================================================================
 
         #==============================================================================================
