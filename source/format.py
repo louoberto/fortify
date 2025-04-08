@@ -13,12 +13,14 @@ def format(self):
     selecter = 0
     skip = False
     first_case = False
+    first_select = False
     select_indent = False
     new_file_lines = []
     do_list = []
     do_count = 0
     slash_skip = False
     slash_cont = False
+    class_happened = False
     i = 0
     while i < len(self.file_lines):
         line = self.file_lines[i]
@@ -130,7 +132,7 @@ def format(self):
             else:
                 temp += char
 
-        temp, indenter, skip, first_case, select_indent, selecter = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count, select_indent, selecter)
+        temp, indenter, skip, first_case, select_indent, selecter, first_select, class_happened = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count, select_indent, selecter, first_select, class_happened)
         if not comment_skip: # User defined; default is true
             temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
             temp = temp1 + temp2
