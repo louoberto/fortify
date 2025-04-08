@@ -21,7 +21,9 @@ def format(self):
     slash_skip = False
     slash_cont = False
     class_happened = False
+    skip_select = False
     i = 0
+    select_indenter = 0
     while i < len(self.file_lines):
         line = self.file_lines[i]
         # print(line)
@@ -124,6 +126,7 @@ def format(self):
                 elif char in ["<", ">", "="]:
                     temp = self.relational_op_spacing(self, j, char, code_line, temp)
                 elif len(code_line) > j + 1 and char == "*" and "*" not in [code_line[j - 1], code_line[j + 1]] and code_line[j - 4 : j] not in self.data_types:
+                    # print(code_line)
                     temp = self.star_spacing(self, j, char, code_line, temp)
                 elif char in ["+", "-"]:
                     temp = self.plus_spacing(self, j, char, code_line, temp)
@@ -132,7 +135,7 @@ def format(self):
             else:
                 temp += char
 
-        temp, indenter, skip, first_case, select_indent, selecter, first_select, class_happened = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count, select_indent, selecter, first_select, class_happened)
+        temp, indenter, skip, first_case, select_indent, selecter, first_select, class_happened, skip_select, select_indenter = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count, select_indent, selecter, first_select, class_happened, skip_select, select_indenter)
         if not comment_skip: # User defined; default is true
             temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
             temp = temp1 + temp2
