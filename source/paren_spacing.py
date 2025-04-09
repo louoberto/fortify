@@ -10,7 +10,7 @@ debug_me = 0
 
 def paren_spacing(self, j, char, code_line, temp_line):
     is_char = False
-    if code_line.startswith('character '):
+    if code_line.lower().startswith('character'):
         if debug_me:
             self.debug(currentframe().f_lineno, char, code_line, j)
         is_char = True
@@ -36,7 +36,12 @@ def paren_spacing(self, j, char, code_line, temp_line):
         # print(code_line, repr(code_line[j]),j)
         if debug_me:
             self.debug(currentframe().f_lineno, char, code_line, j)
-        return temp_line + char + (self.space if (code_line[j + 1] not in [")", '.'] and not is_char) else "")
+        if not is_char:
+            # print(temp_line)
+            return temp_line + char + (self.space if (code_line[j + 1] not in [")", '.']) else "")
+        else:
+            # print(temp_line)
+            return temp_line + char + (self.space if (code_line[j + 1] not in [')', '.','*']) else "")
     else:
         if debug_me:
             self.debug(currentframe().f_lineno, char, code_line, j)
@@ -48,8 +53,8 @@ def paren_spacing(self, j, char, code_line, temp_line):
             if debug_me:
                 self.debug(currentframe().f_lineno, char, code_line, j)
             if temp_line[j-3:] == ' if':
-                # if debug_me:
-                # self.debug(currentframe().f_lineno, char, code_line, j)
+                if debug_me:
+                    self.debug(currentframe().f_lineno, char, code_line, j)
                 return temp_line + self.space + char
             else:
                 if char == '(' and code_line[j-1] == 'f' and code_line[j-2] == 'i' and (j < 3 or not code_line[j-3].isalpha()):

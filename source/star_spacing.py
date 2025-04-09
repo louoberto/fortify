@@ -11,7 +11,7 @@ def star_spacing(self, j, char, code_line, temp_line):
     if debug_me:
         self.debug(currentframe().f_lineno, char, code_line, j)
     is_char = False
-    if code_line.startswith('character '):
+    if code_line.lower().startswith('character'):
         if debug_me:
             self.debug(currentframe().f_lineno, char, code_line, j)
         is_char = True

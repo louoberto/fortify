@@ -22,6 +22,7 @@ from remove_extra_space import remove_extra_space
 from slash_spacing import slash_spacing
 from debug import debug
 from format import format
+import itertools
 
 
 class fortify_class:
@@ -88,6 +89,11 @@ class fortify_class:
         self.line_carry_over = line_carry_over
         self.line_breakup = line_breakup
         self.debug = debug
+        self.function = [
+            'function',
+            'subroutine'
+        ]
+        self.combinations = self.generate_function_names()
 
         # Keywords for indenting
         self.keywords_increase = [
@@ -95,6 +101,17 @@ class fortify_class:
             'do ',
             'function ',
             'function\n',
+            'subroutine',
+            'elemental function',
+            'elemental subroutine',
+            'impure function',
+            'impure subroutine',
+            'non_recursive function',
+            'non_recursive subroutine',
+            'pure function',
+            'pure subroutine',
+            'recursive function',
+            'recursive subroutine',
             'if\n',
             'if ',
             'if(',
@@ -102,14 +119,10 @@ class fortify_class:
             'interface',
             'module',
             'program',
-            'elemental function',
-            'pure function',
-            'recursive function',
             'select',
             'case',
             'associate',
             'structure',
-            'subroutine',
             'type is',
             'type ::',
             'type,',
@@ -117,9 +130,6 @@ class fortify_class:
             'where',
             'block ',
             'block\n',
-            'elemental subroutine',
-            'pure subroutine',
-            'recursive subroutine',
             'class is',
             'class default',
             'map\n',
@@ -163,3 +173,32 @@ class fortify_class:
             'endunion\n',
             'endunion ',
         ]
+
+    def generate_function_names(self):
+        combinations = []
+
+        group_a = ['impure', 'pure']
+        group_b = ['recursive', 'non_recursive', 'elemental']
+        group_c = ['']
+
+        for func in self.function:
+            # Single prefix from group A
+            for a in group_a:
+                combinations.append(f"{a} {func}")
+                combinations.append(f"{a}{func}")
+
+            # Single prefix from group B
+            for b in group_b:
+                combinations.append(f"{b} {func}")
+                combinations.append(f"{b}{func}")
+
+            # Valid combination: one from A + one from B
+            for a in group_a:
+                for b in group_b:
+                    combinations.append(f"{a} {b} {func}")
+            
+            # Single prefix from group B
+            for c in group_c:
+                combinations.append(f"{c}{func}")
+
+        return combinations
