@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.0] - 2025-Apr-08
+### Added
+- Many numerous bugs fixed with this update
+- A known issue is that on F77 files, if code exists in columns 1-6 the formatter will not work correctly. 1-5 should be used for gotos and 6 is used for line continuation. F90 files do not have this problem
+- If a feature is requested or bug is found, please feel free to let me know
+
 ## [1.1.1] - 2025-Jan-26
 ### Added
 - Fixed a bug where indentation would not work with data type functions (e.g. `integer*4 function` or `integer(4) function`)
