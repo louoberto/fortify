@@ -13,7 +13,6 @@ def format(self):
     selecter = 0
     skip = False
     first_case = False
-    first_select = False
     select_indent = False
     new_file_lines = []
     do_list = []
@@ -48,7 +47,7 @@ def format(self):
         elif line[0] in ['*','C','c','!'] and not self.free_form: # Check for F77 comments
             # print(line)
             line = self.comment + line[1:] # Convert to what user wants
-            while(line[-2] == self.space): # Remove empty whitespace at the end of a comment-only line
+            while len(line) >= 2 and line[-2] == self.space: # Remove empty whitespace at the end of a comment-only line
                 line = line[:-2] + line[-1:]
             new_file_lines.append(line) # Append and go back
             i += 1
@@ -135,7 +134,7 @@ def format(self):
             else:
                 temp += char
 
-        temp, indenter, skip, first_case, select_indent, selecter, first_select, class_happened, skip_select, select_indenter = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count, select_indent, selecter, first_select, class_happened, skip_select, select_indenter)
+        temp, indenter, skip, first_case, select_indent, selecter, class_happened, skip_select, select_indenter = self.structured_indent(self, temp, indenter, skip, first_case,i, ff_line, do_list, do_count, select_indent, selecter, class_happened, skip_select, select_indenter)
         if not comment_skip: # User defined; default is true
             temp1, temp2 = self.line_carry_over(self, ff_line, temp, cmnt_line)
             temp = temp1 + temp2

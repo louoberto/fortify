@@ -6,40 +6,44 @@
 # lists found in keywords_increase and keywords_decrease
 # ========================================================================
 import re
-def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, do_list, do_count, select_indent, selecter, first_select, class_happened, skip_select, select_indenter):
+def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, do_list, do_count, select_indent, selecter, class_happened, skip_select, select_indenter):
     j = i
     # print(temp_line)
-    temp_lower = temp_line.lower()
+    #====================================================================================
+    # Specific case for select
+    #====================================================================================
+    if re.match(r'(?i)^\s*selectcase\b', temp_line.lower()):
+        if self.lowercasing:
+            temp_line = re.sub(r'(?i)\bselectcase\b', 'select case', temp_line)
+            temp_lower = temp_line.lower()
+        else:
+            temp_lower = temp_line.lower()
+            temp_lower = re.sub(r'(?i)\bselectcase\b', 'select case', temp_lower)
+    else:
+        temp_lower = temp_line.lower()
+    #====================================================================================
+
     keyword_match = False
     keyword_dec_match = False
     keyword_data_types_match = False
     if temp_lower.strip()[0] != '!':
-        for keyword in self.data_types:
-            pattern = rf"\b{re.escape(keyword)}(?:\s*\*\w+|\s*\([^()]*\))?\s*function\b"
-            if re.search(pattern, temp_lower):
-                keyword_data_types_match = True
-                break
-        # if keyword_data_types_match:
-        #     print(repr(temp_line), keyword_match, repr(keyword))
-
         #==============================================================================================
         # Keyword Increase
         #==============================================================================================
-        if not keyword_data_types_match:
-            for keyword in self.keywords_increase:
-                pattern = r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?' + re.escape(keyword) + r'(?=\b|\s|\(|$)'
-                if re.match(pattern, temp_lower) and ('module procedure' not in temp_lower) and ('interface_' not in temp_lower):
-                    keyword_match = True
-                    skip = True
-                    break
-            # if keyword_match:
-            #     print(repr(temp_line), keyword_match, repr(keyword))
+        for keyword in self.keywords_increase:
+            pattern = r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?' + re.escape(keyword) + r'(?=\b|\s|\(|$)'
+            if re.match(pattern, temp_lower) and ('module procedure' not in temp_lower) and ('interface_' not in temp_lower):
+                keyword_match = True
+                skip = True
+                break
+        # if keyword_match:
+        #     print(repr(temp_line), keyword_match, repr(keyword))
         #==============================================================================================
 
         #==============================================================================================
         # Keyword Decrease
         #==============================================================================================
-        if not keyword_match and not keyword_data_types_match:
+        if not keyword_match:
             for keyword in self.keywords_decrease:
                 pattern1 = r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$)'
                 pattern2 = r'^\s*\d{1,5}\s*' + re.escape(keyword).replace(r'\ ', ' ')
@@ -49,6 +53,34 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
             # if keyword_dec_match:
             #     print(repr(temp_line), keyword_match, repr(keyword))
         #==============================================================================================
+
+        #==============================================================================================
+        # Keyword and Data Type combines e.g. real(8) elemental function
+        #==============================================================================================
+        if not keyword_match and not keyword_dec_match:
+            for keyword in self.data_types:
+                for function in self.combinations:
+                    # Build a pattern that includes the full function combination
+                    # print(keyword + ' ' + function)
+                    pattern = rf"\b{re.escape(keyword)}(?:\s*\*\w+|\s*\([^()]*\))?\s*{re.escape(function)}\b"
+                    if re.search(pattern, temp_lower):
+                        keyword_data_types_match = True
+                        break
+                # if keyword_data_types_match:
+                #     print(repr(temp_line), keyword_match, repr(keyword))
+        
+        #==============================================================================================
+        # Checks for things like: elemental function or subroutine, etc
+        #==============================================================================================
+        if not keyword_match and not keyword_dec_match and not keyword_data_types_match:
+            for function in self.combinations:
+                # print(function)
+                pattern = r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?' + re.escape(function) + r'(?=\b|\s|\(|$)'
+                if re.match(pattern, temp_lower):
+                    keyword_match = True
+                    keyword_data_types_match = True
+                    skip = True
+                    break
 
         #==============================================================================================
         # Check for goto's that randomly match the start of the line from a do loop
@@ -62,6 +94,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
             # if keyword_dec_match:
             #     print(repr(temp_line), keyword_match, repr(keyword))
         #==============================================================================================
+
     else:
         keyword = self.empty
 
@@ -222,6 +255,7 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
             if class_happened:
                 indenter -= 2
             else:
+                # print(keyword, indenter, repr(temp_line))
                 indenter -= 1
             if select_indenter:
                 select_indenter += 1
@@ -283,4 +317,4 @@ def structured_indent(self, temp_line, indenter, skip, first_case, i, ff_line, d
     if indenter < 0:
         indenter = 0
     # print(indenter, repr(temp_line))
-    return temp_line, indenter, skip, first_case, select_indent, selecter, first_select, class_happened, skip_select, select_indenter
+    return temp_line, indenter, skip, first_case, select_indent, selecter, class_happened, skip_select, select_indenter
