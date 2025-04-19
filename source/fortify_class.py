@@ -22,7 +22,6 @@ from remove_extra_space import remove_extra_space
 from slash_spacing import slash_spacing
 from debug import debug
 from format import format
-import itertools
 
 
 class fortify_class:
@@ -48,6 +47,15 @@ class fortify_class:
         self.newline = '\n'
         self.semicolon = ';'
         self.tab = '\t'
+
+        # Structered indent counters and bools
+        self.indenter = 0
+        self.skip = False
+        self.first_case = False
+        self.select_indent = False
+        self.class_happened = False
+        self.skip_select = False
+        self.select_indenter = 0
 
         # Fortran data types (not a complete list yet)
         self.data_types = [
@@ -99,22 +107,15 @@ class fortify_class:
         self.keywords_increase = [
             'do\n',
             'do ',
+            'do',
             'function ',
             'function\n',
+            'function',
             'subroutine',
-            'elemental function',
-            'elemental subroutine',
-            'impure function',
-            'impure subroutine',
-            'non_recursive function',
-            'non_recursive subroutine',
-            'pure function',
-            'pure subroutine',
-            'recursive function',
-            'recursive subroutine',
             'if\n',
             'if ',
             'if(',
+            'if',
             'abstract interface',
             'interface',
             'module',
@@ -132,46 +133,27 @@ class fortify_class:
             'block\n',
             'class is',
             'class default',
-            'map\n',
-            'map ',
             'map',
             'union\n',
             'union '
         ]
         self.keywords_decrease = [
-            'continue\n',
-            'continue ',
-            'end\n',
-            'end ',
-            'enddo\n',
-            'enddo ',
-            'end do',
-            'endfunction\n',
-            'endfunction ',
-            'endif\n',
-            'endif ',
-            'endinterface\n',
-            'endinterface ',
-            'endmodule\n',
-            'endmodule ',
-            'endprogram\n',
-            'endprogram ',
-            'endselect\n',
-            'endselect ',
-            'endstructure\n',
-            'endstructure ',
-            'endsubroutine\n',
-            'endsubroutine ',
-            'endtype\n',
-            'endtype ',
-            'endwhere\n',
-            'endwhere ',
-            'endblock\n',
-            'endblock ',
-            'endmap\n',
-            'endmap ',
-            'endunion\n',
-            'endunion ',
+            'continue',
+            'end',
+            'enddo',
+            'endfunction',
+            'endif',
+            'endinterface',
+            'endmodule',
+            'endprogram',
+            'endselect',
+            'endstructure',
+            'endsubroutine',
+            'endtype',
+            'endwhere',
+            'endblock',
+            'endmap',
+            'endunion',
         ]
 
     def generate_function_names(self):
