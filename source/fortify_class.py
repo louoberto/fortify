@@ -99,7 +99,7 @@ class fortify_class:
         self.debug = debug
         self.function = [
             'function',
-            'subroutine'
+            'subroutine',
         ]
         self.combinations = self.generate_function_names()
 
@@ -135,7 +135,8 @@ class fortify_class:
             'class default',
             'map',
             'union\n',
-            'union '
+            'union ',
+            'forall'
         ]
         self.keywords_decrease = [
             'continue',
@@ -154,13 +155,14 @@ class fortify_class:
             'endblock',
             'endmap',
             'endunion',
+            'endforall'
         ]
 
     def generate_function_names(self):
         combinations = []
 
         group_a = ['impure', 'pure']
-        group_b = ['recursive', 'non_recursive', 'elemental']
+        group_b = ['recursive', 'non_recursive', 'elemental', 'type(...)']
         group_c = ['']
 
         for func in self.function:

@@ -71,17 +71,24 @@ def structured_indent(self, temp_line, current_line, ff_line):
         
         #======================================================================
         # Checks for things like: elemental function or subroutine, etc
-       #======================================================================
-        if not keyword_match and not keyword_dec_match and not keyword_data_types_match:
+        #======================================================================
+        if not keyword_match and not keyword_dec_match:
             for function in self.combinations:
                 # print(function)
-                pattern = r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?' + re.escape(function) + r'(?=\b|\s|\(|$)'
+                #pattern = r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?' + re.escape(function) + r'(?=\b|\s|\(|$)'
+                pattern = (r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?'
+                            + re.escape(function).replace(
+                            'type\\(\\.\\.\\.\\)',  # escape it as it appears in re.escape output
+                            r'(?:type\s*\([^()]*\)|type\s*\*\w+)')  # real regex for type(charint) or type *mytype
+                            + r'(?=\b|\s|\(|$)')
+                # print(pattern)
                 if re.match(pattern, temp_lower):
                     keyword_match = True
                     keyword_data_types_match = True
                     self.skip = True
                     break
-
+                # if keyword_data_types_match:
+                #     print(repr(temp_line), keyword_match, repr(keyword))
         #======================================================================
         # Check for goto's that randomly match the start of the line from a do loop
         #======================================================================
@@ -175,8 +182,12 @@ def structured_indent(self, temp_line, current_line, ff_line):
                     # print(keyword, self.skip, self.indenter, repr(temp_line))
                     self.skip = False
             else:
-                # print(keyword, self.skip, self.indenter, repr(temp_line))
-                self.skip = False
+                pattern = r'^\s*\d{0,5}\s*if\s*\([^()]*\)\s*$' # Match case for 'if (...)' followed by no then, but an else may follow
+                if re.match(pattern, temp_lower):
+                    self.indenter += 1
+                    self.skip = True
+                else:
+                    self.skip = False
         elif keyword == 'do ' or keyword == 'do\n' and re.match(pattern2, temp_lower.strip()):
             self.indenter += 1
             self.skip = True
@@ -243,6 +254,14 @@ def structured_indent(self, temp_line, current_line, ff_line):
         # print(temp_lower)
         self.indenter += 1
         self.skip = True
+    elif re.match(r'^\s*\d{0,5}\s+continue(\s|$)', temp_lower) and self.free_form:
+        # print(repr(temp_line), do_list)
+        for goto in do_list:
+            # print(goto[0])
+            if temp_line.startswith(goto[0]):
+                self.indenter -= (1 + goto[1])
+                do_list.remove(goto)
+                break
     elif keyword_dec_match:
         # print(keyword, self.indenter, repr(temp_line))
         if temp_lower.startswith("end =") or re.match(r'^\s*\d{0,5}\s+end =', temp_lower):
@@ -257,8 +276,8 @@ def structured_indent(self, temp_line, current_line, ff_line):
                 self.indenter -= 1
             if self.select_indenter:
                 self.select_indenter += 1
-        elif (temp_line.strip() == 'continue') or (temp_lower.startswith("continue") and not self.free_form) or (re.match(r'^\s*\d{0,4}\s+continue\s*\S*(\s|$)', temp_lower) and self.free_form) \
-            or (re.match(r'^\s*\d{0,4}\s+end do\s*\S*(\s|$)', temp_lower) and self.free_form) or (re.match(r'^\s*\d{0,4}\s+enddo\s*\S*(\s|$)', temp_lower) and self.free_form):
+        elif (temp_line.strip() == 'continue') or (temp_lower.startswith("continue") and not self.free_form) or (re.match(r'^\s*\d{0,5}\s+continue\s*\S*(\s|$)', temp_lower) and self.free_form) \
+            or (re.match(r'^\s*\d{0,5}\s+end do\s*\S*(\s|$)', temp_lower) and self.free_form) or (re.match(r'^\s*\d{0,5}\s+enddo\s*\S*(\s|$)', temp_lower) and self.free_form):
                 # print(keyword, self.indenter, repr(temp_line))
                 if do_list:
                     for goto in do_list:
@@ -267,7 +286,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
                             self.indenter -= (1 + goto[1])
                             do_list.remove(goto)
                             break
-                elif (re.match(r'^\s*\d{0,4}\s+end do\s*\S*(\s|$)', temp_lower) and self.free_form) or (re.match(r'^\s*\d{0,4}\s+enddo\s*\S*(\s|$)', temp_lower) and self.free_form):
+                elif (re.match(r'^\s*\d{0,5}\s+end do\s*\S*(\s|$)', temp_lower) and self.free_form) or (re.match(r'^\s*\d{0,5}\s+enddo\s*\S*(\s|$)', temp_lower) and self.free_form):
                     self.indenter -= 1
                     self.skip = False
         else:
@@ -275,14 +294,6 @@ def structured_indent(self, temp_line, current_line, ff_line):
             self.indenter -= 1
             self.skip = False
             # print(self.file_lines[j-1].lower(), self.indenter, repr(temp_line))
-    elif re.match(r'^\s*\d{0,4}\s+continue(\s|$)', temp_lower) and self.free_form:
-        # print(temp_line, do_list)
-        for goto in do_list:
-            # print(goto[0])
-            if temp_line.startswith(goto[0]):
-                self.indenter -= (1 + goto[1])
-                do_list.remove(goto)
-                break
 
     if re.match(r"^else(where|if)?\b", temp_lower): # else statements go back one, but that's it
         self.skip = True

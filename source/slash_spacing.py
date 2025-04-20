@@ -18,6 +18,8 @@ def slash_spacing(self, j, char, code_line, temp_line, first_slash, i, slash_con
     # print(slash_cont, temp_line)
     if slash_cont or any(temp_line.lower().startswith(keyword) for keyword in self.common_types) or (any(temp_line.lower().startswith(keyword) for keyword in self.data_types) and ', parameter' not in temp_line):
         # print(slash_cont, temp_line)
+        if debug_me:
+            self.debug(currentframe().f_lineno, char, code_line, j)
         if len(self.file_lines) > i + 1 and len(self.file_lines[i + 1]) > 5 and self.file_lines[i + 1][5] == self.continuation_char:
             slash_cont = True
         else:
