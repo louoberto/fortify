@@ -27,19 +27,17 @@ def structured_indent(self, temp_line, current_line, ff_line):
 
     keyword_match = False
     keyword_dec_match = False
-    keyword_data_types_match = False
     if temp_lower.strip()[0] != '!':
         #======================================================================
         # Keyword Increase
         #======================================================================
         for keyword in self.keywords_increase:
-            pattern = r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?' + re.escape(keyword) + r'(?=\b|\s|\(|$)'
-            if re.match(pattern, temp_lower) and ('module procedure' not in temp_lower) and ('interface_' not in temp_lower):
+            pattern = rf'^\s*(?:[a-z0-9_]+\s*:\s*|\d{{0,5}}\s*)?{re.escape(keyword)}(?=\b|\s|\(|$)'
+            if re.match(pattern, temp_lower) and ('interface_' not in temp_lower):
                 keyword_match = True
                 self.skip = True
+                # print(repr(temp_line), keyword_match, repr(keyword))
                 break
-        # if keyword_match:
-        #     print(repr(temp_line), keyword_match, repr(keyword))
         #======================================================================
 
         #======================================================================
@@ -50,49 +48,29 @@ def structured_indent(self, temp_line, current_line, ff_line):
                 pattern1 = r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$|\n)'
                 if re.match(pattern1, temp_lower):
                     keyword_dec_match = True
+                    # print(repr(temp_line), repr(keyword))
                     break
-            # if keyword_dec_match:
-            #     print(repr(temp_line), repr(keyword))
         #======================================================================
-
-        #======================================================================
-        # Keyword and Data Type combines e.g. real(8) elemental function
-        #======================================================================
-        if not keyword_match and not keyword_dec_match:
-            for keyword in self.data_types:
-                for function in self.combinations:
-                    # print(keyword + ' ' + function)
-                    pattern = rf"\b{re.escape(keyword)}(?:\s*\*\w+|\s*\([^()]*\))?\s*{re.escape(function)}\b"
-                    if re.search(pattern, temp_lower):
-                        keyword_data_types_match = True
-                        break
-                # if keyword_data_types_match:
-                #     print(repr(temp_line), keyword_match, repr(keyword))
         
         #======================================================================
-        # Checks for things like: elemental function or subroutine, etc
+        # Keyword and Data Type combines
+        # Checks for things like:
+        # elemental function or subroutine, real(8) elemental function, etc
         #======================================================================
         if not keyword_match and not keyword_dec_match:
-            for function in self.combinations:
+            for function in self.function:
                 # print(function)
-                #pattern = r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?' + re.escape(function) + r'(?=\b|\s|\(|$)'
-                pattern = (r'^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?'
-                            + re.escape(function).replace(
-                            'type\\(\\.\\.\\.\\)',  # escape it as it appears in re.escape output
-                            r'(?:type\s*\([^()]*\)|type\s*\*\w+)')  # real regex for type(charint) or type *mytype
-                            + r'(?=\b|\s|\(|$)')
-                # print(pattern)
+                pattern = rf'^\s*\d{{0,5}}\s*(?:[a-z0-9_]+(?:\*[\w\d]+|\([^()]*\))?\s*){{0,3}}{re.escape(function)}\b'
                 if re.match(pattern, temp_lower):
                     keyword_match = True
-                    keyword_data_types_match = True
-                    self.skip = True
+                    keyword = function
+                    # print(repr(temp_line), keyword_match)
                     break
-                # if keyword_data_types_match:
-                #     print(repr(temp_line), keyword_match, repr(keyword))
+
         #======================================================================
         # Check for goto's that randomly match the start of the line from a do loop
         #======================================================================
-        if not keyword_match and not keyword_dec_match and not keyword_data_types_match:
+        if not keyword_match and not keyword_dec_match:
             for goto in do_list:
                 pattern1 = r'^\s*' + re.escape(goto[0]) + r'\b'
                 idx = temp_lower.find(self.space)
@@ -158,21 +136,23 @@ def structured_indent(self, temp_line, current_line, ff_line):
                 self.skip = True
             elif temp_lower[-2].strip() == self.continuation_char or (not self.free_form and len(self.file_lines[j+1]) > 6 and self.file_lines[j+1][5] != self.space):
                 # print(keyword, self.skip, self.indenter, repr(temp_line))
-                if self.file_lines[j+1][-2].strip() == self.continuation_char or not self.free_form:
+                # print(repr(self.file_lines[j+1][-2].strip()))
+                # pattern = r'^\s*(?:\d{0,5}\s*)?if\s*\([^\)]*&\s*$'
+                if self.file_lines[j+1][-2].strip() == self.continuation_char or re.match(pattern, temp_lower) or not self.free_form:
                     # print(keyword, self.skip, self.indenter, repr(temp_line))
                     if self.free_form:
                         while self.file_lines[j+1][-2].strip() == self.continuation_char:
                             j += 1
                     else:
-                        while len(self.file_lines[j+2]) > 5 and self.file_lines[j+2][5] != self.space:
+                        if j + 2 < len(self.file_lines) and len(self.file_lines[j + 2]) > 5 and self.file_lines[j + 2][5] != self.space:
                             j += 1
                         # will need to come back here possibly in case the if statement goes over and over
-                    if self.file_lines[j+1][-5:].strip().lower() == 'then':
+                    if self.file_lines[j + 1].strip().lower().endswith('then'):
                         # print(temp_line)
                         self.indenter += 1
                         self.skip = True
                     else:
-                        # print(keyword, self.skip, self.indenter, repr(temp_line))
+                        # print(keyword, self.skip, self.indenter, repr(self.file_lines[j+1][-6:].strip().lower()))
                         self.skip = False
                 elif self.file_lines[j+1][-5:].strip().lower() == 'then':
                     # print(keyword, self.skip, self.indenter, repr(temp_line))
@@ -182,7 +162,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
                     # print(keyword, self.skip, self.indenter, repr(temp_line))
                     self.skip = False
             else:
-                pattern = r'^\s*\d{0,5}\s*if\s*\([^()]*\)\s*$' # Match case for 'if (...)' followed by no then, but an else may follow
+                pattern = r'^\s*\d{0,5}\s*if\s*\([^()]*\)\s*$' # Match case for 'if (...)' followed by no then nor any text afterward, but an else may follow
                 if re.match(pattern, temp_lower):
                     self.indenter += 1
                     self.skip = True
@@ -236,11 +216,26 @@ def structured_indent(self, temp_line, current_line, ff_line):
                         break
                     if re.match(pattern_end, self.file_lines[k].lower().strip()):
                         self.select_indenter = self.indenter
-                        break
-                    
+                        break               
             elif not (temp_lower.startswith('type *') and not self.select_indent) and not temp_lower.startswith('type ='):
-                self.indenter += 1
-                self.skip = True
+                # print(keyword, self.indenter, repr(temp_line))
+                pattern = r'^\s*forall\s*\(.*?\)\s+\S' # skip the forall() + code one-liner
+                if re.match(pattern, temp_lower):
+                    self.skip = False
+                else:
+                    if keyword == 'module procedure':
+                        if self.inside_submod:
+                            # print(keyword, self.indenter, repr(temp_line))
+                            self.indenter += 1
+                            self.skip = True
+                        else:
+                            # print(keyword, self.indenter, repr(temp_line))
+                            self.skip = False
+                    else:
+                        if keyword == 'submodule':
+                            self.inside_submod = True
+                        self.indenter += 1
+                        self.skip = True
             else:
                 self.skip = False
         elif re.search(rf"\b{re.escape('type')}(?:\s*\*\w+|\s*\(\w+\))?\s*function\b", temp_lower):
@@ -250,10 +245,6 @@ def structured_indent(self, temp_line, current_line, ff_line):
         else:
             # print(keyword, self.skip, self.indenter, repr(temp_line))
             self.skip = False
-    elif keyword_data_types_match:
-        # print(temp_lower)
-        self.indenter += 1
-        self.skip = True
     elif re.match(r'^\s*\d{0,5}\s+continue(\s|$)', temp_lower) and self.free_form:
         # print(repr(temp_line), do_list)
         for goto in do_list:
@@ -264,6 +255,8 @@ def structured_indent(self, temp_line, current_line, ff_line):
                 break
     elif keyword_dec_match:
         # print(keyword, self.indenter, repr(temp_line))
+        if keyword == 'endsubmodule' or (keyword == 'end' and 'end submodule' in temp_lower):
+            self.inside_submod = False
         if temp_lower.startswith("end =") or re.match(r'^\s*\d{0,5}\s+end =', temp_lower):
             pass
         elif temp_lower.startswith("endselect") or temp_lower.startswith("end select"):

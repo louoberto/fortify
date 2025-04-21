@@ -56,6 +56,7 @@ class fortify_class:
         self.class_happened = False
         self.skip_select = False
         self.select_indenter = 0
+        self.inside_submod = False
 
         # Fortran data types (not a complete list yet)
         self.data_types = [
@@ -101,7 +102,6 @@ class fortify_class:
             'function',
             'subroutine',
         ]
-        self.combinations = self.generate_function_names()
 
         # Keywords for indenting
         self.keywords_increase = [
@@ -118,6 +118,7 @@ class fortify_class:
             'if',
             'abstract interface',
             'interface',
+            'module procedure',
             'module',
             'program',
             'select',
@@ -129,14 +130,15 @@ class fortify_class:
             'type,',
             'type',
             'where',
-            'block ',
-            'block\n',
+            'block',
             'class is',
             'class default',
             'map',
             'union\n',
             'union ',
-            'forall'
+            'forall',
+            'critical',
+            'submodule'
         ]
         self.keywords_decrease = [
             'continue',
@@ -155,34 +157,8 @@ class fortify_class:
             'endblock',
             'endmap',
             'endunion',
-            'endforall'
+            'endforall',
+            'endcritical',
+            'endsubmodule',
+            'endprocedure'
         ]
-
-    def generate_function_names(self):
-        combinations = []
-
-        group_a = ['impure', 'pure']
-        group_b = ['recursive', 'non_recursive', 'elemental', 'type(...)']
-        group_c = ['']
-
-        for func in self.function:
-            # Single prefix from group A
-            for a in group_a:
-                combinations.append(f"{a} {func}")
-                combinations.append(f"{a}{func}")
-
-            # Single prefix from group B
-            for b in group_b:
-                combinations.append(f"{b} {func}")
-                combinations.append(f"{b}{func}")
-
-            # Valid combination: one from A + one from B
-            for a in group_a:
-                for b in group_b:
-                    combinations.append(f"{a} {b} {func}")
-            
-            # Single prefix from group B
-            for c in group_c:
-                combinations.append(f"{c}{func}")
-
-        return combinations
