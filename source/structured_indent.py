@@ -60,7 +60,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
         if not keyword_match and not keyword_dec_match:
             for function in self.function:
                 # print(function)
-                pattern = rf'^\s*\d{{0,5}}\s*(?:[a-z0-9_]+(?:\*[\w\d]+|\([^()]*\))?\s*){{0,3}}{re.escape(function)}\b'
+                pattern = rf'^\s*\d{{0,5}}\s*(?:[a-z0-9_]+(?:\*[\w\d]+|\([^)]*\([^)]*\)[^)]*\)|\([^)]*\))?\s*){{0,5}}{re.escape(function)}\b'
                 if re.match(pattern, temp_lower):
                     keyword_match = True
                     keyword = function
