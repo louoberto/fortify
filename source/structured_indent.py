@@ -29,15 +29,33 @@ def structured_indent(self, temp_line, current_line, ff_line):
     keyword_dec_match = False
     if temp_lower.strip()[0] != '!':
         #======================================================================
+        # Keyword and Data Type combines
+        # Checks for things like:
+        # elemental function or subroutine, real(8) elemental function, etc
+        #======================================================================
+        for function in self.function:
+            # print(function)
+            if re.search(rf'^\s*\d{{0,5}}\s*end\s+{re.escape(function)}\b', temp_lower):
+                continue
+            pattern = rf'^\s*\d{{0,5}}\s*(?:[a-z0-9_]+(?:\*[\w\d]+|\([^)]*\([^)]*\)[^)]*\)|\([^)]*\))?\s*){{0,5}}{re.escape(function)}\b'
+            if re.match(pattern, temp_lower):
+                keyword_match = True
+                keyword = function
+                # print(repr(temp_lower), keyword_match, repr(keyword))
+                break
+        #======================================================================
+
+        #======================================================================
         # Keyword Increase
         #======================================================================
-        for keyword in self.keywords_increase:
-            pattern = rf'^\s*(?:[a-z0-9_]+\s*:\s*|\d{{0,5}}\s*)?{re.escape(keyword)}(?=\b|\s|\(|$)'
-            if re.match(pattern, temp_lower) and ('interface_' not in temp_lower):
-                keyword_match = True
-                self.skip = True
-                # print(repr(temp_line), keyword_match, repr(keyword))
-                break
+        if not keyword_match:
+            for keyword in self.keywords_increase:
+                pattern = rf'^\s*(?:[a-z0-9_]+\s*:\s*|\d{{0,5}}\s*)?{re.escape(keyword)}(?=\b|\s|\(|$)'
+                if re.match(pattern, temp_lower) and ('interface_' not in temp_lower):
+                    keyword_match = True
+                    self.skip = True
+                    # print(repr(temp_lower), keyword_match, repr(keyword))
+                    break
         #======================================================================
 
         #======================================================================
@@ -51,21 +69,6 @@ def structured_indent(self, temp_line, current_line, ff_line):
                     # print(repr(temp_line), repr(keyword))
                     break
         #======================================================================
-        
-        #======================================================================
-        # Keyword and Data Type combines
-        # Checks for things like:
-        # elemental function or subroutine, real(8) elemental function, etc
-        #======================================================================
-        if not keyword_match and not keyword_dec_match:
-            for function in self.function:
-                # print(function)
-                pattern = rf'^\s*\d{{0,5}}\s*(?:[a-z0-9_]+(?:\*[\w\d]+|\([^)]*\([^)]*\)[^)]*\)|\([^)]*\))?\s*){{0,5}}{re.escape(function)}\b'
-                if re.match(pattern, temp_lower):
-                    keyword_match = True
-                    keyword = function
-                    # print(repr(temp_line), keyword_match)
-                    break
 
         #======================================================================
         # Check for goto's that randomly match the start of the line from a do loop
@@ -86,10 +89,16 @@ def structured_indent(self, temp_line, current_line, ff_line):
     if keyword_match:
         # print(repr(keyword), self.indenter, repr(temp_line))
         pattern2 = r"^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?do\b"
-        if keyword.strip() == 'select':
-            if self.select_indent:
-                self.indenter += 1
-            self.select_indent = True
+        pattern_select = r'\bselect\s+\w+\b(?!\s*=|\(.*?\)\s*=)'
+        if keyword == 'select':
+            if re.match(pattern_select, temp_lower):
+                # print(repr(keyword), self.indenter, repr(temp_lower), self.select_indent)
+                if self.select_indent:
+                    self.indenter += 1
+                self.select_indent = True
+            else:
+                # print(repr(keyword), self.indenter, repr(temp_lower), self.select_indent)
+                self.skip = False
         if keyword in ['type', 'where'] and not self.select_indent and not temp_lower.startswith('type (') and not temp_lower.startswith('type(') and not temp_lower.startswith('type ='):
             # print(keyword, self.indenter, repr(temp_line))
             # =======================================================
@@ -217,6 +226,9 @@ def structured_indent(self, temp_line, current_line, ff_line):
                     if re.match(pattern_end, self.file_lines[k].lower().strip()):
                         self.select_indenter = self.indenter
                         break               
+            elif re.match(r'\bselect\b(?=[^\n=]*=)', temp_lower) and not 'select type' in temp_lower:
+                # print(keyword, self.indenter, repr(temp_line))
+                self.skip = False
             elif not (temp_lower.startswith('type *') and not self.select_indent) and not temp_lower.startswith('type ='):
                 # print(keyword, self.indenter, repr(temp_line))
                 pattern = r'^\s*forall\s*\(.*?\)\s+\S' # skip the forall() + code one-liner
@@ -243,8 +255,12 @@ def structured_indent(self, temp_line, current_line, ff_line):
             self.indenter += 1
             self.skip = True
         else:
-            # print(keyword, self.skip, self.indenter, repr(temp_line))
-            self.skip = False
+            # print(keyword, self.skip, self.indenter, repr(temp_lower))
+            if keyword in self.function:
+                self.indenter += 1
+                self.skip = True
+            else:
+                self.skip = False
     elif re.match(r'^\s*\d{0,5}\s+continue(\s|$)', temp_lower) and self.free_form:
         # print(repr(temp_line), do_list)
         for goto in do_list:
