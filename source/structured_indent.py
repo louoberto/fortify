@@ -37,7 +37,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
             # print(function)
             if re.search(rf'^\s*\d{{0,5}}\s*end\s+{re.escape(function)}\b', temp_lower):
                 continue
-            pattern = rf'^\s*\d{{0,5}}\s*(?:[a-z0-9_]+(?:\*[\w\d]+|\([^)]*\([^)]*\)[^)]*\)|\([^)]*\))?\s*){{0,5}}{re.escape(function)}\b'
+            pattern = rf'^\s*\d{{0,5}}\s*(?:[a-z0-9_]+(?:\*[\w\d]+|\([^()]*\)|\([^()]*\([^()]*\)[^()]*\))?\s*){{0,5}}{re.escape(function)}\b(?!\s*\()'
             if re.match(pattern, temp_lower):
                 keyword_match = True
                 keyword = function
@@ -63,7 +63,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
         #======================================================================
         if not keyword_match:
             for keyword in self.keywords_decrease:
-                pattern1 = r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$|\n)'
+                pattern1 = r'^\s*\d{0,5}\s*' + re.escape(keyword) + r'(?=\s|\(|$|\n|\;)'
                 if re.match(pattern1, temp_lower):
                     keyword_dec_match = True
                     # print(repr(temp_line), repr(keyword))
@@ -106,8 +106,9 @@ def structured_indent(self, temp_line, current_line, ff_line):
             # =======================================================
             is_type_block = False
             for k in range(j + 1, len(self.file_lines)):
-                pattern = rf"^end\s*{re.escape(keyword.strip())}\b"
+                pattern = rf"^end\s*{re.escape(keyword.strip())}\s*;?\b"
                 if re.match(pattern, self.file_lines[k].lower().strip()):
+                    # print(keyword, self.indenter, repr(temp_line))
                     is_type_block = True
                     break
                 else:
@@ -201,7 +202,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
                 # print(do_list)
         elif not temp_lower.replace(self.space, self.empty).startswith('type(') and not temp_lower.startswith('do '):
             # print(keyword, self.indenter, repr(temp_line))
-            if keyword in ['type is', 'class is', 'class default', 'case']:
+            if keyword in ['type is', 'class is', 'class default', 'case', 'rank']:
                 # print(keyword, self.indenter, repr(temp_line))
                 self.class_happened = True
                 if self.select_indent:
@@ -232,7 +233,8 @@ def structured_indent(self, temp_line, current_line, ff_line):
             elif not (temp_lower.startswith('type *') and not self.select_indent) and not temp_lower.startswith('type ='):
                 # print(keyword, self.indenter, repr(temp_line))
                 pattern = r'^\s*forall\s*\(.*?\)\s+\S' # skip the forall() + code one-liner
-                if re.match(pattern, temp_lower):
+                pattern_map = r'^\s*map\s*=>'
+                if re.match(pattern, temp_lower) or re.match(pattern_map, temp_lower):
                     self.skip = False
                 else:
                     if keyword == 'module procedure':

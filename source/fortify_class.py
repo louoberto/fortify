@@ -138,7 +138,8 @@ class fortify_class:
             'union ',
             'forall',
             'critical',
-            'submodule'
+            'submodule',
+            'rank'
         ]
         self.keywords_decrease = [
             'continue',
