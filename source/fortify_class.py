@@ -139,7 +139,9 @@ class fortify_class:
             'forall',
             'critical',
             'submodule',
-            'rank'
+            'rank',
+            'enum,',
+            'change team'
         ]
         self.keywords_decrease = [
             'continue',
@@ -161,5 +163,7 @@ class fortify_class:
             'endforall',
             'endcritical',
             'endsubmodule',
-            'endprocedure'
+            'endprocedure',
+            'endenum',
+            'endteam'
         ]

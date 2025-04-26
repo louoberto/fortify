@@ -38,7 +38,8 @@ def structured_indent(self, temp_line, current_line, ff_line):
             if re.search(rf'^\s*\d{{0,5}}\s*end\s+{re.escape(function)}\b', temp_lower):
                 continue
             pattern = rf'^\s*\d{{0,5}}\s*(?:[a-z0-9_]+(?:\*[\w\d]+|\([^()]*\)|\([^()]*\([^()]*\)[^()]*\))?\s*){{0,5}}{re.escape(function)}\b(?!\s*\()'
-            if re.match(pattern, temp_lower):
+            pattern2 = rf'^\s*\d{{0,5}}\s*[a-zA-Z_][a-zA-Z0-9_]*\*\(\*\)\s+{re.escape(function)}\b(?!\s*\()'
+            if re.match(pattern, temp_lower) or re.match(pattern2, temp_lower):
                 keyword_match = True
                 keyword = function
                 # print(repr(temp_lower), keyword_match, repr(keyword))
@@ -89,8 +90,10 @@ def structured_indent(self, temp_line, current_line, ff_line):
     if keyword_match:
         # print(repr(keyword), self.indenter, repr(temp_line))
         pattern2 = r"^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?do\b"
-        pattern_select = r'\bselect\s+\w+\b(?!\s*=|\(.*?\)\s*=)'
+        pattern_select = r'\s*(?:[a-z0-9_]+\s*:\s*)?select\s+\w+\b(?!\s*=|\s*\([^)]*\)\s*=)'
+        # ^\s*(?:[a-z0-9_]+\s*:\s*
         if keyword == 'select':
+            # print(repr(keyword), self.indenter, repr(temp_lower), self.select_indent)
             if re.match(pattern_select, temp_lower):
                 # print(repr(keyword), self.indenter, repr(temp_lower), self.select_indent)
                 if self.select_indent:
@@ -232,7 +235,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
                 self.skip = False
             elif not (temp_lower.startswith('type *') and not self.select_indent) and not temp_lower.startswith('type ='):
                 # print(keyword, self.indenter, repr(temp_line))
-                pattern = r'^\s*forall\s*\(.*?\)\s+\S' # skip the forall() + code one-liner
+                pattern = r'^\s*forall\s*\(.*?\)\s+(?!;)\S' # skip the forall() + code one-liner
                 pattern_map = r'^\s*map\s*=>'
                 if re.match(pattern, temp_lower) or re.match(pattern_map, temp_lower):
                     self.skip = False
