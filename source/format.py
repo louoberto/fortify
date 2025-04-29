@@ -160,6 +160,8 @@ def format(self):
         #======================================================================
         temp = self.structured_indent(self, temp, line_num, ff_line)
         #======================================================================
+        self.lines.append(temp)
+        self.code_line = temp # Save the current line for knowledge on the next line
 
         #======================================================================
         # We skip this if in the middle of a string. Otherwise we need to see 

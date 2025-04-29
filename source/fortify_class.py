@@ -57,6 +57,7 @@ class fortify_class:
         self.skip_select = False
         self.select_indenter = 0
         self.inside_submod = False
+        self.cont_happened = False
 
         # Fortran data types (not a complete list yet)
         self.data_types = [
@@ -84,6 +85,8 @@ class fortify_class:
         self.read_file = read_file  # Read and stoe the file_lines of the file to format
         self.print_file = print_file
         self.format = format
+        self.code_line = ''
+        self.lines = []
         self.remove_extra_space = remove_extra_space
         self.period_spacing = period_spacing
         self.comma_spacing = comma_spacing
@@ -167,3 +170,27 @@ class fortify_class:
             'endenum',
             'endteam'
         ]
+
+    def is_where_oneliner(self, line):
+        line = line.strip().lower()
+        if not line.startswith('where'):
+            return False
+        # Find the first '(' after 'where'
+        first_paren = line.find('(')
+        if first_paren == -1:
+            return False
+
+        count = 0
+        for i in range(first_paren, len(line)):
+            if line[i] == '(':
+                count += 1
+            elif line[i] == ')':
+                count -= 1
+                if count == 0:
+                    # After this position, check if there's real code
+                    after = line[i+1:].lstrip()
+                    if after and not after.startswith(';') and not after.startswith('!'):
+                        return True
+                    else:
+                        return False
+        return False

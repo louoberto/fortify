@@ -43,7 +43,7 @@ def plus_spacing(self, j, char, code_line, temp_line):
             temp = temp_line + char
         else:
             # print(code_line)
-            if code_line[j + 1].isalnum() or (code_line[j + 1] == self.newline and temp_line[j-1] == '('):
+            if code_line[j + 1].isalnum() or (code_line[j + 1] == self.newline and len(temp_line) > j - 1 and temp_line[j-1] == '('):
                 if code_line[j - 2].isalnum():
                     temp = temp_line + char + self.space
                 else:
