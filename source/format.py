@@ -13,6 +13,10 @@ def format(self):
     slash_skip = False
     slash_cont = False
     line_num = 0
+    pound_ifdef = False
+    pound_else = False
+    pound_endif = False
+    self_skip_true = 0
     while line_num < len(self.file_lines):
         line = self.file_lines[line_num]
         # print(line)
@@ -37,6 +41,26 @@ def format(self):
                 slash_skip = True
             else:
                 slash_skip = False
+            if line.strip().startswith('#if'):
+                pound_ifdef = True
+                self.ifdefdent = self.indenter
+                # print('ifd = ', self.ifdefdent, line)
+            elif line.strip().startswith('#else') and pound_ifdef:
+                pound_ifdef = False
+                pound_else = True
+                self.elsedent = self.ifdefdent
+                # print(self.indenter)
+                self.indenter = self.ifdefdent
+                # print('ifdef = ', self.ifdefdent)
+                # print('else = ', self.elsedent)
+                # print(self.indenter)
+            elif line.strip().startswith('#endif') and pound_ifdef or pound_else:
+                pound_ifdef = False
+                pound_else = False
+                # print(self.indenter)
+                # pound_endif = True
+                # self.endifdent = self.indenter
+                # print('end = ', self.endifdent, line)
             line_num += 1
             continue
         elif line[0] in ['*','C','c','!'] and not self.free_form: # Check for F77 comments
@@ -158,7 +182,8 @@ def format(self):
         #======================================================================
         # Structured indenting/nesting
         #======================================================================
-        temp = self.structured_indent(self, temp, line_num, ff_line)
+        # print(repr(temp), self.indenter)
+        temp, self_skip_true = self.structured_indent(self, temp, line_num, ff_line, self_skip_true)
         #======================================================================
         self.lines.append(temp)
         self.code_line = temp # Save the current line for knowledge on the next line

@@ -8,7 +8,7 @@
 import re
 do_list = []
 do_count = 0
-def structured_indent(self, temp_line, current_line, ff_line):
+def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
     j = current_line
     # print(repr(temp_line))
     #==========================================================================
@@ -122,6 +122,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
     pattern_equal = rf'^\s*(?:[a-z0-9_]+\s*:\s*)?{re.escape(keyword)}\s*(?:\([^()]*\))?\s*=' # Match 'keyword ='
     if re.match(pattern_equal, temp_lower):
         self.skip = False
+        # print(repr(temp_line), keyword_match, repr(keyword))
     elif keyword_match:
         # print(repr(keyword), self.indenter, repr(temp_line))
         pattern2 = r"^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?do\b"
@@ -196,7 +197,10 @@ def structured_indent(self, temp_line, current_line, ff_line):
                         while self.file_lines[j+1][-2].strip() == self.continuation_char:
                             j += 1
                     else:
-                        if j + 2 < len(self.file_lines) and len(self.file_lines[j + 2]) > 5 and self.file_lines[j + 2][5] != self.space:
+                        # print(self.file_lines[j+2]) #self.file_lines[j+2][
+                        while (j + 2 < len(self.file_lines) and len(self.file_lines[j + 2]) > 0 and ((len(self.file_lines[j + 2]) > 5 and self.file_lines[j + 2][5] != self.space) or self.file_lines[j + 2].lstrip().startswith((self.continuation_char, '#'))) ):
+                            # print(self.file_lines[j+2])
+                            self_skip_true += 1
                             j += 1
                         # will need to come back here possibly in case the if statement goes over and over
                     if self.file_lines[j + 1].strip().lower().endswith('then'):
@@ -354,7 +358,7 @@ def structured_indent(self, temp_line, current_line, ff_line):
     if re.match(r"^else(where|if)?\b", temp_lower): # else statements go back one, but that's it
         self.skip = True
 
-    if self.skip:
+    if self.skip or self_skip_true > 0:
         if keyword == 'select':
             if self.skip_select:
                 # print(keyword, self.skip, self.indenter, repr(temp_line), self.select_indenter)
@@ -365,17 +369,24 @@ def structured_indent(self, temp_line, current_line, ff_line):
                 temp_line = self.space * self.tab_len * (self.indenter - 1) + temp_line
         else:
             temp_line = self.space * self.tab_len * (self.indenter - 1) + temp_line
+            # print(repr(temp_line), self.indenter - 1)
         # print(temp_line)
         if self.free_form:
+            # print(temp_line)
             if temp_line.strip()[-1] == self.continuation_char:
                 self.skip = True
             else:
                 self.skip = False
         else:
-            if len(self.file_lines) > j + 1 and len(self.file_lines[j + 1]) > 5 and self.file_lines[j + 1][5] != self.space and not self.file_lines[j + 1][0].isalpha() and self.file_lines[j + 1][0] not in ['*', self.comment]:
+            # print(temp_line)
+            if len(self.file_lines) > j + 1 and len(self.file_lines[j + 1]) > 5 and self.file_lines[j + 1][5] != self.space and not self.file_lines[j + 1][0].isalpha() and self.file_lines[j + 1][0] not in ['*', self.comment, '#']:
+                # print(temp_line)
                 self.skip = True
             else:
+                # print(temp_line)
                 self.skip = False
+        if self_skip_true > 0:
+            self_skip_true -= 1
     else:
         temp_line = self.space * self.tab_len * self.indenter + temp_line
 
@@ -386,4 +397,5 @@ def structured_indent(self, temp_line, current_line, ff_line):
         self.cont_happened = True
     else:
         self.cont_happened = False
-    return temp_line
+
+    return temp_line, self_skip_true

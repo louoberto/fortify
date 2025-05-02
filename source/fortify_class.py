@@ -56,6 +56,9 @@ class fortify_class:
         self.class_happened = False
         self.skip_select = False
         self.select_indenter = 0
+        self.ifdefdent = 0
+        self.elsedent = 0
+        self.endifdent = 0
         self.inside_submod = False
         self.cont_happened = False
 
