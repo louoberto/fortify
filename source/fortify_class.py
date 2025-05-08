@@ -197,3 +197,28 @@ class fortify_class:
                     else:
                         return False
         return False
+
+    def is_forall_oneliner(self, line: str) -> bool:
+        import re
+        line = line.strip().lower()
+
+        # Strip leading optional numeric label (up to 5 digits)
+        line = re.sub(r'^\s*\d{0,5}\s*', '', line)
+
+        if not line.startswith("forall"):
+            return False
+
+        start = line.find("(")
+        if start == -1:
+            return False
+
+        count = 0
+        for i in range(start, len(line)):
+            if line[i] == "(":
+                count += 1
+            elif line[i] == ")":
+                count -= 1
+                if count == 0:
+                    after = line[i + 1:].lstrip()
+                    return bool(after and not after.startswith((";", "!")))
+        return False
