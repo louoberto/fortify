@@ -6,6 +6,9 @@
 # lists found in keywords_increase and keywords_decrease
 # =============================================================================
 import re
+from inspect import currentframe
+debug_me = 0
+
 do_list = []
 do_count = 0
 def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
@@ -70,11 +73,15 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
         #======================================================================
         if not keyword_match:
             # print(repr(temp_line))
+            # if debug_me:
+            #     self.debug(currentframe().f_lineno, '', repr(temp_line), j)
             for keyword in self.keywords_increase:
                 pattern = rf'^\s*(?:[a-z0-9_]+\s*:\s*|\d{{0,5}}\s*)?{re.escape(keyword)}(?=\b|\s|\(|$)'
-                if re.match(pattern, temp_lower) and ('interface_' not in temp_lower):
+                if re.match(pattern, temp_lower) and (' interface_' + keyword + ' ' not in temp_lower):
                     keyword_match = True
                     self.skip = True
+                    if debug_me:
+                        self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
                     if temp:
                         # if keyword == 'block':
                         #     print(repr(temp))
@@ -84,10 +91,15 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                                 keyword_match = True
                                 self.skip = True
                                 # print(repr(temp.lstrip()))
+                                if debug_me:
+                                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
                                 break
                             else:
                                 keyword_match = False
                                 self.skip = False
+                                if debug_me:
+                                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
+                                # print(keyword, self.indenter, repr(temp_line))
                         # print(repr(temp_lower), repr(temp))
                     # print(repr(temp_lower))#, keyword_match, repr(keyword))
                     break
@@ -117,16 +129,25 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                     keyword_dec_match = True
             # if keyword_dec_match:
             #     print(repr(temp_line), keyword_match, repr(keyword))
+            if keyword_dec_match:
+                if debug_me:
+                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
         #======================================================================
 
     else:
         keyword = self.empty
-
+        if debug_me:
+            self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
+    # print(repr(temp_line), keyword_match, repr(keyword))
     pattern_equal = rf'^\s*(?:[a-z0-9_]+\s*:\s*)?{re.escape(keyword)}\s*(?:\([^()]*\))?\s*=' # Match 'keyword ='
     if re.match(pattern_equal, temp_lower):
         self.skip = False
         # print(repr(temp_line), keyword_match, repr(keyword))
+        if debug_me:
+            self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
     elif keyword_match:
+        if debug_me:
+            self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
         # print(repr(keyword), self.indenter, repr(temp_line))
         pattern2 = r"^(?:[a-z0-9_]+:\s*|\s*\d{0,5}\s*)?do\b"
         pattern_select = r'\s*(?:[a-z0-9_]+\s*:\s*)?select\s+\w+\b(?!\s*=|\s*\([^)]*\)\s*=)'
@@ -164,6 +185,7 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                     self.indenter += 1
                     self.skip = True
                 else:
+                    # print(keyword, self.indenter, repr(temp_line))
                     self.skip = False
         elif keyword == 'associate':
             # print(keyword, self.indenter, repr(temp_line))
@@ -183,6 +205,7 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                 self.indenter += 1
                 self.skip = True
             else:
+                # print(keyword, self.indenter, repr(temp_line))
                 self.skip = False
         elif keyword == 'if ' or keyword == 'if\n':
             # print(keyword, self.skip, self.indenter, repr(temp_line))
@@ -226,6 +249,7 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                     self.indenter += 1
                     self.skip = True
                 else:
+                    # print(keyword, self.indenter, repr(temp_line))
                     self.skip = False
         elif keyword == 'do ' or keyword == 'do\n' and re.match(pattern2, temp_lower.strip()):
             self.indenter += 1
@@ -298,6 +322,7 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                     else:
                         if keyword == 'submodule':
                             self.inside_submod = True
+                        # print(keyword, self.indenter, repr(temp_line))
                         self.indenter += 1
                         self.skip = True
             else:
@@ -313,6 +338,7 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                 self.indenter += 1
                 self.skip = True
             else:
+                # print(keyword, self.indenter, repr(temp_line))
                 self.skip = False
     elif re.match(r'^\s*\d{0,5}\s+continue(\s|$)', temp_lower) and self.free_form:
         # print(repr(temp_line), do_list)
@@ -351,48 +377,74 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                 elif (re.match(r'^\s*\d{0,5}\s+end do\s*\S*(\s|$)', temp_lower) and self.free_form) or (re.match(r'^\s*\d{0,5}\s+enddo\s*\S*(\s|$)', temp_lower) and self.free_form):
                     self.indenter -= 1
                     self.skip = False
+                    if debug_me:
+                        self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
+                    # print(keyword, self.indenter, repr(temp_line))
         else:
             # print(keyword, self.indenter, repr(temp_line))
             self.indenter -= 1
             self.skip = False
+            if debug_me:
+                self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
             # print(self.file_lines[j-1].lower(), self.indenter, repr(temp_line))
-        if temp_lower.strip().endswith(self.continuation_char):
-            print(self.file_lines[j-1].lower(), self.indenter, repr(temp_line))
+        # if temp_lower.strip().endswith(self.continuation_char):
+        #     print(self.file_lines[j-1].lower(), self.indenter, repr(temp_line))
 
     if re.match(r"^else(where|if)?\b", temp_lower): # else statements go back one, but that's it
         self.skip = True
-
+        if debug_me:
+            self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
+    # print(repr(temp_line), keyword_match, repr(keyword))
     if self.skip or self_skip_true > 0:
+        # print(repr(temp_line), keyword_match, repr(keyword))
         if keyword == 'select':
             if self.skip_select:
                 # print(keyword, self.skip, self.indenter, repr(temp_line), self.select_indenter)
                 temp_line = self.space * self.tab_len * (self.indenter + self.select_indenter - 1) + temp_line
                 self.skip_select = False
+                if debug_me:
+                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
             else:
                 # print(keyword, self.skip, self.indenter, repr(temp_line), self.select_indenter)
                 temp_line = self.space * self.tab_len * (self.indenter - 1) + temp_line
+                if debug_me:
+                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
         else:
             temp_line = self.space * self.tab_len * (self.indenter - 1) + temp_line
             # print(repr(temp_line), self.indenter - 1)
+            if debug_me:
+                self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
         # print(temp_line)
         if self.free_form:
             # print(temp_line)
             if temp_line.strip()[-1] == self.continuation_char:
                 self.skip = True
+                if debug_me:
+                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
             else:
+                # print(keyword, self.indenter, repr(temp_line))
                 self.skip = False
+                if debug_me:
+                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
         else:
             # print(temp_line)
             if len(self.file_lines) > j + 1 and len(self.file_lines[j + 1]) > 5 and self.file_lines[j + 1][5] != self.space and not self.file_lines[j + 1][0].isalpha() and self.file_lines[j + 1][0] not in ['*', self.comment, '#']:
                 # print(temp_line)
                 self.skip = True
+                if debug_me:
+                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
             else:
                 # print(temp_line)
                 self.skip = False
+                if debug_me:
+                    self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
         if self_skip_true > 0:
             self_skip_true -= 1
     else:
+        # print(repr(temp_line), keyword_match, repr(keyword), self.indenter)
         temp_line = self.space * self.tab_len * self.indenter + temp_line
+        if debug_me:
+            self.debug(currentframe().f_lineno, keyword, repr(temp_line), j)
 
     if self.indenter < 0:
         self.indenter = 0
