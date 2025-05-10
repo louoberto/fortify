@@ -217,10 +217,18 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                 # print(keyword, self.skip, self.indenter, repr(temp_line))
                 # print(repr(self.file_lines[j+1][-2].strip()))
                 # pattern = r'^\s*(?:\d{0,5}\s*)?if\s*\([^\)]*&\s*$'
-                if self.file_lines[j+1][-2].strip() == self.continuation_char or re.match(pattern, temp_lower) or not self.free_form:
+                if (
+                    j + 1 < len(self.file_lines)
+                    and len(self.file_lines[j + 1]) >= 2
+                    and self.file_lines[j + 1][-2].strip() == self.continuation_char
+                ) or re.match(pattern, temp_lower) or not self.free_form:
                     # print(keyword, self.skip, self.indenter, repr(temp_line))
                     if self.free_form:
-                        while self.file_lines[j+1][-2].strip() == self.continuation_char:
+                        while (
+                            j + 1 < len(self.file_lines)
+                            and len(self.file_lines[j + 1]) >= 2
+                            and self.file_lines[j + 1][-2].strip() == self.continuation_char
+                        ):
                             j += 1
                     else:
                         # print(self.file_lines[j+2]) #self.file_lines[j+2][

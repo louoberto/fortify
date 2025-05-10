@@ -62,24 +62,6 @@ class fortify_class:
         self.inside_submod = False
         self.cont_happened = False
 
-        # Fortran data types (not a complete list yet)
-        self.data_types = [
-            'integer',
-            'real',
-            'complex',
-            'character',
-            'logical',
-            'double precision',
-            'doubleprecision',
-        ]
-        self.common_types = [
-            'namelist',
-            'data',
-            'common',
-            'structure'
-        ]
-
-
         # Logical expressions
         self.iftypes = ['.and.', '.not.']
         self.iftypes2 = ['.eq.', '.ge.', '.gt.', '.le.', '.lt.', '.ne.', '.or.']
@@ -109,18 +91,32 @@ class fortify_class:
             'subroutine',
         ]
 
+        # Fortran data types (not a complete list yet)
+        self.data_types = [
+            'integer',
+            'real',
+            'complex',
+            'character',
+            'logical',
+            'double precision',
+            'doubleprecision',
+        ]
+        self.common_types = [
+            'namelist',
+            'data',
+            'common',
+            'structure'
+        ]
+
         # Keywords for indenting
         self.keywords_increase = [
             'do\n',
             'do ',
             'do',
-            'function ',
-            'function\n',
             'function',
             'subroutine',
             'if\n',
             'if ',
-            'if(',
             'if',
             'abstract interface',
             'interface',
@@ -140,8 +136,7 @@ class fortify_class:
             'class is',
             'class default',
             'map',
-            'union\n',
-            'union ',
+            'union',
             'forall',
             'critical',
             'submodule',
