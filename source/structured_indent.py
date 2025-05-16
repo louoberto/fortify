@@ -259,27 +259,29 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                 else:
                     # print(keyword, self.indenter, repr(temp_line))
                     self.skip = False
-        elif keyword == 'do ' or keyword == 'do\n' and re.match(pattern2, temp_lower.strip()):
+        elif keyword in ['do ', 'do\n'] and re.match(pattern2, temp_lower.strip()):
             self.indenter += 1
             self.skip = True
             # print(temp_line, self.indenter)
             # Check if there is a continue with it
-            i = len('do')
-            while temp_lower[i] == self.space:
-                i += 1
-            if temp_lower[i].isnumeric():
-                # print(temp_lower[i])
-                temp_num = self.empty
-                while temp_lower[i].isnumeric():
-                    temp_num += temp_line[i]
+            i = temp_lower.find('do')
+            if i != -1:
+                i += len('do')
+                while i < len(temp_lower) and temp_lower[i] == self.space:
                     i += 1
-                if any(temp_num == item[0] for item in do_list):
-                    for index, item in enumerate(do_list):
-                        if temp_num == item[0]:
-                            do_list[index] = (item[0], item[1] + 1)
-                            break
-                else:
-                    do_list.append((temp_num, do_count))
+                if i < len(temp_lower) and temp_lower[i].isnumeric():
+                    # print(temp_lower[i])
+                    temp_num = self.empty
+                    while i < len(temp_lower) and temp_lower[i].isnumeric():
+                        temp_num += temp_line[i]
+                        i += 1
+                    if any(temp_num == item[0] for item in do_list):
+                        for index, item in enumerate(do_list):
+                            if temp_num == item[0]:
+                                do_list[index] = (item[0], item[1] + 1)
+                                break
+                    else:
+                        do_list.append((temp_num, do_count))
                 # print(do_list)
         elif not temp_lower.replace(self.space, self.empty).startswith('type(') and not temp_lower.startswith('do '):
             # print(keyword, self.indenter, repr(temp_line))
@@ -353,6 +355,14 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
         for goto in do_list:
             # print(goto[0])
             if temp_line.startswith(goto[0]):
+                self.indenter -= (1 + goto[1])
+                do_list.remove(goto)
+                break
+    elif not self.free_form and any(re.search(r'\d', line) for line in self.file_lines[j][0:5]):
+        number_line = self.file_lines[j][0:5].strip()
+        for goto in do_list:
+            # print(goto[0])
+            if number_line == goto[0]:
                 self.indenter -= (1 + goto[1])
                 do_list.remove(goto)
                 break

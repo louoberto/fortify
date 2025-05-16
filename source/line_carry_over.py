@@ -23,8 +23,8 @@ def line_carry_over(self, ff_line, temp_line, cmnt_line):
     if line_cont:  # then we need to find a good place to stop this line
         j = self.last_col - len(ff_line) - 1
         # Look for the first space, and call it there
-        if temp_line[j] != self.space:
-            while temp_line[j] not in [self.space, "'", '"']:
+        if j < len(temp_line) and temp_line[j] != self.space:
+            while j >= 0 and temp_line[j] not in [self.space, "'", '"']:
                 j -= 1
             j += 1
 
