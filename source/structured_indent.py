@@ -213,7 +213,7 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                 # print(keyword, self.skip, self.indenter, repr(temp_line))
                 self.indenter += 1
                 self.skip = True
-            elif temp_lower[-2].strip() == self.continuation_char or (not self.free_form and len(self.file_lines[j+1]) > 6 and self.file_lines[j+1][5] != self.space):
+            elif temp_lower[-2].strip() == self.continuation_char or temp_lower[-1].strip() == self.continuation_char or (not self.free_form and len(self.file_lines[j+1]) > 6 and self.file_lines[j+1][5] != self.space):
                 # print(keyword, self.skip, self.indenter, repr(temp_line))
                 # print(repr(self.file_lines[j+1][-2].strip()))
                 # pattern = r'^\s*(?:\d{0,5}\s*)?if\s*\([^\)]*&\s*$'
@@ -237,7 +237,8 @@ def structured_indent(self, temp_line, current_line, ff_line, self_skip_true):
                             self_skip_true += 1
                             j += 1
                         # will need to come back here possibly in case the if statement goes over and over
-                    if self.file_lines[j + 1].strip().lower().endswith('then'):
+                    dummy1, line_to_check, dummy2, dummy3 = self.line_breakup(self, self.file_lines[j + 1])
+                    if line_to_check.strip().lower().endswith('then'):
                         # print(temp_line)
                         self.indenter += 1
                         self.skip = True
