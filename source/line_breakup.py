@@ -7,6 +7,9 @@
 # ========================================================================
 def line_breakup(self, line):
     cmt_index = line.find(self.comment)
+    ff_line = self.empty
+    code_line = self.empty
+    cmnt_line = self.empty
     if cmt_index >= 0:
         # print(repr(line))
         if cmt_index > 0:
